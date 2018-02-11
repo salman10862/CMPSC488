@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body, html {
+                height: 98%;
+                width: 98%;
+            }
+            #map {
+                height: 100%;
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script>
+            function initMap() {
+                var psuHbg = {lat: 40.2042945, lng: -76.7471177};
+                var map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 15,
+                    center: psuHbg
+                });
+                var marker = new google.maps.Marker({
+                    position: psuHbg,
+                    map: map
+                });
+            }
+        </script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD7MjGyPPBoWoQaqQinDGn3lnn5P_9sL_w&callback=initMap">
+        </script>
+    </body>
+</html>
