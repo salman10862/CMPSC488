@@ -1,6 +1,8 @@
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -15,7 +17,6 @@ public class MapWindow extends Application {
         /* Begin menu bar */
         MenuBar menuBar = new MenuBar();
         menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
-        root.setTop(menuBar);
 
         Menu fileMenu                  = new Menu("File");
         MenuItem menuItem_new          = new MenuItem("New");
@@ -42,9 +43,21 @@ public class MapWindow extends Application {
         menuBar.getMenus().addAll(fileMenu, toolsMenu, helpMenu);
         /* end menu bar */
 
+        /*Begin map*/
+        final WebView browser = new WebView();
+        final WebEngine webEngine = browser.getEngine();
+        webEngine.load(getClass().getResource("googlemap.html").toString());
+        /*end map*/
+
+        root.setTop(menuBar);
+        root.setCenter(browser);
         primaryStage.setTitle("Application - Map Window"); // name of app??
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    static {
+        System.setProperty("java.net.useSystemProxies", "true");
     }
 
     public static void main(String[] args) {
