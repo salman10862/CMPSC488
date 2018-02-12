@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<Pane id="SettingsWindow" fx:id="Settings" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="SettingsController">
+   <children>
+      <Button layoutX="511.0" layoutY="361.0" mnemonicParsing="false" text="Cancel" />
+      <Button layoutX="443.0" layoutY="361.0" mnemonicParsing="false" text="Apply" />
+      <TabPane layoutX="7.0" layoutY="14.0" prefHeight="340.0" prefWidth="591.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="General">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ChoiceBox layoutX="296.0" layoutY="39.0" prefWidth="150.0" />
+                        <TextFlow layoutX="14.0" layoutY="39.0" prefHeight="25.0" prefWidth="102.0">
+                           <children>
+                              <Label prefHeight="24.0" prefWidth="100.0" text="Currency" />
+                           </children></TextFlow>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Optimizer">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</Pane>
