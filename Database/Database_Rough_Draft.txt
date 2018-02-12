@@ -1,0 +1,20 @@
+$Creating a profile database
+use proflieDB
+
+$adding a user to the user collection within the profile database
+db.users.insertOne({firstName: "charlie", lastName: "wilson", username: "cwilson32", password: "12345678", email: "cwilson32@aol.com"})
+
+$adding a user to the user collection within the profile database
+db.users.insertOne({firstName: "jamie", lastName: "collins", username: "jcollins24", password: "98765432", email: "jcollins24@gmail.com"})
+
+$adding a user to the user collection within the profile database
+db.users.insertOne({firstName: "annie", lastName: "simons", username: "jsimons57", password: "10111213", email: "jsimons57@aol.com"})
+
+$adding a project to the project collection within the profile database
+db.project.insertOne({projectName: "Transpo", ownerid: "5a820c16e70a4edee84ae473", contents: "To be determined", sharedid: ["Based on who owner wants to share project with"], optimizedResults: "Based on user's optimizationRequest")
+
+$adding a project to the project collection within the profile database
+db.project.insertOne({projectName: "Transpo", ownerid: "5a820c16e70a4edee84ae474", contents: "To be determined", sharedid: ["Based on who owner wants to share project with"], optimizedResults: "Based on user's optimizationRequest")
+
+$adding a project to the project collection within the profile database
+db.project.insertOne({projectName: "Transpo", ownerid: "5a820c16e70a4edee84ae475", contents: "To be determined", sharedid: ["Based on who owner wants to share project with"], optimizedResults: "Based on user's optimizationRequest")
