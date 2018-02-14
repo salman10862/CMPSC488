@@ -25,9 +25,9 @@ public class JavaMongoConnection {
 		
 		//insert record into database
 		DBObject newUser = new BasicDBObject();
-		newUser.put("firstName", "Alex");
+		newUser.put("firstName", "James");
 		newUser.put("lastName", "Clark");
-		newUser.put("username", "aclark123");
+		newUser.put("username", "jclark123");
 		newUser.put("password", "animation123");
 		
 		//add record to database
