@@ -1,67 +1,34 @@
+import java.io.IOException;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
+import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class MapWindow extends Application {
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage stage) throws IOException {
 
-        BorderPane root = new BorderPane();
+        Parent root = null;
+        try{
+            root = FXMLLoader.load(getClass().getResource("MapWindow.fxml"));
+        }
+        catch (IOException e) {
+            System.err.println("Caught IOException: " + e.getMessage());
+        }
+        
         Scene scene = new Scene(root, 800, 600);
 
-        /* Begin menu bar */
-        MenuBar menuBar = new MenuBar();
-        menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
-
-        Menu fileMenu                  = new Menu("File");
-        MenuItem menuItem_new          = new MenuItem("New");
-        MenuItem menuItem_loadFromFile = new MenuItem("Load From File");
-        MenuItem menuItem_loadFromDb   = new MenuItem("Load From Database");
-        MenuItem menuItem_save         = new MenuItem("Save");
-        MenuItem menuItem_saveas       = new MenuItem("Save as...");
-        MenuItem menuItem_exit         = new MenuItem("Exit");
-
-        Menu toolsMenu                 = new Menu("Tools");
-        MenuItem menuItem_options      = new MenuItem("Options");
-
-        Menu helpMenu                  = new Menu("Help");
-        MenuItem menuItem_about        = new MenuItem("About");
-
-        fileMenu.getItems().addAll(menuItem_new, menuItem_loadFromFile,
-                menuItem_loadFromDb, new SeparatorMenuItem(), menuItem_save,
-                menuItem_saveas, new SeparatorMenuItem(), menuItem_exit);
-
-        toolsMenu.getItems().addAll(menuItem_options);
-
-        helpMenu.getItems().addAll(menuItem_about);
-
-        menuBar.getMenus().addAll(fileMenu, toolsMenu, helpMenu);
-        /* end menu bar */
-
-        /*Begin map*/
-        final WebView browser = new WebView();
-        final WebEngine webEngine = browser.getEngine();
-        webEngine.load(getClass().getResource("googlemap.html").toString());
-        /*end map*/
-
-        root.setTop(menuBar);
-        root.setCenter(browser);
-        primaryStage.setTitle("Application - Map Window"); // name of app??
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
-
-    static {
-        System.setProperty("java.net.useSystemProxies", "true");
+        stage.setTitle("Application - Map Window");
+        stage.setScene(scene);
+        stage.show();
     }
 
     public static void main(String[] args) {
 
-        launch(args);
+        Application.launch(args);
     }
 }

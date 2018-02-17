@@ -1,54 +1,34 @@
+import java.io.IOException;
 import javafx.application.Application;
-import javafx.geometry.*;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.*;
-import javafx.scene.text.*;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import java.util.*;
 
 public class StartWindow extends Application {
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage stage) throws IOException {
 
-        BorderPane root = new BorderPane();
+        Parent root = null;
+        try{
+            root = FXMLLoader.load(getClass().getResource("StartWindow.fxml"));
+        }
+        catch (IOException e) {
+            System.err.println("Caught IOException: " + e.getMessage());
+        }
+        
         Scene scene = new Scene(root, 400, 400);
 
-        VBox vbox = new VBox();
-        vbox.setPadding(new Insets(10));
-        vbox.setSpacing(10);
-        vbox.prefWidthProperty().bind(primaryStage.widthProperty());
-        vbox.setAlignment(Pos.CENTER);
-
-        Text title = new Text("App Name"); // replace with real name once we decide on one
-        title.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        vbox.getChildren().add(title);
-
-        Button newProj = new Button("New Project");
-        Button loadProjLocal = new Button("Load Project From File");
-        Button loadProjDb = new Button("Load Project From Database");
-        Button exit = new Button("Exit");
-
-        List<Button> buttons = new ArrayList<>();
-        buttons.add(newProj);
-        buttons.add(loadProjLocal);
-        buttons.add(loadProjDb);
-        buttons.add(exit);
-
-        for(Button i : buttons) {
-            i.setMinWidth(200);
-            vbox.getChildren().add(i);
-        }
-
-        root.setCenter(vbox);
-        primaryStage.setTitle("Application - Start Window");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        stage.setTitle("Welcome!");
+        stage.setScene(scene);
+        stage.show();
     }
 
     public static void main(String[] args) {
 
-        launch(args);
+        Application.launch(args);
     }
 }
