@@ -6,8 +6,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="StartWindowController">
    <center>
       <VBox alignment="CENTER" BorderPane.alignment="CENTER">
          <children>
@@ -19,7 +18,7 @@
                   <Insets bottom="10.0" />
                </VBox.margin>
             </Text>
-            <Button minWidth="200.0" mnemonicParsing="false" text="New Project">
+            <Button fx:id="newProjectButton" minWidth="200.0" mnemonicParsing="false" onMouseClicked="#handleNewProjectButton" text="New Project">
                <VBox.margin>
                   <Insets bottom="10.0" />
                </VBox.margin>
@@ -34,7 +33,7 @@
                   <Insets bottom="10.0" />
                </VBox.margin>
             </Button>
-            <Button minWidth="200.0" mnemonicParsing="false" text="Exit">
+            <Button fx:id="exitButton" minWidth="200.0" mnemonicParsing="false" onMouseClicked="#handleExitButton" text="Exit">
                <VBox.margin>
                   <Insets />
                </VBox.margin>

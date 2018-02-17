@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Authors:" textAlignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </Text>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Salman Al-Habieli" textAlignment="CENTER" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Jason Fredericks" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Hayden Gfeller" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Pranav Presenan" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Christopher Williams" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ian Wright" />
+            <Button mnemonicParsing="false" text="OK">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
