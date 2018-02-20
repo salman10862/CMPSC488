@@ -16,11 +16,12 @@ public class SettingsController {
         userProfile cUser = new userProfile();
 
         //Try to get username from the UserProfile object
-        try{
-            text1 = new Text(cUser.getUsername());
-        }finally {
+        text1 = new Text(cUser.getUsername());
+        /*
             text1 = new Text("Example User");
-        }
+            text1.setScaleX(1.2);
+            text1.setScaleY(1.2);
+        */
 
         userNameField.getChildren().add(text1);
     }
