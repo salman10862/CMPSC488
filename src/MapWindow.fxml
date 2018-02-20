@@ -36,6 +36,6 @@
       </MenuBar>
    </top>
    <center>
-      <WebView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" BorderPane.alignment="CENTER" />
    </center>
 </BorderPane>

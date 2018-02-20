@@ -6,6 +6,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.MenuItem;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
 public class MapWindowController {
@@ -14,6 +16,8 @@ public class MapWindowController {
     @FXML private MenuItem exitItem;
     @FXML private MenuItem defineConstraintsItem;
     @FXML private MenuItem settingsItem;
+    @FXML private WebEngine webEngine;
+    @FXML private WebView webView;
 
     @FXML protected void handledefineConstraintsItem(ActionEvent event) throws IOException {
 
@@ -65,5 +69,10 @@ public class MapWindowController {
 
     @FXML protected void handleExitItem(ActionEvent event) {
         Platform.exit();
+    }
+
+    @FXML protected void initialize() {
+        webEngine = webView.getEngine();
+        webEngine.load(getClass().getResource("googlemap.html").toString());
     }
 }
