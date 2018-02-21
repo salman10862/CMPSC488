@@ -2,9 +2,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class projResource {
-    int id;
-    String label;
-    int amnt;
-    ArrayList<projResource> constraint_list;
-    HashMap<projResource, Double> constraint_amnt;
+    private int id,
+                amnt;
+
+    private String label;;
+    private ArrayList<projResource> constraint_list;
+    private HashMap<projResource, Double> constraint_amnt;
+
 }

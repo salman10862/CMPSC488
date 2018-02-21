@@ -1,12 +1,19 @@
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.PasswordField;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.stage.Stage;
+
+import java.awt.*;
 
 
 public class SettingsController {
-    @FXML private Text actiontarget;
+    @FXML private javafx.scene.control.Button cancelButton;
     @FXML private TextFlow userNameField;
+    @FXML private PasswordField newPassField1;
+    @FXML private PasswordField newPassField2;
+    @FXML private PasswordField currenPassConfirm;
 
     @FXML
     public void initialize()
@@ -27,15 +34,17 @@ public class SettingsController {
     }
 
     @FXML protected void handleApplyButton(ActionEvent event) {
-        actiontarget.setText("Test");
     }
 
     @FXML protected void handleCancelButton(ActionEvent event) {
-        actiontarget.setText("Test");
+        Stage s = (Stage) cancelButton.getScene().getWindow();
+        s.close();
     }
 
     @FXML protected void handleChangePassButton(ActionEvent event){
-        actiontarget.setText("test");
+        //Placeholder test
+        if(newPassField1.getText().matches(newPassField2.getText()))
+            System.out.println("The Passwords agree!");
     }
 
 }
