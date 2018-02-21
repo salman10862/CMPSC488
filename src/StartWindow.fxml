@@ -10,7 +10,7 @@
    <center>
       <VBox alignment="CENTER" BorderPane.alignment="CENTER">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="App Name!" textAlignment="CENTER">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Penny Chain" textAlignment="CENTER">
                <font>
                   <Font name="Arial" size="36.0" />
                </font>
