@@ -14,10 +14,29 @@ public class Connection_Online {
 
     public static void main(String args[]) throws UnknownHostException, IOException{
         //Connecting to MongoDB Server (*Note: must add the external jar file first)
-        MongoClientURI uri = new MongoClientURI("mongodb://OR-admin:williamspresenan@OR-project-shard-00-00-lkgqb.mongodb.net:27017,OR-project-shard-00-01-lkgqb.mongodb.net:27017,OR-project-shard-00-02-lkgqb.mongodb.net:27017/test?replicaSet=OR-Project-shard-0&authSource=admin");
-        System.out.println("server connection successfully done");
+        MongoClientURI uri = new MongoClientURI("mongodb+srv://OR-admin:williamspresenan@or-project-lkgqb.mongodb.net/test");
         MongoClient mongoClient = new MongoClient(uri);
-        //DB database = mongoClient.getDB("Users");
+        DB h = mongoClient.getDB("ProfileDB");
+        DBCollection users = h.getCollection("Users");
+        System.out.println(h.getName());
+        System.out.println("server connection successfully done");
+        BasicDBObject query = new BasicDBObject();
+        query.put("firstName", "Pranav");
+        DBCursor x = users.find(query);
+        while (x.hasNext())
+        {
+            System.out.println(x.next());
+        }
+        x.close();
+        DBObject person = new BasicDBObject("firstName", "James")
+                .append("lastName", "Murray")
+                .append("username", "jm3245")
+                .append("password", "password23")
+                .append("email", "jm3245@yahoo.com");
+        users.insert(person);
+
+
+
     }
     //add a record to the database
     public static void addRecord(){
