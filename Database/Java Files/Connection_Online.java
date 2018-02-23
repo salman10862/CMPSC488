@@ -12,14 +12,31 @@ import com.mongodb.MongoClientURI;
 
 public class Connection_Online {
 
+    private static MongoClientURI uri = new MongoClientURI("mongodb+srv://OR-admin:williamspresenan@or-project-lkgqb.mongodb.net/test");
+    private static MongoClient mongoClient = new MongoClient(uri);
+    private static DB database = mongoClient.getDB("ProfileDB");
+    private static DBCollection users = database.getCollection("Users");
+    private static DBCollection userCollection = database.getCollection("Users");
+
     public static void main(String args[]) throws UnknownHostException, IOException{
-        //Connecting to MongoDB Server (*Note: must add the external jar file first)
-        MongoClientURI uri = new MongoClientURI("mongodb+srv://OR-admin:williamspresenan@or-project-lkgqb.mongodb.net/test");
-        MongoClient mongoClient = new MongoClient(uri);
-        DB h = mongoClient.getDB("ProfileDB");
-        DBCollection users = h.getCollection("Users");
-        System.out.println(h.getName());
+        System.out.println(database.getName());
         System.out.println("server connection successfully done");
+        addRecord();
+        findRecord();
+    }
+    //insert a record to the database
+    public static void addRecord(){
+        DBObject person = new BasicDBObject("firstName", "Jenny")
+                .append("lastName", "Adamas")
+                .append("username", "Ja5476")
+                .append("password", "ilovecats25")
+                .append("email", "ja5476@aol.com");
+        userCollection.insert(person);
+    }
+
+    //find a record in the database
+    public static void findRecord()
+    {
         BasicDBObject query = new BasicDBObject();
         query.put("firstName", "Pranav");
         DBCursor x = users.find(query);
@@ -28,32 +45,6 @@ public class Connection_Online {
             System.out.println(x.next());
         }
         x.close();
-        DBObject person = new BasicDBObject("firstName", "James")
-                .append("lastName", "Murray")
-                .append("username", "jm3245")
-                .append("password", "password23")
-                .append("email", "jm3245@yahoo.com");
-        users.insert(person);
-
-
-
-    }
-    //add a record to the database
-    public static void addRecord(){
-        //choose which database to connect to
-    /*    DB database = mongoClient.getDB("ProfileDB");    //needs to be imported
-        DBCol! lection userCollection = database.getCollection("users");
-        System.out.println("Database name: " + database.getName()); */
-
-        //insert record into database
-        DBObject newUser = new BasicDBObject();
-        newUser.put("firstName", "Alex");
-        newUser.put("lastName", "Clark");
-        newUser.put("username", "aclark123");
-        newUser.put("password", "animation123");
-
-        //add record to database
-        //userCollection.insert(newUser);    //user collection needs to be created
     }
 }
 
