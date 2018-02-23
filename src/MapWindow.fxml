@@ -23,6 +23,7 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Tools">
             <items>
+                <MenuItem fx:id="addAResourceItem" mnemonicParsing="false" onAction="#handleAddAResource" text="Add A Resource"/>
                   <MenuItem fx:id="defineConstraintsItem" mnemonicParsing="false" onAction="#handledefineConstraintsItem" text="Define Constraints" />
               <MenuItem fx:id="settingsItem" mnemonicParsing="false" onAction="#handleSettingsItem" text="Settings" />
             </items>

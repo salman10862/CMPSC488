@@ -71,8 +71,24 @@ public class MapWindowController {
         Platform.exit();
     }
 
+    @FXML protected void handleAddAResource(ActionEvent event){
+        Parent root = null;
+        try{
+            root = (Parent)FXMLLoader.load(getClass().getResource("AddAResourceWindow.fxml"));
+        }
+        catch (IOException e) {
+            System.err.println("Caught IOException: " + e.getMessage());
+        }
+        Stage stage = new Stage();
+        stage.setTitle("Add A Resource");
+        stage.setScene(new Scene(root, 600, 400));
+        stage.show();
+    }
+
+
     @FXML protected void initialize() {
         webEngine = webView.getEngine();
         webEngine.load(getClass().getResource("googlemap.html").toString());
     }
+
 }
