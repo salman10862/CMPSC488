@@ -1,5 +1,5 @@
-
 import java.util.ArrayList;
+import com.google.gson.Gson;
 
 public class Project {
     private String projLabel;
@@ -31,6 +31,14 @@ public class Project {
         // TODO: implment online
     }
 
-    //public String projToJSONTest() { }
+    public String projToJSONTest() {
+        StringBuilder sb = new StringBuilder();
+
+
+        Gson gson = new Gson();
+
+        return "Pass";
+
+    }
 
 }

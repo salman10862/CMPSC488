@@ -18,7 +18,7 @@ public class projResource {
     }
 
     public String getLabel(){
-        return  label;
+        return label;
     }
 
     public void changeLabel(String label){
@@ -44,4 +44,6 @@ public class projResource {
     public Double getConstraintDist(projResource rType){
         return constraint_dist.get(rType);
     }
+
+
 }
