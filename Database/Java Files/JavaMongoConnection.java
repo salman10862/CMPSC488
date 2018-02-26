@@ -19,8 +19,8 @@ public class JavaMongoConnection {
 	private static MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));	
 	
 	//choose which database to connect to
-	private static DB database = mongoClient.getDB("ProfileDB");
-	private static DBCollection collection = database.getCollection("Projects");
+	private static DB database;
+	private static DBCollection collection;
 	
 	public static void main(String args[]) throws UnknownHostException{		
 		System.out.println("server connection successfully done");
