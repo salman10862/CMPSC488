@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 
 public class Project {
@@ -20,5 +21,16 @@ public class Project {
         projResourceList.remove(res);
     }
 
+    public void projectToFile(boolean online){
+        /*
+        if(!online) {
+
+        }
+        else
+*/
+        // TODO: implment online
+    }
+
+    //public String projToJSONTest() { }
 
 }

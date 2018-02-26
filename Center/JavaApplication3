@@ -63,5 +63,3 @@ public class JavaApplication3 {
         System.out.print("0");  
     }
 }
-    
-
