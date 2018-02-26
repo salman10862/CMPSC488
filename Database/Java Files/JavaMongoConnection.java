@@ -42,8 +42,27 @@ public class JavaMongoConnection {
 	}
 	
 	//find a record in database
-	public static void findRecord(){
-		;
+	public static void findRecordByUsername(){
+		//Connecting to MongoDB Server (*Note: must add the external jar file first)
+		MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));	
+		System.out.println("server connection successfully done");
+		
+		//choose which database to connect to
+		DB database = mongoClient.getDB("ProfileDB");
+		DBCollection userCollection = database.getCollection("users");
+		System.out.println("Database name: " + database.getName());
+		
+		System.out.println("\n");
+		
+		BasicDBObject whereQuery = new BasicDBObject();
+		whereQuery.put("username", uname);
+		DBCursor cursor = userCollection.find(whereQuery);
+		while(cursor.hasNext()){
+			
+			System.out.println(cursor.next());
+		}
+		
+		cursor.close();
 	}
 	
 	//modify a record in the database
