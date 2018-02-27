@@ -14,9 +14,19 @@ public class userProfile {
         pass = "passDefault";
     }
 
+    userProfile(String name, String pass){
+        this.name = name;
+        this.pass = pass;
+    }
+
     public String getUsername()
     {
         return name;
+    }
+
+    public String getPassHash() {
+        return pass;
+        //TODO: Secure the password
     }
 
     public boolean checkPassword(String input)
