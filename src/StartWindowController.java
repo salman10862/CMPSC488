@@ -15,17 +15,18 @@ public class StartWindowController {
     @FXML private Button exitButton;
 
     @FXML protected void handleNewProjectButton(MouseEvent event) throws IOException {
-        Parent root = null;
-        try {
-            root = (Parent)FXMLLoader.load(getClass().getResource("MapWindow.fxml"));
-        }
-        catch (IOException e) {
-            System.err.println("Caught IOException: " + e.getMessage());
-        }
+        Project project = new Project();
+
+        MapWindowController controller = new MapWindowController(project);
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("MapWindow.fxml"));
+        loader.setController(controller);
+        Parent root = loader.load();
+        Scene scene = new Scene(root, 800, 600);
 
         Stage stage = new Stage();
         stage.setTitle("Application - Map Window");
-        stage.setScene(new Scene(root, 800, 600));
+        stage.setScene(scene);
         stage.show();
         ((Node)(event.getSource())).getScene().getWindow().hide();
     }
