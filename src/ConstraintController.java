@@ -45,11 +45,11 @@ public class ConstraintController{
                 if(t.equals("Global"))
                     cList.setItems(FXCollections.observableList(global_values));
                 else if (t.equals("Reousrce-tied"))
-                    cList.setItems(null);
+                    cList.setItems(FXCollections.observableList(project.getProjResourceList())); //TODO: Iterate over different types
                 else
-                    cList.setItems(null);
+                    cList.setItems(null);   //TODO: Update with District implementation
 
-                System.out.println("Constraint Click registered");
+                System.out.println("Constraint Click registered"); //simple debug, remove
             }
         });
 

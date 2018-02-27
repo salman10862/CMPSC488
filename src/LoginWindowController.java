@@ -23,7 +23,9 @@ public class LoginWindowController {
     @FXML private Parent root;
 
     @FXML protected void handleLoginButton(MouseEvent event) {
-        // do something
+        //1. Lookup user in our local list
+        // String username = ~somelist~.search(usernameField.getText());
+        //2.
     }
 
     @FXML protected void handleNewAcctButton(MouseEvent event) {
@@ -37,6 +39,7 @@ public class LoginWindowController {
         }
 
         source.getScene().setRoot(root);
+
     }
 
     @FXML protected void handleExitButton(MouseEvent event) {

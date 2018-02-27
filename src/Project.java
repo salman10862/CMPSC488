@@ -26,6 +26,10 @@ public class Project {
         return mainMap;
     }
 
+    public ArrayList<projResource> getProjResourceList() {
+        return projResourceList;
+    }
+
     public void addProjResource(projResource res){
         projResourceList.add(res);
     }
