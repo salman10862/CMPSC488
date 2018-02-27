@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class OptimizationRequest {
-	private int varBound = 4;
+	private int varBound;
 	private int max_posi;
 	private ArrayList<String> variables = new ArrayList<String>();
 	private ArrayList<String> constraints = new ArrayList<String>();
@@ -11,6 +11,7 @@ public class OptimizationRequest {
 	
 	public OptimizationRequest(Map new_map) {
 		this.Map = new_map;
+		varBound = map.getSize();
 	}
 	
 	public void sendRequest(String path_name) throws IOException {
