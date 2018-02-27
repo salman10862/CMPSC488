@@ -19,7 +19,14 @@ public class ConstraintController{
     @FXML private ListView cTypeList;
     @FXML private ListView cList;
     @FXML private javafx.scene.control.Button cancelButton;
+    private Project project;
+    private Map currentMap;
 
+    public ConstraintController(Project project)
+    {
+        this.project = project;
+        this.currentMap = project.getMainMap();
+    }
 
     @FXML
     public void initialize()

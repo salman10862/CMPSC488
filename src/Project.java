@@ -3,14 +3,27 @@ import com.google.gson.Gson;
 
 public class Project {
     private String projLabel;
-    private String linked_userID;
+    private userProfile linked_userID;
     private Map mainMap;
     private ArrayList<Map> scenarioMaps;
     private ArrayList<projResource> projResourceList;
 
-
     public boolean isValidUser(String user){
-        return linked_userID.equals(user);
+        return linked_userID.getUsername().equals(user);
+    }
+
+    public userProfile getUserProfile(){
+        if(linked_userID == null)
+            linked_userID = new userProfile();
+
+        return linked_userID;
+    }
+
+    public Map getMainMap(){
+        if(mainMap == null)
+            mainMap = new Map();
+
+        return mainMap;
     }
 
     public void addProjResource(projResource res){

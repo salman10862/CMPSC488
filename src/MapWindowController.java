@@ -19,8 +19,30 @@ public class MapWindowController {
     @FXML private WebEngine webEngine;
     @FXML private WebView webView;
 
+    private Project project;
+    private Map currentMap;
+
+    public MapWindowController(Project project)
+    {
+        this.project = project;
+        this.currentMap = project.getMainMap();
+    }
+
     @FXML protected void handledefineConstraintsItem(ActionEvent event) throws IOException {
 
+        ConstraintController controller = new ConstraintController(project);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("ConstraintWindow.fxml"));
+        loader.setController(controller);
+        Parent root = loader.load();
+        Scene scene = new Scene(root, 600, 400);
+
+        Stage stage = new Stage();
+        stage.setTitle("Project Constraints");
+        stage.setScene(scene);
+        stage.show();
+
+
+        /*
         Parent root = null;
         try {
             root = (Parent)FXMLLoader.load(getClass().getResource("ConstraintWindow.fxml"));
@@ -32,10 +54,22 @@ public class MapWindowController {
         Stage stage = new Stage();
         stage.setTitle("Project Constraints");
         stage.setScene(new Scene(root, 600, 400));
-        stage.show();
+        stage.show();*/
     }
 
     @FXML protected void handleSettingsItem(ActionEvent event) throws IOException {
+        /*
+        SettingsController controller = new SettingsController(project);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("SettingsTest.fxml"));
+        loader.setController(controller);
+        Parent root = loader.load();
+        Scene scene = new Scene(root, 600, 400);
+
+        stage.setTitle("Settings");
+        stage.setScene(scene);
+        stage.show();
+        */
+
 
         Parent root = null;
         try {
@@ -52,6 +86,18 @@ public class MapWindowController {
     }
 
     @FXML protected void handleAboutItem(ActionEvent event) throws IOException {
+        /*
+        AboutController controller = new AboutController(project);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("AboutWindow.fxml"));
+        loader.setController(controller);
+        Parent root = loader.load();
+        Scene scene = new Scene(root, 300, 300);
+
+        stage.setTitle("About");
+        stage.setScene(scene);
+        stage.show();
+        */
+
 
         Parent root = null;
         try {
@@ -72,6 +118,19 @@ public class MapWindowController {
     }
 
     @FXML protected void handleAddAResource(ActionEvent event){
+        /*
+        ConstraintController controller = new ConstraintController(project);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("_____.fxml"));
+        loader.setController(controller);
+        Parent root = loader.load();
+        Scene scene = new Scene(root, 600, 400);
+
+        stage.setTitle("______");
+        stage.setScene(scene);
+        stage.show();
+        */
+
+
         Parent root = null;
         try{
             root = (Parent)FXMLLoader.load(getClass().getResource("AddAResourceWindow.fxml"));

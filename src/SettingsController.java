@@ -1,5 +1,6 @@
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.PasswordField;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -8,19 +9,32 @@ import javafx.stage.Stage;
 import java.awt.*;
 
 
-public class SettingsController {
+public class SettingsController{
     @FXML private javafx.scene.control.Button cancelButton;
     @FXML private TextFlow userNameField;
     @FXML private PasswordField newPassField1;
     @FXML private PasswordField newPassField2;
     @FXML private PasswordField currenPassConfirm;
+    //@FXML private double gridValue;
+    @FXML private javafx.scene.control.TextField gridField;
+
+    private Project project;
+
+    public SettingsController(Project project)
+    {
+        this.project = project;
+    }
 
     @FXML
     public void initialize()
     {
         Text text1;
         // TODO: Pass info about user around properly between functions
-        userProfile cUser = new userProfile();
+        if(project == null)
+            project = new Project();
+
+        userProfile cUser = project.getUserProfile();
+        gridField.setText(Integer.toString(project.getMainMap().getGrid_size()));
 
         //Try to get username from the UserProfile object
         text1 = new Text(cUser.getUsername());

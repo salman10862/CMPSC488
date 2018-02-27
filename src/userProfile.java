@@ -21,7 +21,11 @@ public class userProfile {
 
     public boolean checkPassword(String input)
     {
-
         return pass.equals(input);
     }
+
+    public List<Project> getProjList() {
+        return projList;
+    }
+
 }

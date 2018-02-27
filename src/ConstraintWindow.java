@@ -6,16 +6,30 @@ import javafx.stage.Stage;
 
 
 public class ConstraintWindow extends Application {
+    private Project project;
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("ConstraintWindow.fxml"));
+        if(project == null)
+            this.project = new Project();
+
+        ConstraintController controller = new ConstraintController(project);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("ConstraintWindow.fxml"));
+        loader.setController(controller);
+        Parent root = loader.load();
+        Scene scene = new Scene(root, 600, 400);
+
+        stage = new Stage();
+        stage.setTitle("Resources");
+        stage.setScene(scene);
+        stage.show();
+        /*Parent root = FXMLLoader.load(getClass().getResource("ConstraintWindow.fxml"));
 
         Scene scene = new Scene(root, 600, 400);
 
         stage.setTitle("Resources");
         stage.setScene(scene);
-        stage.show();
+        stage.show();*/
     }
 
 
