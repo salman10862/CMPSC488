@@ -8,9 +8,10 @@ public class Map {
     private BigDecimal latitude,
                         longitude;
 
-    public int getGrid_size(){
-        return grid_size;}
-    // D-to-D_matrix
+    public int getGrid_size(){ return grid_size; }
+    public int changeGrid_size(int grid_size){ return this.grid_size = grid_size; }
+
+        // D-to-D_matrix
     // TODO: Row = Major Redistribution Center: Distibution's Distrubtion
     // TODO: column = minor distribution: Customer's Distribution
 

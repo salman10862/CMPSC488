@@ -7,7 +7,7 @@ import java.util.List;
 
 //Class to aid in storing and retrieving local user data
 public class userStore {
-    private File storage; //Default value;
+    private File storage;
 
     public userStore(File storage){
         this.storage = storage;

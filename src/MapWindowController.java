@@ -107,6 +107,8 @@ public class MapWindowController {
         stage.show();
     }
 
+    @FXML protected void lockMapListener(ActionEvent event){}
+
 
     @FXML protected void initialize() {
         webEngine = webView.getEngine();

@@ -12,25 +12,19 @@
 
 <Pane id="SettingsWindow" fx:id="Settings" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Button fx:id="cancelButton" layoutX="511.0" layoutY="361.0" mnemonicParsing="false" onAction="#handleCancelButton" text="Cancel" />
-      <Button fx:id="applyButton" layoutX="443.0" layoutY="361.0" mnemonicParsing="false" onAction="#handleApplyButton" text="Apply" />
       <TabPane layoutX="7.0" layoutY="14.0" prefHeight="340.0" prefWidth="591.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="General">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="324.0" prefWidth="591.0">
                      <children>
                         <ChoiceBox fx:id="currencySelection" layoutX="296.0" layoutY="39.0" prefWidth="150.0" />
                         <TextFlow layoutX="14.0" layoutY="39.0" prefHeight="25.0" prefWidth="102.0">
                            <children>
                               <Label prefHeight="24.0" prefWidth="100.0" text="Currency" />
                            </children></TextFlow>
-                         <TextField fx:id="gridField" layoutX="296.0" layoutY="80.0" prefWidth="150.0"/>
-                         <TextFlow layoutX="14.0" layoutY="80.0" prefHeight="25.0" prefWidth="102.0">
-                             <children>
-                             <Label prefHeight="24.0" prefWidth="100.0" text="Grid Scale"/>
-                             </children>
-                         </TextFlow>
+                        <Button fx:id="applyButton" layoutX="414.0" layoutY="259.0" mnemonicParsing="false" onAction="#handleApplyButton" text="Apply" />
+                        <Button fx:id="cancelButton" layoutX="494.0" layoutY="260.0" mnemonicParsing="false" onAction="#handleCancelButton" text="Cancel" />
                      </children>
                   </AnchorPane>
             </content>
@@ -44,23 +38,33 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <TextFlow fx:id="userNameField"  layoutX="112.0" layoutY="14.0" prefHeight="25.0" prefWidth="156.0" AnchorPane.leftAnchor="112.0" AnchorPane.topAnchor="14.0"/>
+                        <TextFlow fx:id="userNameField" layoutX="112.0" layoutY="14.0" prefHeight="25.0" prefWidth="156.0" AnchorPane.leftAnchor="112.0" AnchorPane.topAnchor="14.0" />
                         <TextFlow fx:id="userNameField1" layoutX="120.0" layoutY="49.0" prefHeight="25.0" prefWidth="156.0" />
                         <Label layoutX="10.0" layoutY="185.0" text="New Password:" AnchorPane.rightAnchor="482.0" />
-                        <PasswordField fx:id="newPassField1" layoutX="213.0" layoutY="179.0"/>
+                        <PasswordField fx:id="newPassField1" layoutX="213.0" layoutY="179.0" />
                         <Label layoutX="8.0" layoutY="226.0" text="Confirm New Password:" />
                         <PasswordField fx:id="newPassField2" layoutX="213.0" layoutY="221.0" />
                         <Separator layoutX="11.0" layoutY="127.0" prefHeight="0.0" prefWidth="569.0" />
                         <PasswordField fx:id="currenPassConfirm" layoutX="213.0" layoutY="142.0" promptText="Click Here" />
                         <Label layoutX="7.0" layoutY="147.0" text="Enter Current Password:" />
                         <Button fx:id="changePassButton" layoutX="432.0" layoutY="256.0" mnemonicParsing="false" onAction="#handleChangePassButton" text="Change Password" />
+                        <TextFlow fx:id="passwordFeedback" layoutX="258.0" layoutY="256.0" prefHeight="25.0" prefWidth="156.0" />
                      </children>
                   </AnchorPane>
               </content>
             </Tab>
           <Tab text="Optimizer">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TextFlow layoutX="26.0" layoutY="17.0" prefHeight="25.0" prefWidth="102.0" />
+                        <TextField fx:id="gridField" layoutX="166.0" layoutY="39.0" prefWidth="150.0" />
+                        <Label layoutX="13.0" layoutY="39.0" prefHeight="24.0" prefWidth="100.0" text="Grid Scale" />
+                        <Button fx:id="applyButton1" layoutX="414.0" layoutY="259.0" mnemonicParsing="false" onAction="#handleOptimizerApply" text="Apply" />
+                        <Button fx:id="cancelButton1" layoutX="494.0" layoutY="260.0" mnemonicParsing="false" onAction="#handleCancelButton" text="Cancel" />
+                        <Label layoutX="13.0" layoutY="89.0" prefHeight="24.0" prefWidth="100.0" text="Map Data File" />
+                        <TextField fx:id="mDataField" layoutX="167.0" layoutY="89.0" prefHeight="25.0" prefWidth="281.0" />
+                     </children></AnchorPane>
             </content>
           </Tab>
         </tabs>

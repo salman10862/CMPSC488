@@ -19,6 +19,8 @@ public class SettingsController{
     @FXML private javafx.scene.control.TextField gridField;
 
     private Project project;
+    private userProfile cUser;
+    private Map cMap;
 
     public SettingsController(Project project)
     {
@@ -33,7 +35,9 @@ public class SettingsController{
         if(project == null)
             project = new Project();
 
-        userProfile cUser = project.getUserProfile();
+        cUser = project.getUserProfile();
+        cMap = project.getMainMap();
+
         gridField.setText(Integer.toString(project.getMainMap().getGrid_size()));
 
         //Try to get username from the UserProfile object
@@ -48,6 +52,13 @@ public class SettingsController{
     }
 
     @FXML protected void handleApplyButton(ActionEvent event) {
+
+    }
+
+    @FXML protected void handleOptimizerApply(ActionEvent event){
+        cMap.changeGrid_size(Integer.parseInt(gridField.getText()));
+
+        System.out.println(cMap.getGrid_size());// Diagnostic message
     }
 
     @FXML protected void handleCancelButton(ActionEvent event) {
