@@ -45,10 +45,10 @@
       </ToolBar>
    </bottom>
    <center>
-      <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <StackPane BorderPane.alignment="CENTER">
          <children>
             <Canvas height="373.0" opacity="0.5" width="600.0" />
-            <WebView prefHeight="200.0" prefWidth="200.0" />
+            <WebView minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0" />
          </children>
       </StackPane>
    </center>
