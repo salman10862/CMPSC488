@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="363.0" prefWidth="590.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AddAResourceController">
+    <children>
+        <Button fx:id="cancelButton" layoutX="517.0" layoutY="311.0" mnemonicParsing="false" onAction="#handleCancelButton" text="Cancel" />
+        <ListView fx:id="rTypeList" layoutX="14.0" layoutY="39.0" prefHeight="303.0" prefWidth="199.0" />
+        <Label layoutX="19.0" layoutY="11.0" text="Resource Type" />
+      <Button fx:id="cancelButton1" layoutX="461.0" layoutY="311.0" mnemonicParsing="false" onAction="#handleCancelButton" text="Add" />
+      <TextField layoutX="354.0" layoutY="53.0" />
+      <Text layoutX="232.0" layoutY="68.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Resource Name" />
+      <Label layoutX="233.0" layoutY="101.0" text="Associated Value" />
+      <ColorPicker layoutX="435.0" layoutY="135.0" />
+      <Label layoutX="231.0" layoutY="141.0" text="Color Representation on Map" />
+      <ChoiceBox layoutX="375.0" layoutY="97.0" prefWidth="150.0" />
+    </children>
+</AnchorPane>
