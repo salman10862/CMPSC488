@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.canvas.*?>
 <?import java.lang.*?>
 <?import javafx.scene.web.*?>
 <?import javafx.scene.control.*?>
@@ -36,9 +37,6 @@
         </menus>
       </MenuBar>
    </top>
-   <center>
-      <WebView fx:id="webView" prefHeight="368.0" prefWidth="582.0" BorderPane.alignment="CENTER" />
-   </center>
    <bottom>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
@@ -46,4 +44,12 @@
         </items>
       </ToolBar>
    </bottom>
+   <center>
+      <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Canvas height="373.0" opacity="0.5" width="600.0" />
+            <WebView prefHeight="200.0" prefWidth="200.0" />
+         </children>
+      </StackPane>
+   </center>
 </BorderPane>
