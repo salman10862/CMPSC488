@@ -6,7 +6,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CreateAccountWindowController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pennychain.controller.CreateAccountWindowController">
    <center>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
@@ -48,14 +48,19 @@
                   <PasswordField fx:id="confirmPasswordField" prefWidth="200.0" />
                </children>
             </HBox>
+            <Button fx:id="createAcctButton" mnemonicParsing="false" onMouseClicked="#handleCreateAcctButton" text="Create Account">
+               <VBox.margin>
+                  <Insets bottom="10.0" top="10.0" />
+               </VBox.margin>
+            </Button>
             <Text strokeType="OUTSIDE" strokeWidth="0.0">
                <VBox.margin>
-                  <Insets top="5.0" />
+                  <Insets top="10.0" />
                </VBox.margin>
             </Text>
             <Text strokeType="OUTSIDE" strokeWidth="0.0">
                <VBox.margin>
-                  <Insets top="5.0" />
+                  <Insets top="10.0" />
                </VBox.margin>
             </Text>
          </children>

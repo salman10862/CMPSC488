@@ -22,10 +22,15 @@ public class CreateAccountWindowController {
     @FXML private PasswordField newPasswordField;
     @FXML private PasswordField confirmPasswordField;
 
+    @FXML private Button createAcctButton;
     @FXML private Button okButton;
     @FXML private Button cancelButton;
 
     @FXML private Parent root;
+
+    @FXML protected void handleCreateAcctButton(MouseEvent event) {
+        //do something
+    }
 
     @FXML protected void handleOkButton(MouseEvent event) {
         // do something

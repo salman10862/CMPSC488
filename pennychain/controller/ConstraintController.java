@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class ConstraintController{
+public class ConstraintController {
     @FXML private Text actiontarget;
     @FXML private ListView cTypeList;
     @FXML private ListView cList;

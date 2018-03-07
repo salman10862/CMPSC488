@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class AddAResourceController{
+public class AddAResourceController {
     @FXML private Text actiontarget;
     @FXML private javafx.scene.control.Button cancelButton;
 
