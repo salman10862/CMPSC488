@@ -74,6 +74,19 @@ public class Connection_Online {
 
         cursor.close();
     }
+    
+    public static boolean userExists(String uname){	//check to see if the user exists in database
+    BasicDBObject whereQuery = new BasicDBObject();
+    whereQuery.put("username", uname);
+    DBCursor cursor = userCollection.find(whereQuery);
+    while(cursor.hasNext()){
+        if(cursor.next().get("username").equals(uname))
+            return true;
+    }
+
+    cursor.close();
+    return false;
+}
 
     //modify a record in the database
     public static void modifyRecord()
