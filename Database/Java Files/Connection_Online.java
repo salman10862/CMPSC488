@@ -25,7 +25,8 @@ public class Connection_Online {
         String[] sharedWith = {"cwilson27", "pranav412","jt5689" };
         //addProjectRecord("Sample Project 2", "ckw5071", sharedWith);
         //addUserRecord("chris", "williams", "ckw5071", "camisthebest27");
-        findRecordByUsername("ckw5071");
+        //findRecordByUsername("ckw5071");
+        System.out.println(userExists("pranav412"));    //test to see if username exists in database
     }
 
     //add a record to the database
