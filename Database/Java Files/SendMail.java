@@ -10,6 +10,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+//**Note: Be sure to add javax.mail.jar to build path in order to use this class
 
 public class SendMail {
 
