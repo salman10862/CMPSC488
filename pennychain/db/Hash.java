@@ -21,7 +21,7 @@ public class Hash {
      * as a String in the format salt:saltedHashedPw
      */
 
-    public String getHashAndSalt(CharSequence password)
+    public static String getHashAndSalt(CharSequence password)
         throws NoSuchAlgorithmException, InvalidKeySpecException {
 
         SecureRandom random = new SecureRandom();
@@ -42,4 +42,43 @@ public class Hash {
 
         return result;
     }
+
+    public static boolean verifyPassword(CharSequence password,
+            String b64EncodedSalt, String b64EncodedSaltedHash)
+        throws NoSuchAlgorithmException, InvalidKeySpecException {
+        
+        byte[] salt = 
+            DatatypeConverter.parseBase64Binary(b64EncodedSalt);
+        byte[] hash = 
+            DatatypeConverter.parseBase64Binary(b64EncodedSaltedHash);
+
+        String b64HashedTestPw = null;
+        SecretKeyFactory skf = null;
+
+        PBEKeySpec pbeKeySpec = new PBEKeySpec(
+                password.toString().toCharArray(),
+                salt,
+                ITERATIONS,
+                HASH_BYTES * 8);
+        try {
+            skf = SecretKeyFactory.getInstance(PBKDF2_ALG);
+        }
+        catch(NoSuchAlgorithmException e) {
+            System.err.println("Caught NoSuchAlgorithmException: " +
+                    e.getMessage());
+        }
+
+        try{
+            byte[] hashedTestPw = skf.generateSecret(pbeKeySpec).getEncoded();
+            b64HashedTestPw = 
+                DatatypeConverter.printBase64Binary(hashedTestPw);
+        } 
+        catch(InvalidKeySpecException e) {
+            System.err.println("Caught InvalidKeySpecException: " + 
+                    e.getMessage());
+        }
+
+        return b64HashedTestPw.equals(b64EncodedSaltedHash);
+    }
 }
+
