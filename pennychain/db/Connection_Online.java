@@ -1,5 +1,3 @@
-package pennychain.db;
-
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -27,7 +25,8 @@ public class Connection_Online {
         String[] sharedWith = {"cwilson27", "pranav412","jt5689" };
         //addProjectRecord("Sample Project 2", "ckw5071", sharedWith);
         //addUserRecord("chris", "williams", "ckw5071", "camisthebest27");
-        findRecordByUsername("ckw5071");
+        //findRecordByUsername("ckw5071");
+        System.out.println(userExists("pranav412"));    //test to see if username exists in database
     }
 
     //add a record to the database
@@ -76,6 +75,51 @@ public class Connection_Online {
 
         cursor.close();
     }
+    
+    public static boolean userExists(String uname){	//check to see if the user exists in database
+    BasicDBObject whereQuery = new BasicDBObject();
+    whereQuery.put("username", uname);
+    DBCursor cursor = userCollection.find(whereQuery);
+    while(cursor.hasNext()){
+        if(cursor.next().get("username").equals(uname))
+            return true;
+    }
+
+    cursor.close();
+    return false;
+}
+    
+    public static CharSequence getHashedPass(String uname){	//returns the hashed password for the specified username
+    BasicDBObject whereQuery = new BasicDBObject();
+    whereQuery.put("username", uname);
+    DBCursor cursor = userCollection.find(whereQuery);
+
+    //hashed password to be returned
+    CharSequence pwd = "";
+
+    while(cursor.hasNext()){	//should only return 1 document since usernames must be unique
+        pwd = (CharSequence) cursor.next().get("password");
+    }
+
+    cursor.close();
+    return pwd;
+}
+    
+public static CharSequence getSalt(String uname){	//returns the salt used with the password for the specified username
+    BasicDBObject whereQuery = new BasicDBObject();
+    whereQuery.put("username", uname);
+    DBCursor cursor = userCollection.find(whereQuery);
+
+    //hashed password to be returned
+    CharSequence salt = "";
+
+    while(cursor.hasNext()){	//should only return 1 document since usernames must be unique
+        salt = (CharSequence) cursor.next().get("salt");
+    }
+
+    cursor.close();
+    return salt;
+}
 
     //modify a record in the database
     public static void modifyRecord()
@@ -83,3 +127,4 @@ public class Connection_Online {
         ;
     }
 }
+
