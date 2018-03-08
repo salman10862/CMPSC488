@@ -88,6 +88,38 @@ public class Connection_Online {
     cursor.close();
     return false;
 }
+    
+    public static CharSequence getHashedPass(String uname){	//returns the hashed password for the specified username
+    BasicDBObject whereQuery = new BasicDBObject();
+    whereQuery.put("username", uname);
+    DBCursor cursor = userCollection.find(whereQuery);
+
+    //hashed password to be returned
+    CharSequence pwd = "";
+
+    while(cursor.hasNext()){	//should only return 1 document since usernames must be unique
+        pwd = (CharSequence) cursor.next().get("password");
+    }
+
+    cursor.close();
+    return pwd;
+}
+    
+public static CharSequence getSalt(String uname){	//returns the salt used with the password for the specified username
+    BasicDBObject whereQuery = new BasicDBObject();
+    whereQuery.put("username", uname);
+    DBCursor cursor = userCollection.find(whereQuery);
+
+    //hashed password to be returned
+    CharSequence salt = "";
+
+    while(cursor.hasNext()){	//should only return 1 document since usernames must be unique
+        salt = (CharSequence) cursor.next().get("salt");
+    }
+
+    cursor.close();
+    return salt;
+}
 
     //modify a record in the database
     public static void modifyRecord()
