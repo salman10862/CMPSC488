@@ -30,7 +30,8 @@ public class Connection_Online {
     }
 
     //add a record to the database
-    public static void addUserRecord(String fName, String lName, String uname, String pwd)
+    public static void addUserRecord(String fName, String lName, String uname, String pwd,
+            String salt)
     {
         System.out.println("Database name: " + database.getName());
         //insert record into database
@@ -39,6 +40,7 @@ public class Connection_Online {
         newUser.put("lastName", lName);
         newUser.put("username", uname);
         newUser.put("password", pwd);
+        newUser.put("salt", salt);
 
         //add record to database
         userCollection.insert(newUser);
