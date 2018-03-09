@@ -25,7 +25,7 @@
                         <Insets left="20.0" right="10.0" />
                      </HBox.margin>
                   </Text>
-                  <TextField prefWidth="200.0" />
+                  <TextField fx:id="firstNameField" prefWidth="200.0" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0">
@@ -35,7 +35,7 @@
                         <Insets left="20.0" right="10.0" />
                      </HBox.margin>
                   </Text>
-                  <TextField prefWidth="200.0" />
+                  <TextField fx:id="lastNameField" prefWidth="200.0" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0">
@@ -73,12 +73,12 @@
                   <Insets bottom="10.0" top="10.0" />
                </VBox.margin>
             </Button>
-            <Label text="Label">
+            <Label fx:id="error1" text="Label">
                <VBox.margin>
                   <Insets bottom="10.0" top="10.0" />
                </VBox.margin>
             </Label>
-            <Label text="Label" />
+            <Label fx:id="error2" text="Label" />
          </children>
       </VBox>
    </center>
