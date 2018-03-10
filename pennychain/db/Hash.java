@@ -52,31 +52,16 @@ public class Hash {
         byte[] hash = 
             DatatypeConverter.parseBase64Binary(b64EncodedSaltedHash);
 
-        String b64HashedTestPw = null;
-        SecretKeyFactory skf = null;
-
         PBEKeySpec pbeKeySpec = new PBEKeySpec(
                 password.toString().toCharArray(),
                 salt,
                 ITERATIONS,
                 HASH_BYTES * 8);
-        try {
-            skf = SecretKeyFactory.getInstance(PBKDF2_ALG);
-        }
-        catch(NoSuchAlgorithmException e) {
-            System.err.println("Caught NoSuchAlgorithmException: " +
-                    e.getMessage());
-        }
+        SecretKeyFactory skf = SecretKeyFactory.getInstance(PBKDF2_ALG);
 
-        try{
-            byte[] hashedTestPw = skf.generateSecret(pbeKeySpec).getEncoded();
-            b64HashedTestPw = 
+        byte[] hashedTestPw = skf.generateSecret(pbeKeySpec).getEncoded();
+        String b64HashedTestPw = 
                 DatatypeConverter.printBase64Binary(hashedTestPw);
-        } 
-        catch(InvalidKeySpecException e) {
-            System.err.println("Caught InvalidKeySpecException: " + 
-                    e.getMessage());
-        }
 
         return b64HashedTestPw.equals(b64EncodedSaltedHash);
     }

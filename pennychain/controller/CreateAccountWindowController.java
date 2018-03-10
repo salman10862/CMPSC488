@@ -1,9 +1,10 @@
 package pennychain.controller;
 
-import pennychain.db.Connection_Online;
-import pennychain.db.Hash;
+import pennychain.db.*;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -54,12 +55,23 @@ public class CreateAccountWindowController {
             error2.setTextFill(Color.web("#FF0000"));
         } else if(!Connection_Online.userExists(newUsername) &&
                   newPassword.equals(newPasswordConfirm)) {
-            String hashAndSalt = 
-                Hash.getHashAndSalt(newPasswordField.getCharacters());
-            String[] saltWithSaltedHash = hashAndSalt.split(":");
 
-            Connection_Online.addUserRecord(firstName, lastName, newUsername,
-                    saltWithSaltedHash[0], saltWithSaltedHash[1]);
+            try {
+                String hashAndSalt = 
+                    Hash.getHashAndSalt(newPasswordField.getCharacters());
+                String[] saltWithSaltedHash = hashAndSalt.split(":");
+
+                Connection_Online.addUserRecord(
+                        firstName, 
+                        lastName, 
+                        newUsername, 
+                        saltWithSaltedHash[0], 
+                        saltWithSaltedHash[1]);
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                System.err.println("Caught exception from Hash.getHashAndSalt: "
+                        + e.getMessage());
+                return;
+            }
 
             error1.setText("Account created!");
             error1.setTextFill(Color.web("#00FF00"));
