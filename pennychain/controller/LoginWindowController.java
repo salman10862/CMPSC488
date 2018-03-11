@@ -1,6 +1,12 @@
 package pennychain.controller;
 
+import pennychain.db.Connection_Online;
+import pennychain.db.Hash;
+import pennychain.usr.UserSession;
+
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -26,9 +32,39 @@ public class LoginWindowController {
     @FXML private Parent root;
 
     @FXML protected void handleLoginButton(MouseEvent event) {
-        //1. Lookup user in our local list
-        // String username = ~somelist~.search(usernameField.getText());
-        //2.
+
+        CharSequence username = usernameField.getCharacters();
+
+        if(!Connection_Online.userExists(username.toString())) {
+            // throw some error
+        }
+        else {
+            CharSequence saltedHashedPass = 
+                Connection_Online.getHashedPass(username.toString());
+
+            CharSequence salt = Connection_Online.getSalt(username.toString());
+
+            boolean pwMatch = false;
+
+            try {
+                pwMatch = Hash.verifyPassword(
+                        passwordField.getCharacters(),
+                        salt.toString(),
+                        saltedHashedPass.toString());
+            }
+            catch(NoSuchAlgorithmException | InvalidKeySpecException e) {
+                e.printStackTrace();
+            }
+
+            if(pwMatch) {
+                UserSession session = UserSession.getInstance();
+                session.setCurrentUser(username.toString());
+                // take user to start page
+            }
+            else {
+                // show some error
+            }
+        }
     }
 
     @FXML protected void handleNewAcctButton(MouseEvent event) {
