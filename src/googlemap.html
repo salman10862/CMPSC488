@@ -32,10 +32,29 @@
                 });
             }
 
+            function getZoom(){
+                return map.getZoom();
+            }
+            function getLatitude(){
+                return map.center.lat();
+            }
+            function getLongitude(){
+                return map.center.lng();
+            }
+
+
             function disable(){
                 map.setOptions({
                     zoomControl: false,
                     gestureHandling: 'none'
+                });
+            }
+
+            function setPerspective(lt, lg, zm){
+                var latlng = new google.maps.LatLng(lt, lg);
+                map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: zm ,
+                    center: latlng
                 });
             }
 

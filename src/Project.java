@@ -29,9 +29,6 @@ public class Project {
     }
 
     public Map getMainMap(){
-        if(mainMap == null)
-            mainMap = new Map(100, 800, 600);
-
         return mainMap;
     }
 

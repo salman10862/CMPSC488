@@ -3,6 +3,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -18,6 +19,7 @@ public class MapWindowController {
     @FXML private MenuItem settingsItem;
     @FXML private WebEngine webEngine;
     @FXML private WebView webView;
+    @FXML private Button lockMap;
 
     private Project project;
     private Map currentMap;
@@ -97,16 +99,22 @@ public class MapWindowController {
     @FXML protected void lockMapListener(ActionEvent event){
         int GRID_SIZE =100; //TODO: Talk to group about design of setting initial gride size
         webEngine.executeScript("disable()");
-        Map map = new Map(GRID_SIZE, 800, 600);
-
-
+        Double latitude = (Double) webEngine.executeScript("getLongitude()");
+        Double longitude = (Double) webEngine.executeScript("getLatitude()");
+        int zoom = (Integer) webEngine.executeScript("getZoom()");
+        Map map = new Map(GRID_SIZE, 800, 600, zoom, latitude, longitude);
+        project.setMainMap(map);
     }
 
 
     @FXML protected void initialize() {
         webEngine = webView.getEngine();
         webEngine.load(getClass().getResource("googlemap.html").toString());
-
+        if(project.getMainMap() != null) {
+            webEngine.executeScript("setPerspective(" + project.getMainMap().getLatitude() + ", " + project.getMainMap().getLongitude() + ", "
+                    + project.getMainMap().getZoom() + ")");
+            lockMap.setDisable(true);
+        }
     }
 
 }
