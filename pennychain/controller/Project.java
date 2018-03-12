@@ -9,9 +9,14 @@ public class Project {
     private Map mainMap;
     private ArrayList<Map> scenarioMaps;
     private ArrayList<projResource> projResourceList;
+    private ArrayList<String> settingsList;
 
-    public boolean isValidUser(String user){
-        return linked_userID.getUsername().equals(user);
+    //private final DEFAULT_SETTINGS = new
+
+    public Project(String projLabel, userProfile linked_userID){
+        this.projLabel = projLabel;
+        this.linked_userID = linked_userID;
+        projResourceList = new ArrayList<>();
     }
 
     public userProfile getUserProfile(){
@@ -21,16 +26,29 @@ public class Project {
         return linked_userID;
     }
 
-    public Map getMainMap(){
-        if(mainMap == null)
-            mainMap = new Map();
+    public boolean isValidUser(String user){
+        return linked_userID.getUsername().equals(user);
+    } //DEBUG
 
+    public Map getMainMap(){
         return mainMap;
     }
 
     public ArrayList<projResource> getProjResourceList() {
         return projResourceList;
     }
+
+    public ArrayList<String> getStringsofResources(){
+        ArrayList<String> lst = new ArrayList<>();
+        for (projResource res:
+                projResourceList) {
+            lst.add(res.getLabel());
+        }
+
+        return  lst;
+    }
+
+    public void setMainMap(Map map){ this.mainMap = map;}
 
     public void addProjResource(projResource res){
         projResourceList.add(res);
@@ -50,6 +68,7 @@ public class Project {
         // TODO: implment online
     }
 
+
     public String projToJSONTest() {
         StringBuilder sb = new StringBuilder();
 
@@ -61,3 +80,4 @@ public class Project {
     }
 
 }
+

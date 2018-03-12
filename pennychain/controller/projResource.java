@@ -1,22 +1,24 @@
 package pennychain.controller;
 
+import javafx.scene.paint.Color;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class projResource {
     private int id,
-                amnt;
+            amnt;
 
-    private String label;;
+    private String label;
+    private Color color;
     private ArrayList<projResource> constraint_list;
     private HashMap<projResource, Double> constraint_amnt;
     private HashMap<projResource, Double> constraint_dist;
 
 
-    public projResource(int id, int amnt, String label){
-        this.id = id;
-        this.amnt = amnt;
+    public projResource(String label, Color color){
         this.label = label;
+        this.color = color;
     }
 
     public String getLabel(){

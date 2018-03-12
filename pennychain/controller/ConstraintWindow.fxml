@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pennychain.controller.ConstraintController">
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <ListView fx:id="cList" layoutX="300.0" layoutY="37.0" prefHeight="303.0" prefWidth="284.0" />
-      <Button fx:id="addButton" layoutX="376.0" layoutY="353.0" mnemonicParsing="false" onAction="#handleAddButton" text="Add" />
-      <Button fx:id="removeButton" layoutX="433.0" layoutY="352.0" mnemonicParsing="false" onAction="#handleRemoveButton" text="Remove" />
-      <Button fx:id="cancelButton" layoutX="524.0" layoutY="352.0" mnemonicParsing="false" onAction="#handleCancelButton" text="Cancel" />
+      <Button fx:id="addButton" layoutX="376.0" layoutY="353.0" mnemonicParsing="false" text="Add" onAction="#handleAddButton"/>
+      <Button fx:id="removeButton" layoutX="433.0" layoutY="352.0" mnemonicParsing="false" text="Remove" onAction="#handleRemoveButton"/>
+      <Button fx:id="cancelButton" layoutX="524.0" layoutY="352.0" mnemonicParsing="false" text="Cancel" onAction="#handleCancelButton" />
       <ListView fx:id="cTypeList" layoutX="14.0" layoutY="39.0" prefHeight="303.0" prefWidth="199.0" />
       <Label layoutX="300.0" layoutY="13.0" prefHeight="15.0" prefWidth="96.0" text="Constraint List" />
       <Label layoutX="19.0" layoutY="11.0" text="Constraint Type" />

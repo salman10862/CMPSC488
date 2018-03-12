@@ -9,12 +9,12 @@ import pennychain.controller.Map;
 public class OptimizationRequest {
 	private int varBound;
 	private int max_posi;
-	private ArrayList<String> variables = new ArrayList<String>();
-	private ArrayList<String> constraints = new ArrayList<String>();
-	private Map Map;
+	private ArrayList<String> variables = new ArrayList<>();
+	private ArrayList<String> constraints = new ArrayList<>();
+	private Map map;
 	
 	public OptimizationRequest(Map new_map) {
-		this.Map = new_map;
+		this.map = new_map;
 		varBound = map.getSize();
 	}
 	
@@ -75,6 +75,7 @@ public class OptimizationRequest {
 		 * OBTAIN MAP DATA FROM GUI
 		 * 
 		 */
+		/*
 		for(int i = 0; i < varBound; i++) {
         	for(int j = 0; j < varBound; j++) {
         		if(Map.map_data[i][j] == 0) {
@@ -90,7 +91,7 @@ public class OptimizationRequest {
 			max_num_centers = max_num_centers + variables.get(i) + "+";
 		}
 		constraints.add(max_num_centers + "0=" + max_posi);
-		
+		*/
 	}
 	
 	public void setMaxCenters(int desired_max) {

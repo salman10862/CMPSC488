@@ -1,55 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.canvas.*?>
-<?import java.lang.*?>
 <?import javafx.scene.web.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="442.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pennychain.controller.MapWindowController">
-   <top>
-      <MenuBar BorderPane.alignment="CENTER">
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="442.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+    <top>
+        <MenuBar BorderPane.alignment="CENTER">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="New Project" />
+                        <MenuItem mnemonicParsing="false" text="Load From File" />
+                        <MenuItem mnemonicParsing="false" text="Load From Database" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" text="Save" />
+                        <MenuItem mnemonicParsing="false" text="Save as..." />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="exitItem" mnemonicParsing="false" onAction="#handleExitItem" text="Exit" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Tools">
+                    <items>
+                        <MenuItem fx:id="addAResourceItem" mnemonicParsing="false" onAction="#handleAddAResource" text="Add A Resource" />
+                        <MenuItem fx:id="defineConstraintsItem" mnemonicParsing="false" onAction="#handledefineConstraintsItem" text="Define Constraints" />
+                        <MenuItem fx:id="settingsItem" mnemonicParsing="false" onAction="#handleSettingsItem" text="Settings" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem fx:id="aboutItem" mnemonicParsing="false" onAction="#handleAboutItem" text="About" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+    <center>
+        <WebView fx:id="webView" prefHeight="368.0" prefWidth="582.0" BorderPane.alignment="CENTER" />
+    </center>
+    <bottom>
+        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <items>
-              <MenuItem mnemonicParsing="false" text="New Project" />
-                  <MenuItem mnemonicParsing="false" text="Load From File" />
-                  <MenuItem mnemonicParsing="false" text="Load From Database" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Save" />
-                  <MenuItem mnemonicParsing="false" text="Save as..." />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="exitItem" mnemonicParsing="false" onAction="#handleExitItem" text="Exit" />
+                <Button fx:id="lockMap" mnemonicParsing="false" onAction="#lockMapListener" text="Lock Map" />
+                <ComboBox fx:id="resourceChooser" prefWidth="150.0"  />
             </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Tools">
-            <items>
-                <MenuItem fx:id="addAResourceItem" mnemonicParsing="false" onAction="#handleAddAResource" text="Add A Resource" />
-                  <MenuItem fx:id="defineConstraintsItem" mnemonicParsing="false" onAction="#handledefineConstraintsItem" text="Define Constraints" />
-              <MenuItem fx:id="settingsItem" mnemonicParsing="false" onAction="#handleSettingsItem" text="Settings" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem fx:id="aboutItem" mnemonicParsing="false" onAction="#handleAboutItem" text="About" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-   </top>
-   <bottom>
-      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-        <items>
-          <Button fx:id="lockMap" mnemonicParsing="false" onAction="#lockMapListener" text="Lock Map" />
-        </items>
-      </ToolBar>
-   </bottom>
-   <center>
-      <StackPane BorderPane.alignment="CENTER">
-         <children>
-            <Canvas height="373.0" opacity="0.5" width="600.0" />
-            <WebView minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0" />
-         </children>
-      </StackPane>
-   </center>
+        </ToolBar>
+    </bottom>
 </BorderPane>

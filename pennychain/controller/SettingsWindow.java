@@ -16,7 +16,7 @@ public class SettingsWindow extends Application {
     public void start(Stage stage) throws Exception {
         //TODO: Pass a Project from the MapWindow into here
         if(project == null)
-            project = new Project();
+            this.project = new Project("PROJECT NOT LINKED",new userProfile() );
 
         SettingsController sc = new SettingsController(project);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("SettingsTest.fxml"));
@@ -40,4 +40,3 @@ public class SettingsWindow extends Application {
         launch(args);
     }
 }
-

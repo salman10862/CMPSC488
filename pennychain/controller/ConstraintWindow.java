@@ -13,7 +13,7 @@ public class ConstraintWindow extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         if(project == null)
-            this.project = new Project();
+            this.project = new Project("INVALID PROJECT", new userProfile());
 
         ConstraintController controller = new ConstraintController(project);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("ConstraintWindow.fxml"));

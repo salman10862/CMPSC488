@@ -1,7 +1,6 @@
 package pennychain.controller;
 
 import java.io.IOException;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,7 +15,7 @@ public class MapWindow extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         if(project == null)
-            this.project = new Project();
+            this.project = new Project("PROJECT NOT LINKED",new userProfile() );
 
         MapWindowController controller = new MapWindowController(project);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("MapWindow.fxml"));
@@ -28,22 +27,7 @@ public class MapWindow extends Application {
         stage.setTitle("Application - Map Window");
         stage.setScene(scene);
         stage.show();
-        /*
-        Parent root = null;
-
-        try{
-            root = FXMLLoader.load(getClass().getResource("MapWindow.fxml"));
-        }
-        catch (IOException e) {
-            System.err.println("Caught IOException: " + e.getMessage());
-        }
-
-
-        Scene scene = new Scene(root, 800, 600);
-
-        stage.setTitle("Application - Map Window");
-        stage.setScene(scene);
-        stage.show();*/    }
+    }
 
     public static void main(String[] args) {
 
