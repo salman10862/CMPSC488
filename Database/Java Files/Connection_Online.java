@@ -109,7 +109,7 @@ public class Connection_Online {
         return salt;
     }
 
-    //modify a record in the database
+    //modify a user's username in the database
     public static void modifyUserName(String uname, String newUName)
     {
         BasicDBObject whereQuery = new BasicDBObject().append("$set",
@@ -117,6 +117,7 @@ public class Connection_Online {
         userCollection.update(new BasicDBObject().append("username", uname), whereQuery);
     }
 
+    //modify a user's password in the database
     public static void modifyPasword(String oldHash, String newHash)
     {
         BasicDBObject whereQuery = new BasicDBObject().append("$set",
