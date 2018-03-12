@@ -51,10 +51,10 @@
             }
 
             function setPerspective(lt, lg, zm){
-                var latlng = new google.maps.LatLng(lt, lg);
+                var ltlng = new google.maps.LatLng(lt, lg);
                 map = new google.maps.Map(document.getElementById('map'), {
                     zoom: zm ,
-                    center: latlng
+                    center: ltlng
                 });
             }
 

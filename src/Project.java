@@ -26,7 +26,7 @@ public class Project {
 
     public boolean isValidUser(String user){
         return linked_userID.getUsername().equals(user);
-    }
+    } //DEBUG
 
     public Map getMainMap(){
         return mainMap;

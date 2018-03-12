@@ -58,12 +58,14 @@ public class AddAResourceController{
         if(!labelField.getText().equals("")) {
             project.addProjResource(new projResource(labelField.getText(), newRColor));
             rList.setItems(FXCollections.observableList(project.getStringsofResources()));
+            s.hide();
+
         }
     }
 
     @FXML protected void handleCancelButton(ActionEvent event) {
         Stage s = (Stage) cancelButton.getScene().getWindow();
-        s.close();
+        s.hide();
     }
 
 

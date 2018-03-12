@@ -43,6 +43,7 @@
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
           <Button fx:id="lockMap" mnemonicParsing="false" onAction="#lockMapListener" text="Lock Map" />
+            <ComboBox fx:id="resourceChooser" prefWidth="150.0"  />
         </items>
       </ToolBar>
    </bottom>

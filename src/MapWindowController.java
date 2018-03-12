@@ -1,15 +1,20 @@
 import java.io.IOException;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuItem;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class MapWindowController {
 
@@ -23,6 +28,7 @@ public class MapWindowController {
 
     private Project project;
     private Map currentMap;
+    private ComboBox<String> resourceChooser;
 
     public MapWindowController(Project project)
     {
@@ -94,26 +100,47 @@ public class MapWindowController {
         stage.setScene(scene);
         stage.show();
 
+        stage.setOnHidden(new EventHandler<WindowEvent>(){
+                  @Override
+                  public void handle(WindowEvent windowEvent){ ;
+                      resourceChooser.setItems(FXCollections.observableArrayList(project.getStringsofResources()));
+                      System.out.println("Yep, it closed.");
+                      System.out.println(project.getStringsofResources());
+                  }
+              }
+        );
     }
 
     @FXML protected void lockMapListener(ActionEvent event){
         int GRID_SIZE =100; //TODO: Talk to group about design of setting initial gride size
         webEngine.executeScript("disable()");
+
         Double latitude = (Double) webEngine.executeScript("getLongitude()");
         Double longitude = (Double) webEngine.executeScript("getLatitude()");
         int zoom = (Integer) webEngine.executeScript("getZoom()");
+        //TODO: Compute and add grid distance parameters to the Map
         Map map = new Map(GRID_SIZE, 800, 600, zoom, latitude, longitude);
         project.setMainMap(map);
+        lockMap.setVisible(false);
+        resourceChooser = new ComboBox();
+        if(!project.getStringsofResources().isEmpty())
+            resourceChooser.setItems(FXCollections.observableList(project.getStringsofResources()));
+        resourceChooser.setVisible(true); //TODO: //Implement resourceBar
+
     }
 
 
     @FXML protected void initialize() {
         webEngine = webView.getEngine();
         webEngine.load(getClass().getResource("googlemap.html").toString());
-        if(project.getMainMap() != null) {
+        resourceChooser = new ComboBox();
+        if(project.getMainMap()  != null) {
             webEngine.executeScript("setPerspective(" + project.getMainMap().getLatitude() + ", " + project.getMainMap().getLongitude() + ", "
                     + project.getMainMap().getZoom() + ")");
             lockMap.setDisable(true);
+            if(!project.getStringsofResources().equals(null))
+                resourceChooser.setItems(FXCollections.observableList(project.getStringsofResources()));
+            resourceChooser.setVisible(true);
         }
     }
 
