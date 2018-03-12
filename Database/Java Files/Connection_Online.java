@@ -26,7 +26,8 @@ public class Connection_Online {
         //addProjectRecord("Sample Project 2", "ckw5071", sharedWith);
         //addUserRecord("chris", "williams", "ckw5071", "camisthebest27");
         //findRecordByUsername("ckw5071");
-        System.out.println(userExists("pranav412"));    //test to see if username exists in database
+        //modifyUserName("ckw5072", "ckw5071");
+        modifyPasword("camisthebest27", "camisthegreatest27");
     }
 
     //add a record to the database
@@ -75,56 +76,52 @@ public class Connection_Online {
 
         cursor.close();
     }
-    
-    public static boolean userExists(String uname){	//check to see if the user exists in database
-    BasicDBObject whereQuery = new BasicDBObject();
-    whereQuery.put("username", uname);
-    DBCursor cursor = userCollection.find(whereQuery);
-    while(cursor.hasNext()){
-        if(cursor.next().get("username").equals(uname))
-            return true;
-    }
 
-    cursor.close();
-    return false;
-}
-    
     public static CharSequence getHashedPass(String uname){	//returns the hashed password for the specified username
-    BasicDBObject whereQuery = new BasicDBObject();
-    whereQuery.put("username", uname);
-    DBCursor cursor = userCollection.find(whereQuery);
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("username", uname);
+        DBCursor cursor = userCollection.find(whereQuery);
 
-    //hashed password to be returned
-    CharSequence pwd = "";
+        //hashed password to be returned
+        CharSequence pwd = "";
 
-    while(cursor.hasNext()){	//should only return 1 document since usernames must be unique
-        pwd = (CharSequence) cursor.next().get("password");
+        while(cursor.hasNext()){	//should only return 1 document since usernames must be unique
+            pwd = (CharSequence) cursor.next().get("password");
+        }
+
+        cursor.close();
+        return pwd;
     }
 
-    cursor.close();
-    return pwd;
-}
-    
-public static CharSequence getSalt(String uname){	//returns the salt used with the password for the specified username
-    BasicDBObject whereQuery = new BasicDBObject();
-    whereQuery.put("username", uname);
-    DBCursor cursor = userCollection.find(whereQuery);
+    public static CharSequence getSalt(String uname){	//returns the salt used with the password for the specified username
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("username", uname);
+        DBCursor cursor = userCollection.find(whereQuery);
 
-    //hashed password to be returned
-    CharSequence salt = "";
+        //hashed password to be returned
+        CharSequence salt = "";
 
-    while(cursor.hasNext()){	//should only return 1 document since usernames must be unique
-        salt = (CharSequence) cursor.next().get("salt");
+        while(cursor.hasNext()){	//should only return 1 document since usernames must be unique
+            salt = (CharSequence) cursor.next().get("salt");
+        }
+
+        cursor.close();
+        return salt;
     }
-
-    cursor.close();
-    return salt;
-}
 
     //modify a record in the database
-    public static void modifyRecord()
+    public static void modifyUserName(String uname, String newUName)
     {
-        ;
+        BasicDBObject whereQuery = new BasicDBObject().append("$set",
+                new BasicDBObject().append("username", newUName));
+        userCollection.update(new BasicDBObject().append("username", uname), whereQuery);
+    }
+
+    public static void modifyPasword(String oldHash, String newHash)
+    {
+        BasicDBObject whereQuery = new BasicDBObject().append("$set",
+                new BasicDBObject().append("password", newHash));
+        userCollection.update(new BasicDBObject().append("password", oldHash), whereQuery);
     }
 }
 
