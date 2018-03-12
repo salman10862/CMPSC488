@@ -5,8 +5,14 @@ public class Map {
                 len,
                 grid_size=100; // Default value for testing
 
-    private BigDecimal latitude,
-                        longitude;
+    //private BigDecimal latitude,
+      //                  longitude;
+
+    public Map(int grid_size, int width, int len){
+        this.grid_size = grid_size;
+        this.len = len;
+        this.width = width;
+    }
 
     public int getGrid_size(){ return grid_size; }
     public int changeGrid_size(int grid_size){ return this.grid_size = grid_size; }

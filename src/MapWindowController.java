@@ -79,40 +79,34 @@ public class MapWindowController {
         Platform.exit();
     }
 
-    @FXML protected void handleAddAResource(ActionEvent event){
-        /*
-        AddAResourceController controller = new AddAResourceController(project, currentMap);
+    @FXML protected void handleAddAResource(ActionEvent event) throws IOException{
+
+        AddAResourceController controller = new AddAResourceController(project);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("AddAResourceWindow.fxml"));
         loader.setController(controller);
         Parent root = loader.load();
-        Scene scene = new Scene(root, 600, 400);
+        Scene scene = new Scene(root, 590, 363);
 
         Stage stage = new Stage();
         stage.setTitle("Add a Resource");
         stage.setScene(scene);
         stage.show();
-        */
 
-
-        Parent root = null;
-        try{
-            root = (Parent)FXMLLoader.load(getClass().getResource("AddAResourceWindow.fxml"));
-        }
-        catch (IOException e) {
-            System.err.println("Caught IOException: " + e.getMessage());
-        }
-        Stage stage = new Stage();
-        stage.setTitle("Add A Resource");
-        stage.setScene(new Scene(root, 600, 400));
-        stage.show();
     }
 
-    @FXML protected void lockMapListener(ActionEvent event){}
+    @FXML protected void lockMapListener(ActionEvent event){
+        int GRID_SIZE =100; //TODO: Talk to group about design of setting initial gride size
+        webEngine.executeScript("disable()");
+        Map map = new Map(GRID_SIZE, 800, 600);
+
+
+    }
 
 
     @FXML protected void initialize() {
         webEngine = webView.getEngine();
         webEngine.load(getClass().getResource("googlemap.html").toString());
+
     }
 
 }

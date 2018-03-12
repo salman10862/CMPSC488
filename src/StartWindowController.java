@@ -13,9 +13,12 @@ public class StartWindowController {
 
     @FXML private Button newProjectButton;
     @FXML private Button exitButton;
+    private userProfile cUser;
 
     @FXML protected void handleNewProjectButton(MouseEvent event) throws IOException {
-        Project project = new Project();
+
+
+        Project project = new Project("",cUser );
 
         MapWindowController controller = new MapWindowController(project);
 

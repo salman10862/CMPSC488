@@ -13,7 +13,7 @@ public class MapWindow extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         if(project == null)
-            this.project = new Project();
+            this.project = new Project("PROJECT NOT LINKED",new userProfile() );
 
         MapWindowController controller = new MapWindowController(project);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("MapWindow.fxml"));

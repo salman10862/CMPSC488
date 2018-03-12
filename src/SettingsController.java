@@ -33,7 +33,7 @@ public class SettingsController{
         Text text1;
         // TODO: Pass info about user around properly between functions
         if(project == null)
-            project = new Project();
+            this.project = new Project("PROJECT NOT LINKED",new userProfile() );
 
         cUser = project.getUserProfile();
         cMap = project.getMainMap();
