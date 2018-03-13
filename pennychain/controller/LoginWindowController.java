@@ -1,5 +1,7 @@
 package pennychain.controller;
 
+import pennychain.controller.StartWindowController;
+import pennychain.controller.CreateAccountWindowController;
 import pennychain.db.Connection_Online;
 import pennychain.db.Hash;
 import pennychain.usr.UserSession;
@@ -12,6 +14,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -29,14 +32,21 @@ public class LoginWindowController {
     @FXML private Button newAcctButton;
     @FXML private Button exitButton;
 
+    @FXML private Label errorMessage;
+
     @FXML private Parent root;
+    private Stage primaryStage;
+
+    public LoginWindowController(Stage stage) {
+        this.primaryStage = stage;
+    }
 
     @FXML protected void handleLoginButton(MouseEvent event) {
 
         CharSequence username = usernameField.getCharacters();
 
         if(!Connection_Online.userExists(username.toString())) {
-            // throw some error
+            errorMessage.setText("Username not found");
         }
         else {
             CharSequence saltedHashedPass = 
@@ -59,26 +69,51 @@ public class LoginWindowController {
             if(pwMatch) {
                 UserSession session = UserSession.getInstance();
                 session.setCurrentUser(username.toString());
-                // take user to start page
+                
+                StartWindowController controller = new StartWindowController(session);
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("StartWindow.fxml"));
+                loader.setController(controller);
+
+                try {
+                    root = loader.load();
+                }
+                catch(IOException e) {
+                    System.err.println("Caught IOException: " + e.getMessage());
+                }
+
+                Stage stage = new Stage();
+                Scene scene = new Scene(root, 400, 400);
+                stage.setTitle("Pennychain - Start or Load a Project");
+                stage.setScene(scene);
+                stage.show();
+                ((Node)(event.getSource())).getScene().getWindow().hide();
             }
             else {
-                // show some error
+                errorMessage.setText("Passwords do not match");
             }
         }
     }
 
     @FXML protected void handleNewAcctButton(MouseEvent event) {
 
-        Node source = (Node) event.getSource();
-        
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("CreateAccountWindow.fxml"));
+        CreateAccountWindowController controller = new CreateAccountWindowController();
+        loader.setController(controller);
+
         try {
-            root = FXMLLoader.load(getClass().getResource("CreateNewAccountWindow.fxml"));
-        } catch (IOException e) {
-            System.out.println("Caught IOException: " + e.getMessage());
+            root = loader.load();
+        }
+        catch(IOException e) {
+            System.err.println("Caught IOException: " + e.getMessage());
         }
 
-        source.getScene().setRoot(root);
+        Scene scene = new Scene(root, 400, 400);
+        Stage stage = new Stage();
 
+        stage.setTitle("Create an Account");
+        stage.setScene(scene);
+        stage.show();
+        ((Node)(event.getSource())).getScene().getWindow().hide();
     }
 
     @FXML protected void handleExitButton(MouseEvent event) {
