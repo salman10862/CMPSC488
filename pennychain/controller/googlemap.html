@@ -25,12 +25,14 @@
                 map = new google.maps.Map(document.getElementById('map'), {
                     zoom: 15,
                     center: psuHbg
+
                 });
                 var marker = new google.maps.Marker({
                     position: psuHbg,
                     map: map
                 });
             }
+
 
             function getZoom(){
                 return map.getZoom();

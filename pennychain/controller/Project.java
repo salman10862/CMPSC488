@@ -12,7 +12,9 @@ public class Project {
     private ArrayList<String> settingsList;
 
     //private final DEFAULT_SETTINGS = new
+    public Project(){
 
+    }
     public Project(String projLabel, userProfile linked_userID){
         this.projLabel = projLabel;
         this.linked_userID = linked_userID;
