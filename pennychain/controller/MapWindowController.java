@@ -18,6 +18,8 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import pennychain.center.OptimizationRequest;
+
 public class MapWindowController {
 
     @FXML private MenuItem aboutItem;
@@ -131,6 +133,15 @@ public class MapWindowController {
 
     }
 
+    //This method (feel free to change the name as desired) is intended to be what is called when User tries to send an optimization request
+    @FXML protected void sendOptimizationRequest() {
+        if(project.getMainMap() != null) {
+            OptimizationRequest opreq = new OptimizationRequest(this.currentMap);
+            this.currentMap = opreq.sendRequest("C:\\"); 
+                                            //TODO: sendRequest requires user-defined path name for file storage (C drive is temporary filler)
+            project.setMainMap(this.currentMap);
+        }
+    }
 
     @FXML protected void initialize() {
         webEngine = webView.getEngine();
