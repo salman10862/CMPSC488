@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.web.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="442.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<?import javafx.scene.canvas.Canvas?>
+<BorderPane fx:id="windowPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="442.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <top>
         <MenuBar BorderPane.alignment="CENTER">
             <menus>
@@ -36,13 +38,15 @@
         </MenuBar>
     </top>
     <center>
+        <Canvas fx:id="transGrid" BorderPane.alignment="CENTER"></Canvas>
         <WebView fx:id="webView" prefHeight="368.0" prefWidth="582.0" BorderPane.alignment="CENTER" />
     </center>
     <bottom>
         <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <items>
                 <Button fx:id="lockMap" mnemonicParsing="false" onAction="#lockMapListener" text="Lock Map" />
-                <ComboBox fx:id="resourceChooser" prefWidth="150.0"  />
+                <ComboBox fx:id="resourceChooser" prefWidth="150.0" promptText="Resources" />
+            <Button mnemonicParsing="false" text="Request Optimization" />
             </items>
         </ToolBar>
     </bottom>

@@ -7,12 +7,16 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuItem;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -27,10 +31,13 @@ public class MapWindowController {
     @FXML private WebEngine webEngine;
     @FXML private WebView webView;
     @FXML private Button lockMap;
+    @FXML private Canvas transGrid;
+    @FXML private BorderPane windowPane;
 
     private Project project;
     private Map currentMap;
-    private ComboBox<String> resourceChooser;
+    @FXML private ComboBox<String> resourceChooser;
+
 
     public MapWindowController(Project project)
     {
@@ -124,11 +131,24 @@ public class MapWindowController {
         Map map = new Map(GRID_SIZE, 800, 600, zoom, latitude, longitude);
         project.setMainMap(map);
         lockMap.setVisible(false);
-        resourceChooser = new ComboBox();
+        resourceChooser = new ComboBox<>();
         if(!project.getStringsofResources().isEmpty())
             resourceChooser.setItems(FXCollections.observableList(project.getStringsofResources()));
         resourceChooser.setVisible(true); //TODO: //Implement resourceBar
 
+        //Added Transparency Layer
+        StackPane layerPane = new StackPane();
+        windowPane.setCenter(layerPane);
+        transGrid.setOpacity(0);
+        transGrid.setWidth(webView.getWidth());
+        transGrid.setHeight(webView.getHeight());
+        layerPane.getChildren().addAll(webView, transGrid);
+        transGrid.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                System.out.println("Canvas clicked at" + mouseEvent.getX());
+            }
+        });
     }
 
 
