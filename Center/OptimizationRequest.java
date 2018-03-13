@@ -1,16 +1,20 @@
+import pennychain.center.APMpyth;
+import pennychain.controller.Map;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class OptimizationRequest {
+	//private final Map map;
 	private int varBound;
 	private int max_posi;
 	private ArrayList<String> variables = new ArrayList<String>();
 	private ArrayList<String> constraints = new ArrayList<String>();
-	private Map Map;
+	private Map map;
 	
 	public OptimizationRequest(Map new_map) {
-		this.Map = new_map;
+		this.map = new_map;
 		varBound = map.getSize();
 	}
 	
@@ -70,10 +74,10 @@ public class OptimizationRequest {
 		/*
 		 * OBTAIN MAP DATA FROM GUI
 		 * 
-		 */
+		 *
 		for(int i = 0; i < varBound; i++) {
         	for(int j = 0; j < varBound; j++) {
-        		if(Map.map_data[i][j] == 0) {
+        		//if(Map.map_data[i][j] == 0) {
         			variables.add("X[" + (i*varBound+j) + "]");//1, >=0, >=1");
         		} else if (Map.map_data[i][j] == 1) {
         			variables.add("X[" + (i*varBound+j) + "]");//1, >=0, >=1");
@@ -86,7 +90,7 @@ public class OptimizationRequest {
 			max_num_centers = max_num_centers + variables.get(i) + "+";
 		}
 		constraints.add(max_num_centers + "0=" + max_posi);
-		
+		*/
 	}
 	
 	public void setMaxCenters(int desired_max) {

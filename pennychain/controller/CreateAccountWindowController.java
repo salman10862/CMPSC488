@@ -66,7 +66,7 @@ public class CreateAccountWindowController {
                         lastName, 
                         newUsername, 
                         saltWithSaltedHash[0], 
-                        saltWithSaltedHash[1]);
+                        saltWithSaltedHash[1], "email");
             } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
                 System.err.println("Caught exception from Hash.getHashAndSalt: "
                         + e.getMessage());
