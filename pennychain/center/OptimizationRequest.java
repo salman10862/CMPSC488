@@ -15,16 +15,16 @@ public class OptimizationRequest {
 	
 	public OptimizationRequest(Map new_map) {
 		this.map = new_map;
-		varBound = map.getSize();
+		varBound = map.getWidth();
 	}
 	
-	public void sendRequest(String path_name) throws IOException {
+	public Map sendRequest(String path_name) throws IOException {
 		this.read_map();
 		APMpyth apmpython = new APMpyth(path_name);
 		this.bundle_data(path_name);
 		
 		String results = apmpython.sendData();
-		this.display_on_map(results);
+		return this.display_on_map(results);
 	}
 	
 	private void bundle_data(String path) throws IOException {
@@ -60,38 +60,35 @@ public class OptimizationRequest {
 		return obj_func;
 	}
 	
-	private void display_on_map(String map) {
-		System.out.print(map);
-		
+	private Map display_on_map(String map) {
 		/*
 		 * 
-		 * DISPLAY MAP DATA ON GUI
+		 * Convert file from APMPyth to Map type to display on GUI
 		 * 
 		 */
+		Map opmap = new Map(this.map.getGrid_size(), this.map.getLength(), this.map.getWidth(), this.map.getZoom(), this.map.getLatitude(), this.map.getLongitute());
+		//TODO: populate map_data of opmap using results from apmpython
+		return opmap;
 	}
 	
 	private void read_map() {
-		/*
-		 * OBTAIN MAP DATA FROM GUI
-		 * 
-		 */
-		/*
+
 		for(int i = 0; i < varBound; i++) {
-        	for(int j = 0; j < varBound; j++) {
-        		if(Map.map_data[i][j] == 0) {
-        			variables.add("X[" + (i*varBound+j) + "]");//1, >=0, >=1");
-        		} else if (Map.map_data[i][j] == 1) {
-        			variables.add("X[" + (i*varBound+j) + "]");//1, >=0, >=1");
-        			constraints.add("X[" + (i*varBound+j) + "]=1");
+        		for(int j = 0; j < varBound; j++) {
+        			if(map.map_data[i][j] == 0) {
+        				variables.add("X[" + (i*varBound+j) + "]");//1, >=0, >=1");
+        			} else if (map.map_data[i][j] == 1) {
+        				variables.add("X[" + (i*varBound+j) + "]");//1, >=0, >=1");
+        				constraints.add("X[" + (i*varBound+j) + "]=1");
+        			}
         		}
-        	}
 		}
+		
 		String max_num_centers = "";
 		for(int i = 0; i < variables.size(); i++) {
 			max_num_centers = max_num_centers + variables.get(i) + "+";
 		}
 		constraints.add(max_num_centers + "0=" + max_posi);
-		*/
 	}
 	
 	public void setMaxCenters(int desired_max) {

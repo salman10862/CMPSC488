@@ -5,6 +5,11 @@ public class Map {
             len,
             zoom,
             grid_size=100; // Default value for testing
+    
+    public int[][] map_data; //This is the matrix definining existing infrastructure and invalid locations on the grid 
+                                    //(current implementation is -1 for invalid locations, 0 for potential locations, 
+                                    //and 1 for those already being used, but this can be adjusted to accomodate additional options later)
+                              //TODO: We need to populate this matrix with values indicated by our "invisible grid" on the map
 
 
     private Double latitude,
@@ -25,10 +30,13 @@ public class Map {
     public int getZoom(){return zoom;}
     public int changeGrid_size(int grid_size){ return this.grid_size = grid_size; }
     public int getSize(){return 100;} //TODO: REPLACE DUMMY VALUE
+    public int getWidth() {return this.width};
+    public int getLength() {return this.len};
 
     // D-to-D_matrix
     // TODO: Row = Major Redistribution Center: Distibution's Distrubtion
     // TODO: column = minor distribution: Customer's Distribution
+            //ASIDE (from Jason): Not 100% sure, but these may be what I indicated in comments near the map_data declaration. Let me know if its something else :^)
 
 
 

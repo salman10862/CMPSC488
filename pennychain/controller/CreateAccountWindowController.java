@@ -24,6 +24,7 @@ public class CreateAccountWindowController {
 
     @FXML private TextField firstNameField;
     @FXML private TextField lastNameField;
+    @FXML private TextField emailField;
     @FXML private TextField newUsernameField;
     @FXML private PasswordField newPasswordField;
     @FXML private PasswordField confirmPasswordField;
@@ -37,10 +38,15 @@ public class CreateAccountWindowController {
 
     @FXML private Parent root;
 
+    private boolean accountCreated = false;
+
+    public CreateAccountWindowController(){}
+
     @FXML protected void handleCreateAcctButton(MouseEvent event) {
         
         String firstName = firstNameField.getCharacters().toString();
         String lastName = lastNameField.getCharacters().toString();
+        String email = emailField.getCharacters().toString();
         String newUsername = newUsernameField.getCharacters().toString();
         String newPassword = newPasswordField.getCharacters().toString();
         String newPasswordConfirm = 
@@ -65,8 +71,11 @@ public class CreateAccountWindowController {
                         firstName, 
                         lastName, 
                         newUsername, 
-                        saltWithSaltedHash[0], 
-                        saltWithSaltedHash[1], "email");
+                        saltWithSaltedHash[1], 
+                        saltWithSaltedHash[0],
+                        email);
+
+                accountCreated = true;
             } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
                 System.err.println("Caught exception from Hash.getHashAndSalt: "
                         + e.getMessage());
@@ -80,21 +89,51 @@ public class CreateAccountWindowController {
     }
 
     @FXML protected void handleOkButton(MouseEvent event) {
-        // do something
-        //MongoDatabase
+        if(!accountCreated) {
+            error1.setText("Account not yet created!");
+            error1.setTextFill(Color.web("#FF0000"));
+            error2.setText("");
+        }
+        else {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginWindow.fxml"));
+            Stage stage = new Stage();
+            LoginWindowController controller = new LoginWindowController(stage);
+            loader.setController(controller);
+
+            try {
+                root = loader.load();
+            }
+            catch(IOException e) {
+                System.err.println("Caught IOException: " + e.getMessage());
+            }
+
+            Scene scene = new Scene(root, 400, 400);
+            stage.setTitle("Welcome!");
+            stage.setScene(scene);
+            stage.show();
+            ((Node)(event.getSource())).getScene().getWindow().hide();
+        }
     }
 
     @FXML protected void handleCancelButton(MouseEvent event) {
 
-        Node source = (Node) event.getSource();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginWindow.fxml"));
+        Stage stage = new Stage();
+        LoginWindowController controller = new LoginWindowController(stage);
+        loader.setController(controller);
 
         try {
-            root = FXMLLoader.load(getClass().getResource("LoginWindow.fxml"));
-        } catch (IOException e) {
-            System.out.println("Caught IOException: " + e.getMessage());
+            root = loader.load();
+        }
+        catch(IOException e) {
+            System.err.println("Caught IOException: " + e.getMessage());
         }
 
-        source.getScene().setRoot(root);
+        Scene scene = new Scene(root, 400, 400);
+        stage.setTitle("Welcome!");
+        stage.setScene(scene);
+        stage.show();
+        ((Node)(event.getSource())).getScene().getWindow().hide();
     }
 }
 
