@@ -1,5 +1,7 @@
 package pennychain.controller;
 
+import pennychain.usr.UserSession;
+
 import java.io.IOException;
 
 import javafx.application.Platform;
@@ -16,6 +18,12 @@ public class StartWindowController {
 
     @FXML private Button newProjectButton;
     @FXML private Button exitButton;
+    
+    private UserSession userSession;
+
+    public StartWindowController(UserSession session) {
+        this.userSession = session;
+    }
 
     @FXML protected void handleNewProjectButton(MouseEvent event) throws IOException {
         Project project = new Project();
