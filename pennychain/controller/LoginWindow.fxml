@@ -6,7 +6,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pennychain.controller.LoginWindowController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
@@ -30,6 +30,11 @@
                   <PasswordField fx:id="passwordField" prefHeight="25.0" prefWidth="200.0" />
                </children>
             </HBox>
+            <Label fx:id="errorMessage" textFill="RED">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
             <Button fx:id="loginButton" mnemonicParsing="false" onMouseClicked="#handleLoginButton" prefWidth="200.0" text="Log In">
                <VBox.margin>
                   <Insets bottom="10.0" top="20.0" />
