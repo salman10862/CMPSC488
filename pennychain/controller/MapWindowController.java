@@ -47,7 +47,7 @@ public class MapWindowController {
     private int currentZoom;
 
     StackPane layerPane;
-    @FXML private ComboBox<String> resourceChooser;
+    @FXML private ComboBox<String> resourceChooser = new ComboBox<>();
 
 
     public MapWindowController(Project project)
@@ -123,7 +123,8 @@ public class MapWindowController {
         stage.setOnHidden(new EventHandler<WindowEvent>(){
                               @Override
                               public void handle(WindowEvent windowEvent){
-                                  resourceChooser.setItems(FXCollections.observableArrayList(project.getStringsofResources()));
+                                  resourceChooser.getItems().addAll(project.getStringsofResources());
+
                                   System.out.println("Yep, it closed.");
                                   System.out.println(project.getStringsofResources());
                               }
@@ -144,9 +145,8 @@ public class MapWindowController {
         currentMap = project.getMainMap();
         currentZoom = zoom;
         lockMap.setVisible(false);
-        resourceChooser = new ComboBox<>();
         if(!project.getStringsofResources().isEmpty())
-            resourceChooser.setItems(FXCollections.observableList(project.getStringsofResources()));
+            resourceChooser.getItems().addAll(FXCollections.observableList(project.getStringsofResources()));
         resourceChooser.setVisible(true); //TODO: //Implement resourceBar
 
         //Added Transparency Layer
@@ -181,8 +181,6 @@ public class MapWindowController {
     }
 
     @FXML protected void handleZoomIn(){
-        //TODO: BUG! It makes the canvas expand but now it covers the bottom toolbar
-        //TODO: More roughly define the default zoom, detect when we're there
         int zoom = currentMap.getZoom();
         currentZoom++;
         transGrid.setScaleX(currentMap.googleZoomScales[currentZoom]/currentMap.googleZoomScales[zoom]);
@@ -198,7 +196,8 @@ public class MapWindowController {
             transGrid.setScaleX(currentMap.googleZoomScales[currentZoom]/currentMap.googleZoomScales[zoom]);
             transGrid.setScaleY(currentMap.googleZoomScales[currentZoom]/currentMap.googleZoomScales[zoom]);
             webEngine.executeScript("zoomOut()");
-            reEnableMapEdit();
+            if(currentZoom == zoom)
+                reEnableMapEdit();
         }
     }
 
@@ -208,14 +207,6 @@ public class MapWindowController {
         layerPane.setDisable(false);
         transGrid.toFront();
         System.out.println(layerPane.getChildren());
-        //TODO: BUG! Can't seem to renable the clicking.
-        transGrid.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                System.out.println("Canvas clicked at" + mouseEvent.getX());
-            }
-        });
-
     }
 
 
@@ -223,14 +214,13 @@ public class MapWindowController {
     @FXML protected void initialize() {
         webEngine = webView.getEngine();
         webEngine.load(getClass().getResource("googlemap.html").toString());
-        resourceChooser = new ComboBox();
         if(project.getMainMap()  != null) {
             webEngine.executeScript("setPerspective(" + project.getMainMap().getLatitude() + ", " + project.getMainMap().getLongitude() + ", "
                     + project.getMainMap().getZoom() + ")");
             lockMap.setDisable(true);
             currentZoom = project.getMainMap().getZoom();
             if(!project.getStringsofResources().isEmpty())
-                resourceChooser.setItems(FXCollections.observableList(project.getStringsofResources()));
+                resourceChooser.getItems().addAll(FXCollections.observableList(project.getStringsofResources()));
             resourceChooser.setVisible(true);
         }
         else{

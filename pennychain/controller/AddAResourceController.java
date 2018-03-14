@@ -66,7 +66,6 @@ public class AddAResourceController{
             project.addProjResource(new projResource(labelField.getText(), newRColor));
             rList.setItems(FXCollections.observableList(project.getStringsofResources()));
             s.hide();
-
         }
     }
 

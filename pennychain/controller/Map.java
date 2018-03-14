@@ -12,6 +12,7 @@ public class Map {
                               //TODO: We need to populate this matrix with values indicated by our "invisible grid" on the map
 
     //Array for scaling ratios of GoogleMaps at the 20 zoom-in levels (index 0 -> zoom 0)
+    //TODO: Implement the more exact latitude-based values (these are good in average case
     public double[] googleZoomScales = { 1128.497220,       2256.994440,
                                         4513.988880,        9027.977761,
                                         18055.955520,       36111.911040,
