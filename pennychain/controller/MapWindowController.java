@@ -43,6 +43,9 @@ public class MapWindowController {
 
     private Project project;
     private Map currentMap;
+
+    private int currentZoom;
+
     StackPane layerPane;
     @FXML private ComboBox<String> resourceChooser;
 
@@ -139,6 +142,7 @@ public class MapWindowController {
         Map map = new Map(GRID_SIZE, 800, 600, zoom, latitude, longitude);
         project.setMainMap(map);
         currentMap = project.getMainMap();
+        currentZoom = zoom;
         lockMap.setVisible(false);
         resourceChooser = new ComboBox<>();
         if(!project.getStringsofResources().isEmpty())
@@ -178,7 +182,9 @@ public class MapWindowController {
 
     @FXML protected void handleZoomIn(){
         //TODO: BUG! It makes the canvas expand but now it covers the bottom toolbar
+        //TODO: More roughly define the default zoom, detect when we're there
         int zoom = currentMap.getZoom();
+        currentZoom++;
         transGrid.setScaleX(currentMap.googleZoomScales[zoom+1]/currentMap.googleZoomScales[zoom]);
         transGrid.setScaleY(currentMap.googleZoomScales[zoom+1]/currentMap.googleZoomScales[zoom]);
         webEngine.executeScript("zoomIn()");
@@ -187,16 +193,19 @@ public class MapWindowController {
 
     @FXML protected void handleZoomOut(){
         int zoom = currentMap.getZoom();
-        transGrid.setScaleX(1/currentMap.googleZoomScales[zoom+1]);
-        transGrid.setScaleY(1/currentMap.googleZoomScales[zoom+1]);
-        webEngine.executeScript("zoomOut()");
-        reEnableMapEdit();
+        if(currentZoom > zoom) {
+            currentZoom--;
+            transGrid.setScaleX(1 / currentMap.googleZoomScales[zoom + 1]);
+            transGrid.setScaleY(1 / currentMap.googleZoomScales[zoom + 1]);
+            webEngine.executeScript("zoomOut()");
+            reEnableMapEdit();
+        }
     }
 
     private void reEnableMapEdit(){
-        layerPane.setDisable(false);
+        webView.setDisable(false);
         transGrid.setDisable(false);
-
+        //TODO: BUG! Can't seem to renable the clicking.
         transGrid.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -216,6 +225,7 @@ public class MapWindowController {
             webEngine.executeScript("setPerspective(" + project.getMainMap().getLatitude() + ", " + project.getMainMap().getLongitude() + ", "
                     + project.getMainMap().getZoom() + ")");
             lockMap.setDisable(true);
+            currentZoom = project.getMainMap().getZoom();
             if(!project.getStringsofResources().isEmpty())
                 resourceChooser.setItems(FXCollections.observableList(project.getStringsofResources()));
             resourceChooser.setVisible(true);
