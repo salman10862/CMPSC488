@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.web.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
 <?import javafx.scene.canvas.Canvas?>
-<BorderPane fx:id="windowPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="442.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.web.WebView?>
+
+<BorderPane fx:id="windowPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="442.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
     <top>
         <MenuBar BorderPane.alignment="CENTER">
             <menus>
@@ -38,15 +43,17 @@
         </MenuBar>
     </top>
     <center>
-        <Canvas fx:id="transGrid" BorderPane.alignment="CENTER"></Canvas>
+        <Canvas fx:id="transGrid" BorderPane.alignment="CENTER" />
         <WebView fx:id="webView" prefHeight="368.0" prefWidth="582.0" BorderPane.alignment="CENTER" />
     </center>
     <bottom>
-        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <items>
                 <Button fx:id="lockMap" mnemonicParsing="false" onAction="#lockMapListener" text="Lock Map" />
                 <ComboBox fx:id="resourceChooser" prefWidth="150.0" promptText="Resources" />
-            <Button mnemonicParsing="false" text="Request Optimization" />
+            <Button fx:id="optimizeButton" mnemonicParsing="false" text="Request Optimization" />
+            <Button fx:id="zoomInButton" mnemonicParsing="false" text="Zoom In" onAction="#handleZoomIn" />
+            <Button fx:id="zoomOutButton" mnemonicParsing="false" text="Zoom Out" onAction="#handleZoomOut"/>
             </items>
         </ToolBar>
     </bottom>

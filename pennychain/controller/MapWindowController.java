@@ -8,10 +8,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
@@ -24,6 +21,8 @@ import javafx.stage.WindowEvent;
 
 import pennychain.center.OptimizationRequest;
 
+import javax.tools.Tool;
+
 public class MapWindowController {
 
     @FXML private MenuItem aboutItem;
@@ -32,12 +31,19 @@ public class MapWindowController {
     @FXML private MenuItem settingsItem;
     @FXML private WebEngine webEngine;
     @FXML private WebView webView;
+
     @FXML private Button lockMap;
+    @FXML private Button zoomInButton;
+    @FXML private Button zoomOutButton;
+    @FXML private Button optimizeButton;
+
     @FXML private Canvas transGrid;
     @FXML private BorderPane windowPane;
+    @FXML private ToolBar toolbar;
 
     private Project project;
     private Map currentMap;
+    StackPane layerPane;
     @FXML private ComboBox<String> resourceChooser;
 
 
@@ -132,6 +138,7 @@ public class MapWindowController {
         //TODO: Compute and add grid distance parameters to the Map
         Map map = new Map(GRID_SIZE, 800, 600, zoom, latitude, longitude);
         project.setMainMap(map);
+        currentMap = project.getMainMap();
         lockMap.setVisible(false);
         resourceChooser = new ComboBox<>();
         if(!project.getStringsofResources().isEmpty())
@@ -139,18 +146,24 @@ public class MapWindowController {
         resourceChooser.setVisible(true); //TODO: //Implement resourceBar
 
         //Added Transparency Layer
-        StackPane layerPane = new StackPane();
-        windowPane.setCenter(layerPane);
+        layerPane = new StackPane();
+
         transGrid.setOpacity(0);
         transGrid.setWidth(webView.getWidth());
         transGrid.setHeight(webView.getHeight());
         layerPane.getChildren().addAll(webView, transGrid);
+        windowPane.setCenter(layerPane);
         transGrid.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 System.out.println("Canvas clicked at" + mouseEvent.getX());
             }
         });
+
+        //Enable map interactions
+        zoomInButton.setDisable(false);
+        zoomOutButton.setDisable(false);
+        optimizeButton.setDisable(false);
     }
 
     //This method (feel free to change the name as desired) is intended to be what is called when User tries to send an optimization request
@@ -163,6 +176,38 @@ public class MapWindowController {
         }
     }
 
+    @FXML protected void handleZoomIn(){
+        //TODO: BUG! It makes the canvas expand but now it covers the bottom toolbar
+        int zoom = currentMap.getZoom();
+        transGrid.setScaleX(currentMap.googleZoomScales[zoom+1]/currentMap.googleZoomScales[zoom]);
+        transGrid.setScaleY(currentMap.googleZoomScales[zoom+1]/currentMap.googleZoomScales[zoom]);
+        webEngine.executeScript("zoomIn()");
+        layerPane.setDisable(true);
+    }
+
+    @FXML protected void handleZoomOut(){
+        int zoom = currentMap.getZoom();
+        transGrid.setScaleX(1/currentMap.googleZoomScales[zoom+1]);
+        transGrid.setScaleY(1/currentMap.googleZoomScales[zoom+1]);
+        webEngine.executeScript("zoomOut()");
+        reEnableMapEdit();
+    }
+
+    private void reEnableMapEdit(){
+        layerPane.setDisable(false);
+        transGrid.setDisable(false);
+
+        transGrid.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                System.out.println("Canvas clicked at" + mouseEvent.getX());
+            }
+        });
+
+    }
+
+
+
     @FXML protected void initialize() {
         webEngine = webView.getEngine();
         webEngine.load(getClass().getResource("googlemap.html").toString());
@@ -174,6 +219,11 @@ public class MapWindowController {
             if(!project.getStringsofResources().isEmpty())
                 resourceChooser.setItems(FXCollections.observableList(project.getStringsofResources()));
             resourceChooser.setVisible(true);
+        }
+        else{
+            zoomInButton.setDisable(true);
+            zoomOutButton.setDisable(true);
+            optimizeButton.setDisable(true);
         }
     }
 
