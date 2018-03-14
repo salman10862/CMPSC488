@@ -185,8 +185,8 @@ public class MapWindowController {
         //TODO: More roughly define the default zoom, detect when we're there
         int zoom = currentMap.getZoom();
         currentZoom++;
-        transGrid.setScaleX(currentMap.googleZoomScales[zoom+1]/currentMap.googleZoomScales[zoom]);
-        transGrid.setScaleY(currentMap.googleZoomScales[zoom+1]/currentMap.googleZoomScales[zoom]);
+        transGrid.setScaleX(currentMap.googleZoomScales[currentZoom]/currentMap.googleZoomScales[zoom]);
+        transGrid.setScaleY(currentMap.googleZoomScales[currentZoom]/currentMap.googleZoomScales[zoom]);
         webEngine.executeScript("zoomIn()");
         layerPane.setDisable(true);
     }
@@ -195,8 +195,8 @@ public class MapWindowController {
         int zoom = currentMap.getZoom();
         if(currentZoom > zoom) {
             currentZoom--;
-            transGrid.setScaleX(1 / currentMap.googleZoomScales[zoom + 1]);
-            transGrid.setScaleY(1 / currentMap.googleZoomScales[zoom + 1]);
+            transGrid.setScaleX(currentMap.googleZoomScales[currentZoom]/currentMap.googleZoomScales[zoom]);
+            transGrid.setScaleY(currentMap.googleZoomScales[currentZoom]/currentMap.googleZoomScales[zoom]);
             webEngine.executeScript("zoomOut()");
             reEnableMapEdit();
         }
@@ -205,6 +205,9 @@ public class MapWindowController {
     private void reEnableMapEdit(){
         webView.setDisable(false);
         transGrid.setDisable(false);
+        layerPane.setDisable(false);
+        transGrid.toFront();
+        System.out.println(layerPane.getChildren());
         //TODO: BUG! Can't seem to renable the clicking.
         transGrid.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
