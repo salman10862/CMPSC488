@@ -1,5 +1,7 @@
 package pennychain.center;
 
+import pennychain.controller.Map;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,11 +11,11 @@ public class JavaApplication3 {
 	private int max_posi;
 	private ArrayList<String> variables = new ArrayList<String>();
 	private ArrayList<String> constraints = new ArrayList<String>();
-	private map Map;
+	private Map map;
 	
-	public JavaApplication3(map new_map) {
-		this.Map = new_map;
-		varBound = Map.getSize();
+	public JavaApplication3(Map new_map) {
+		this.map = new_map;
+		varBound = map.getSize();
 	}
 	
 	public void sendRequest(String path_name) throws IOException {
@@ -72,7 +74,7 @@ public class JavaApplication3 {
 		/*
 		 * OBTAIN MAP DATA FROM GUI
 		 * 
-		 */
+		 *
                 FileWriter f = new FileWriter("C:\\Users\\hgfel\\Documents\\NetBeansProjects\\JavaApplication3\\variables.txt");
 		for(int i = 0; i < varBound; i++) {
         	for(int j = 0; j < varBound; j++) {
@@ -98,7 +100,7 @@ public class JavaApplication3 {
 		}
 		constraints.add(max_num_centers + "0=" + max_posi);
                 
-		
+		*/
 	}
 	
 	public void setMaxCenters(int desired_max) {

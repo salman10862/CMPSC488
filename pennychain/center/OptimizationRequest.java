@@ -66,7 +66,7 @@ public class OptimizationRequest {
 		 * Convert file from APMPyth to Map type to display on GUI
 		 * 
 		 */
-		Map opmap = new Map(this.map.getGrid_size(), this.map.getLength(), this.map.getWidth(), this.map.getZoom(), this.map.getLatitude(), this.map.getLongitute());
+		Map opmap = new Map(this.map.getGrid_size(), this.map.getLength(), this.map.getWidth(), this.map.getZoom(), this.map.getLatitude(), this.map.getLongitude());
 		//TODO: populate map_data of opmap using results from apmpython
 		return opmap;
 	}

@@ -154,7 +154,7 @@ public class MapWindowController {
     }
 
     //This method (feel free to change the name as desired) is intended to be what is called when User tries to send an optimization request
-    @FXML protected void sendOptimizationRequest() {
+    @FXML protected void sendOptimizationRequest() throws IOException{
         if(project.getMainMap() != null) {
             OptimizationRequest opreq = new OptimizationRequest(this.currentMap);
             this.currentMap = opreq.sendRequest("C:\\"); 

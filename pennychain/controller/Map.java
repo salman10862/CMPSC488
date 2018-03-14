@@ -30,8 +30,8 @@ public class Map {
     public int getZoom(){return zoom;}
     public int changeGrid_size(int grid_size){ return this.grid_size = grid_size; }
     public int getSize(){return 100;} //TODO: REPLACE DUMMY VALUE
-    public int getWidth() {return this.width};
-    public int getLength() {return this.len};
+    public int getWidth() {return this.width;}
+    public int getLength() {return this.len;}
 
     // D-to-D_matrix
     // TODO: Row = Major Redistribution Center: Distibution's Distrubtion
