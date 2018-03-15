@@ -11,12 +11,16 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 import javafx.application.Platform;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -41,8 +45,22 @@ public class LoginWindowController {
         this.primaryStage = stage;
     }
 
-    @FXML protected void handleLoginButton(MouseEvent event) {
+    @FXML public void initialize() {
+        passwordField.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
+            @Override
+            public void handle(KeyEvent e) {
+                if(e.getCode() == KeyCode.ENTER)
+                    login(e);
+            }
+        });
+    }
+
+    @FXML protected void handleLoginButton(MouseEvent event) {
+        login(event);
+    }
+
+    protected void login(Event event) {
         CharSequence username = usernameField.getCharacters();
 
         if(!Connection_Online.userExists(username.toString())) {
