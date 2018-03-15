@@ -1,8 +1,13 @@
 package pennychain.controller;
 
+import pennychain.db.Hash;
+import pennychain.usr.UserSession;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -12,20 +17,24 @@ import java.awt.*;
 
 
 public class SettingsController{
-    @FXML private javafx.scene.control.Button cancelButton;
+    @FXML private Button cancelButton;
+    @FXML private Button changePassButton;
     @FXML private TextFlow userNameField;
     @FXML private PasswordField newPassField1;
     @FXML private PasswordField newPassField2;
     @FXML private PasswordField currenPassConfirm;
+    @FXML private Label pwChangeResponse;
     //@FXML private double gridValue;
     @FXML private javafx.scene.control.TextField gridField;
 
     private Project project;
+    private UserSession session;
     private userProfile cUser;
     private Map cMap;
 
-    public SettingsController(Project project)
+    public SettingsController(UserSession session, Project project)
     {
+        this.session = session;
         this.project = project;
     }
 
@@ -68,10 +77,32 @@ public class SettingsController{
         s.close();
     }
 
-    @FXML protected void handleChangePassButton(ActionEvent event){
-        //Placeholder test
-        if(newPassField1.getText().matches(newPassField2.getText()))
-            System.out.println("The Passwords agree!");
-    }
+    @FXML protected void handleChangePassButton(MouseEvent event){
+        String salt = Connection_Online.getSalt(session.getCurrentUser());
+        String saltedHashedPass = Connection_Online.getHashedPass(session.getCurrentUser());
 
+        if(Hash.verifyPassword(currenPassConfirm.getCharacters(), salt, saltedHashedPass) {
+            String newPass1 = newPassField1.getCharacters().toString();
+            String newPass2 = newPassField2.getCharacters().toString();
+
+            if(newPass1.equals(newPass2)) {
+                String newSaltAndSaltedHashedPw = 
+                    Hash.getHashAndSalt(newPassField2.getCharacters());
+
+                String[] base64Strings = newSaltAndSaltedHashedPw.split(":");
+                //Connection_Online.modifyRecord(); method not written yet!
+
+                pwChangeResponse.setText("Password updated");
+                pwChangeResponse.setTextFill(Color.web("00FF00"));
+            }
+            else {
+                pwChangeResponse.setText("New passwords do not match");
+                pwChangeResponse.setTextFill(Color.web("FF0000"));
+            }
+        }
+        else {
+            pwChangeResponse.setText("Current password is incorrect");
+            pwChangeResponse.setTextFill(Color.web("FF0000"));
+        }
+    }
 }

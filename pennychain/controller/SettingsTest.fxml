@@ -98,6 +98,11 @@
                                     <Insets bottom="10.0" />
                                  </VBox.margin>
                               </HBox>
+                              <HBox fx:id="responseMsg" alignment="CENTER" minHeight="20.0">
+                                 <children>
+                                    <Label fx:id="pwChangeResponse" />
+                                 </children>
+                              </HBox>
                                       <Button fx:id="changePassButton" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#handleChangePassButton" text="Change Password" />
                            </children>
                         </VBox>
