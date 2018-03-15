@@ -55,7 +55,7 @@ public class Map {
         for(int l=cell_length; l<=len ;l=l+cell_length){
             for(int w=cell_width; w<=width ; w=w+cell_width){
                 gridCorners.add(new Point(l,w));
-                gridCenters.add(new Point(l/2, w/2));
+                gridCenters.add(new Point(l-(cell_length/2), w-(cell_width/2)));
             }
         }
     }
