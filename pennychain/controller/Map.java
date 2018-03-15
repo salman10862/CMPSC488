@@ -1,5 +1,8 @@
 package pennychain.controller;
 
+import java.awt.*;
+import java.util.ArrayList;
+
 public class Map {
     private int width,
             len,
@@ -27,13 +30,34 @@ public class Map {
     private Double latitude,
             longitude;
 
+
+    private ArrayList<Point> gridCorners;    //Stores the lower right-hand coordinates of each grid cell.
+    private ArrayList<Point> gridCenters;    //Stores the center of each grid cell;
+
     public Map(int grid_size, int width, int len, int zoom, Double latitude, Double longitude){
-        this.grid_size = grid_size;
+        this.grid_size = grid_size; //Grid size MUST be divisible by 4
         this.len = len;
         this.width = width;
         this.zoom = zoom;
         this.longitude = longitude;
         this.latitude = latitude;
+    }
+
+
+    //TODO: Bring up computation concerns with group
+    //Concern: These are all based on ints: But these are all based on pixel values,
+    // So graphically representing them is an issue anyways.
+    public void initializeGrid(){
+        gridCorners = new ArrayList<>(grid_size);
+        gridCenters = new ArrayList<>(grid_size);
+        int cell_length = len/(grid_size/2);
+        int cell_width = width/(grid_size/2);
+        for(int l=cell_length; l<=len ;l=l+cell_length){
+            for(int w=cell_width; w<=width ; w=w+cell_width){
+                gridCorners.add(new Point(l,w));
+                gridCenters.add(new Point(l/2, w/2));
+            }
+        }
     }
 
     public int getGrid_size(){ return grid_size; }
