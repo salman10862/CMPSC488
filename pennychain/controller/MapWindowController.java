@@ -174,8 +174,7 @@ public class MapWindowController {
     @FXML protected void sendOptimizationRequest() throws IOException{
         if(project.getMainMap() != null) {
             OptimizationRequest opreq = new OptimizationRequest(this.currentMap);
-            this.currentMap = opreq.sendRequest("C:\\"); 
-                                            //TODO: sendRequest requires user-defined path name for file storage (C drive is temporary filler)
+            this.currentMap = opreq.sendRequest(project.getOptimizationPath()); 
             project.setMainMap(this.currentMap);
         }
     }
