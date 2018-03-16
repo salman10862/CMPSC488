@@ -3,9 +3,9 @@ package pennychain.usr;
 public class UserSession {
 
     private static UserSession instance = null;
-    private String currentUser;
+    private String currentUser = "default";
 
-    private UserSession(){}
+    public UserSession(){}
 
     public static UserSession getInstance() {
         if(instance == null)
@@ -14,6 +14,7 @@ public class UserSession {
         return instance;
     }
 
+    public String getCurrentUser(){return currentUser;}
     public void setCurrentUser(String user) {
         currentUser = user;
     }

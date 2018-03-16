@@ -1,6 +1,8 @@
 package pennychain.controller;
 
+import javafx.scene.input.MouseEvent;
 import pennychain.db.Hash;
+import pennychain.db.Connection_Online;
 import pennychain.usr.UserSession;
 
 import javafx.event.ActionEvent;
@@ -12,8 +14,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
+import javafx.scene.paint.*;
 
-import java.awt.*;
+import java.security.spec.InvalidParameterSpecException;
+
+//import java.awt.*;
 
 
 public class SettingsController{
@@ -22,7 +27,7 @@ public class SettingsController{
     @FXML private TextFlow userNameField;
     @FXML private PasswordField newPassField1;
     @FXML private PasswordField newPassField2;
-    @FXML private PasswordField currenPassConfirm;
+    @FXML private PasswordField currentPassConfirm;
     @FXML private Label pwChangeResponse;
     //@FXML private double gridValue;
     @FXML private javafx.scene.control.TextField gridField;
@@ -77,11 +82,15 @@ public class SettingsController{
         s.close();
     }
 
-    @FXML protected void handleChangePassButton(MouseEvent event){
-        String salt = Connection_Online.getSalt(session.getCurrentUser());
-        String saltedHashedPass = Connection_Online.getHashedPass(session.getCurrentUser());
 
-        if(Hash.verifyPassword(currenPassConfirm.getCharacters(), salt, saltedHashedPass) {
+    @FXML protected void handleChangePassButton(MouseEvent event) throws java.security.NoSuchAlgorithmException,
+    java.security.spec.InvalidKeySpecException
+    {
+        String salt = Connection_Online.getSalt(session.getCurrentUser()).toString();
+        String saltedHashedPass = Connection_Online.getHashedPass(session.getCurrentUser()).toString();
+
+
+        if(Hash.verifyPassword(currentPassConfirm.getCharacters(), salt, saltedHashedPass)) {
             String newPass1 = newPassField1.getCharacters().toString();
             String newPass2 = newPassField2.getCharacters().toString();
 
@@ -104,5 +113,6 @@ public class SettingsController{
             pwChangeResponse.setText("Current password is incorrect");
             pwChangeResponse.setTextFill(Color.web("FF0000"));
         }
+
     }
 }

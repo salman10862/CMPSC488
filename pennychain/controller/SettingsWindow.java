@@ -6,10 +6,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
+import pennychain.usr.UserSession;
 
 
 public class SettingsWindow extends Application {
     private Project project;
+    private UserSession session;
 
 
     @Override
@@ -18,7 +20,7 @@ public class SettingsWindow extends Application {
         if(project == null)
             this.project = new Project("PROJECT NOT LINKED",new userProfile() );
 
-        SettingsController sc = new SettingsController(project);
+        SettingsController sc = new SettingsController(session,project);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("SettingsTest.fxml"));
         loader.setController(sc);
         Parent root = loader.load();

@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import pennychain.center.OptimizationRequest;
+import pennychain.usr.UserSession;
 
 import javax.tools.Tool;
 
@@ -43,6 +44,7 @@ public class MapWindowController {
 
     private Project project;
     private Map currentMap;
+    private UserSession userSession;
 
     private int currentZoom;
 
@@ -50,8 +52,9 @@ public class MapWindowController {
     @FXML private ComboBox<String> resourceChooser = new ComboBox<>();
 
 
-    public MapWindowController(Project project)
+    public MapWindowController(Project project, UserSession userSessionn)
     {
+        this.userSession = userSessionn;
         this.project = project;
         this.currentMap = project.getMainMap();
     }
@@ -75,7 +78,7 @@ public class MapWindowController {
 
     @FXML protected void handleSettingsItem(ActionEvent event) throws IOException {
 
-        SettingsController controller = new SettingsController(project);
+        SettingsController controller = new SettingsController(userSession, project);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("SettingsTest.fxml"));
         loader.setController(controller);
         Parent root = loader.load();

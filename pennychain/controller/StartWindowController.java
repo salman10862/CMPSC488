@@ -27,8 +27,8 @@ public class StartWindowController {
 
     @FXML protected void handleNewProjectButton(MouseEvent event) throws IOException {
         Project project = new Project();
-
-        MapWindowController controller = new MapWindowController(project);
+        
+        MapWindowController controller = new MapWindowController(project, userSession);
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("MapWindow.fxml"));
         loader.setController(controller);

@@ -8,16 +8,22 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import pennychain.usr.UserSession;
 
 public class MapWindow extends Application {
     private Project project;
+    private UserSession userSession;
 
     @Override
     public void start(Stage stage) throws IOException {
         if(project == null)
             this.project = new Project("PROJECT NOT LINKED",new userProfile() );
 
-        MapWindowController controller = new MapWindowController(project);
+        if(userSession == null)
+            userSession = new UserSession();
+
+
+        MapWindowController controller = new MapWindowController(project, userSession);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("MapWindow.fxml"));
         loader.setController(controller);
         Parent root = loader.load();
