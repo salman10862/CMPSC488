@@ -14,11 +14,10 @@ public class APMpyth {
 	}
 	
 	public String sendData() throws IOException {
-		/*
-		 * CALL PYTHON SCRIPT
-		 * 
-		 * AFTER IT RUNS, READ OPTIMIZED RESULTS
-		 */
+		ProcessBuilder pb = new ProcessBuilder(this.file_loc, "Optimization.py");
+					//This path will change later. Currently is directory of python install, python file name
+					//later python will be an executable in a set project directory
+		Process p = pb.start();
 		return(this.readData());
 	}
 	
