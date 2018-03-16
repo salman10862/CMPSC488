@@ -59,7 +59,14 @@ public class Project {
     public void removeProjResource(projResource res){
         projResourceList.remove(res);
     }
-
+    
+    
+    //Function to get file directory used to pass map data between java and python
+    public String getOptimizationPath() {
+        String s = "";
+        return s;
+    }
+    
     public void projectToFile(boolean online){
         /*
         if(!online) {
