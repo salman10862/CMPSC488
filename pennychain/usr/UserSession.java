@@ -5,7 +5,7 @@ public class UserSession {
     private static UserSession instance = null;
     private String currentUser = "default";
 
-    public UserSession(){}
+    private UserSession(){}
 
     public static UserSession getInstance() {
         if(instance == null)
