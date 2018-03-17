@@ -44,7 +44,7 @@
     </top>
     <center>
         <Canvas fx:id="transGrid" BorderPane.alignment="CENTER" />
-        <WebView fx:id="webView" prefHeight="368.0" prefWidth="582.0" BorderPane.alignment="CENTER" />
+        <WebView fx:id="webView" prefHeight="582.0" prefWidth="582.0" BorderPane.alignment="CENTER" />
     </center>
     <bottom>
         <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">

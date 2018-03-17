@@ -4,8 +4,9 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Map {
-    private int width,
-            len,
+    private double width,
+            len;
+    private int
             zoom,
             grid_size=100; // Default value for testing
     
@@ -30,11 +31,14 @@ public class Map {
     private Double latitude,
             longitude;
 
+    private double cell_width,
+                cell_length;
+
 
     private ArrayList<Point> gridCorners;    //Stores the lower right-hand coordinates of each grid cell.
     private ArrayList<Point> gridCenters;    //Stores the center of each grid cell;
 
-    public Map(int grid_size, int width, int len, int zoom, Double latitude, Double longitude){
+    public Map(int grid_size, double width, double len, int zoom, Double latitude, Double longitude){
         this.grid_size = grid_size; //Grid size MUST be divisible by 4
         this.len = len;
         this.width = width;
@@ -50,14 +54,51 @@ public class Map {
     public void initializeGrid(){
         gridCorners = new ArrayList<>(grid_size);
         gridCenters = new ArrayList<>(grid_size);
-        int cell_length = len/(grid_size/2);
-        int cell_width = width/(grid_size/2);
-        for(int l=cell_length; l<=len ;l=l+cell_length){
-            for(int w=cell_width; w<=width ; w=w+cell_width){
-                gridCorners.add(new Point(l,w));
-                gridCenters.add(new Point(l-(cell_length/2), w-(cell_width/2)));
+        cell_length = len/(grid_size/2);
+        cell_width = width/(grid_size/2);
+        for(double l=cell_length; l<=len ;l=l+cell_length){
+            for(double w=cell_width; w<=width ; w=w+cell_width){
+                gridCorners.add(new Point((int)w, (int)l));
+                gridCenters.add(new Point((int)(w-(cell_width/2)), (int) (l-(cell_length/2))));
             }
         }
+    }
+
+    public double[] getGridCoordinates(double x, double y){
+        double[] coordinates = new double[4];
+        System.out.println("Looking for cell @ pt" + x + " " + y);
+        double left_x = 0;
+        double left_y = 0;
+        double right_x;
+        double right_y;
+        for (Point p:
+             gridCorners) {
+             right_x = p.getX();
+             right_y = p.getY();
+             System.out.println("Currently examing grid cell: " + left_x + " "
+                                                                + left_y + ","
+                                                                + right_x + " "
+                                                                + right_y + ".");
+             if(left_x <= x && right_x >= x) {
+                 if (left_y <= y && right_y >= y) {
+                     coordinates[0] = left_x;
+                     coordinates[1] = left_y;
+                     coordinates[2] = right_x;
+                     coordinates[3] = right_y;
+                     System.out.println("CELL FOUND");
+                     break;
+                 }
+             }
+            if(right_x == width) {
+                left_x = 0;
+                left_y = right_y;
+            }
+             else {
+                left_x = right_x;
+            }
+        }
+
+        return coordinates;
     }
 
     public int getGrid_size(){ return grid_size; }
@@ -66,8 +107,10 @@ public class Map {
     public int getZoom(){return zoom;}
     public int changeGrid_size(int grid_size){ return this.grid_size = grid_size; }
     public int getSize(){return 100;} //TODO: REPLACE DUMMY VALUE
-    public int getWidth() {return this.width;}
-    public int getLength() {return this.len;}
+    public double getCell_width(){return cell_width;}
+    public double getCell_length(){return cell_length;}
+    public double getWidth() {return this.width;}
+    public double getLength() {return this.len;}
 
     // D-to-D_matrix
     // TODO: Row = Major Redistribution Center: Distibution's Distrubtion

@@ -8,21 +8,23 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+
 import pennychain.center.OptimizationRequest;
 import pennychain.usr.UserSession;
 
-import javax.tools.Tool;
 
 public class MapWindowController {
 
@@ -48,7 +50,7 @@ public class MapWindowController {
 
     private int currentZoom;
 
-    StackPane layerPane;
+    private StackPane layerPane;
     @FXML private ComboBox<String> resourceChooser = new ComboBox<>();
 
 
@@ -136,14 +138,14 @@ public class MapWindowController {
     }
 
     @FXML protected void lockMapListener(ActionEvent event){
-        int GRID_SIZE =100; //TODO: Talk to group about design of setting initial gride size
+        int GRID_SIZE =40; //TODO: Talk to group about design of setting initial gride size
         webEngine.executeScript("disable()");
 
         Double latitude = (Double) webEngine.executeScript("getLongitude()");
         Double longitude = (Double) webEngine.executeScript("getLatitude()");
         int zoom = (Integer) webEngine.executeScript("getZoom()");
         //TODO: Compute and add grid distance parameters to the Map
-        Map map = new Map(GRID_SIZE, 800, 600, zoom, latitude, longitude);
+        Map map = new Map(GRID_SIZE, webView.getWidth(), webView.getHeight(), zoom, latitude, longitude);
         project.setMainMap(map);
         currentMap = project.getMainMap();
         currentZoom = zoom;
@@ -155,15 +157,17 @@ public class MapWindowController {
         //Added Transparency Layer
         layerPane = new StackPane();
 
-        transGrid.setOpacity(0);
         transGrid.setWidth(webView.getWidth());
         transGrid.setHeight(webView.getHeight());
         layerPane.getChildren().addAll(webView, transGrid);
         windowPane.setCenter(layerPane);
+
+        currentMap.initializeGrid();
         transGrid.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                System.out.println("Canvas clicked at" + mouseEvent.getX());
+                //System.out.println("Canvas clicked at" + mouseEvent.getX());
+                drawSquare(mouseEvent.getX(), mouseEvent.getY(), Color.color(0.5,0.2,0.2,0.4));
             }
         });
 
@@ -171,6 +175,15 @@ public class MapWindowController {
         zoomInButton.setDisable(false);
         zoomOutButton.setDisable(false);
         optimizeButton.setDisable(false);
+    }
+
+    private  void drawSquare(double x, double y, Color rColor){
+
+        GraphicsContext gc = transGrid.getGraphicsContext2D();
+        gc.setFill(rColor);
+
+        double[] coordinates = currentMap.getGridCoordinates(x, y);
+        gc.fillRect(coordinates[0],coordinates[1],currentMap.getCell_width(),currentMap.getCell_length());
     }
 
     //This method (feel free to change the name as desired) is intended to be what is called when User tries to send an optimization request

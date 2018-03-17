@@ -15,7 +15,7 @@ public class OptimizationRequest {
 	
 	public OptimizationRequest(Map new_map) {
 		this.map = new_map;
-		varBound = map.getWidth();
+		varBound = (int) map.getWidth();
 	}
 	
 	public Map sendRequest(String path_name) throws IOException {
