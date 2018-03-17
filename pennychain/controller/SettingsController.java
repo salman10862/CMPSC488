@@ -24,7 +24,7 @@ import java.security.spec.InvalidParameterSpecException;
 public class SettingsController{
     @FXML private Button cancelButton;
     @FXML private Button changePassButton;
-    @FXML private TextFlow userNameField;
+    @FXML private Label userNameField;
     @FXML private PasswordField newPassField1;
     @FXML private PasswordField newPassField2;
     @FXML private PasswordField currentPassConfirm;
@@ -57,14 +57,8 @@ public class SettingsController{
         gridField.setText(Integer.toString(project.getMainMap().getGrid_size()));
 
         //Try to get username from the UserProfile object
-        text1 = new Text(cUser.getUsername());
-        /*
-            text1 = new Text("Example User");
-            text1.setScaleX(1.2);
-            text1.setScaleY(1.2);
-        */
+        userNameField.setText(cUser.getUsername());
 
-        userNameField.getChildren().add(text1);
     }
 
     @FXML protected void handleApplyButton(ActionEvent event) {

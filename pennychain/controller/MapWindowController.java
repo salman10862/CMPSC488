@@ -31,6 +31,7 @@ public class MapWindowController {
     @FXML private MenuItem aboutItem;
     @FXML private MenuItem exitItem;
     @FXML private MenuItem defineConstraintsItem;
+    @FXML private MenuItem addAResourceItem;
     @FXML private MenuItem settingsItem;
     @FXML private WebEngine webEngine;
     @FXML private WebView webView;
@@ -175,6 +176,8 @@ public class MapWindowController {
         zoomInButton.setDisable(false);
         zoomOutButton.setDisable(false);
         optimizeButton.setDisable(false);
+        addAResourceItem.setDisable(false);
+        defineConstraintsItem.setDisable(false);
     }
 
     private  void drawSquare(double x, double y, Color rColor){
@@ -229,6 +232,8 @@ public class MapWindowController {
     @FXML protected void initialize() {
         webEngine = webView.getEngine();
         webEngine.load(getClass().getResource("googlemap.html").toString());
+
+        //Default case on loading an existing Map
         if(project.getMainMap()  != null) {
             webEngine.executeScript("setPerspective(" + project.getMainMap().getLatitude() + ", " + project.getMainMap().getLongitude() + ", "
                     + project.getMainMap().getZoom() + ")");
@@ -238,10 +243,14 @@ public class MapWindowController {
                 resourceChooser.getItems().addAll(FXCollections.observableList(project.getStringsofResources()));
             resourceChooser.setVisible(true);
         }
+        //Alternative case, new Project and no Map
         else{
             zoomInButton.setDisable(true);
             zoomOutButton.setDisable(true);
             optimizeButton.setDisable(true);
+            defineConstraintsItem.setDisable(true);
+            addAResourceItem.setDisable(true);
+
         }
     }
 
