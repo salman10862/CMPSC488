@@ -2,7 +2,6 @@ package pennychain.center;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 
 public class APMpyth {
@@ -14,7 +13,7 @@ public class APMpyth {
 	}
 	
 	public String sendData() throws IOException {
-		ProcessBuilder pb = new ProcessBuilder(this.file_loc, "Optimization.py");
+		ProcessBuilder pb = new ProcessBuilder(file_loc + "Optimization.py");
 					//This path will change later. Currently is directory of python install, python file name
 					//later python will be an executable in a set project directory
 		Process p = pb.start();

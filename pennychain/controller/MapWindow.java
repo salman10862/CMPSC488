@@ -20,7 +20,7 @@ public class MapWindow extends Application {
             this.project = new Project("PROJECT NOT LINKED",new userProfile() );
 
         if(userSession == null)
-            userSession = new UserSession();
+            userSession = UserSession.getInstance();
 
 
         MapWindowController controller = new MapWindowController(project, userSession);

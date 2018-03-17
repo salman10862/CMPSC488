@@ -19,7 +19,7 @@ public class OptimizationRequest {
 	}
 	
 	public Map sendRequest(String path_name) throws IOException {
-		this.read_map();
+		this.read_map(path_name);
 		APMpyth apmpython = new APMpyth(path_name);
 		this.bundle_data(path_name);
 		
@@ -71,7 +71,7 @@ public class OptimizationRequest {
 		return opmap;
 	}
 	
-	private void read_map(String path) {
+	private void read_map(String path) throws IOException {
 		
 		FileWriter f = new FileWriter(path);
 		for(int i = 0; i < varBound; i++) {
