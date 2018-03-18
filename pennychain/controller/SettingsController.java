@@ -109,4 +109,8 @@ public class SettingsController{
         }
 
     }
+    
+        @FXML protected void handleEmailButton(ActionEvent event){
+        emailButton.setText("Notifications Off");
+    }
 }
