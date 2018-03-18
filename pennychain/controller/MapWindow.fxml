@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.*?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
@@ -11,7 +16,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.web.WebView?>
 
-<BorderPane fx:id="windowPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="442.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="windowPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="442.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <top>
         <MenuBar BorderPane.alignment="CENTER">
             <menus>
@@ -49,11 +54,11 @@
     <bottom>
         <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <items>
-                <Button fx:id="lockMap" mnemonicParsing="false" onAction="#lockMapListener" text="Lock Map" />
+                <Button fx:id="lockMap" mnemonicParsing="false" onMouseClicked="#lockMapListener" text="Lock Map" />
                 <ComboBox fx:id="resourceChooser" prefWidth="150.0" promptText="Resources" />
             <Button fx:id="optimizeButton" mnemonicParsing="false" text="Request Optimization" />
-            <Button fx:id="zoomInButton" mnemonicParsing="false" text="Zoom In" onAction="#handleZoomIn" />
-            <Button fx:id="zoomOutButton" mnemonicParsing="false" text="Zoom Out" onAction="#handleZoomOut"/>
+            <Button fx:id="zoomInButton" mnemonicParsing="false" onMouseClicked="#handleZoomIn" text="Zoom In" />
+            <Button fx:id="zoomOutButton" mnemonicParsing="false" onMouseClicked="#handleZoomOut" text="Zoom Out" />
             </items>
         </ToolBar>
     </bottom>

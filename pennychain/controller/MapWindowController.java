@@ -138,7 +138,7 @@ public class MapWindowController {
         );
     }
 
-    @FXML protected void lockMapListener(ActionEvent event){
+    @FXML protected void lockMapListener(MouseEvent event){
         int GRID_SIZE =40; //TODO: Talk to group about design of setting initial gride size
         webEngine.executeScript("disable()");
 
@@ -235,8 +235,9 @@ public class MapWindowController {
 
         //Default case on loading an existing Map
         if(project.getMainMap()  != null) {
-            webEngine.executeScript("setPerspective(" + project.getMainMap().getLatitude() + ", " + project.getMainMap().getLongitude() + ", "
-                    + project.getMainMap().getZoom() + ")");
+            webEngine.executeScript("setPerspective(" + project.getMainMap().getLatitude() + ", "
+                    + project.getMainMap().getLongitude() + ", " + project.getMainMap().getZoom()
+                    + ")");
             lockMap.setDisable(true);
             currentZoom = project.getMainMap().getZoom();
             if(!project.getStringsofResources().isEmpty())
