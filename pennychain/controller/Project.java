@@ -13,7 +13,7 @@ public class Project {
 
     //private final DEFAULT_SETTINGS = new
     public Project(){
-
+        projResourceList = new ArrayList<>();
     }
     public Project(String projLabel, userProfile linked_userID){
         this.projLabel = projLabel;
