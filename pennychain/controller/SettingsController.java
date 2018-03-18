@@ -31,6 +31,8 @@ public class SettingsController{
     @FXML private Label pwChangeResponse;
     //@FXML private double gridValue;
     @FXML private javafx.scene.control.TextField gridField;
+    
+    @FXML private Button emailButton;
 
     private Project project;
     private UserSession session;
