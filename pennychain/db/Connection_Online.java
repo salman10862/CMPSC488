@@ -125,6 +125,25 @@ public static CharSequence getSalt(String uname){	//returns the salt used with t
     cursor.close();
     return salt;
 }
+    
+    public void shareProject(String username){  //share a project with user
+    //TODO: share project with user if they exist in database
+    if(!(userExists(username){
+        //Display Error Message
+    }
+    else{
+        //Add username to "sharedWith" category
+    }
+            
+}
+
+public void saveProject(){
+        //TODO: Save a project along with all relevant information to database
+}
+
+public void loadProject(){
+        //TODO: Retrieve a project from the databaes and load it into application
+}
 
     //modify a record in the database
     public static void modifyRecord()
