@@ -128,12 +128,6 @@ public static CharSequence getSalt(String uname){	//returns the salt used with t
     
     public void shareProject(String username){  //share a project with user
     //TODO: share project with user if they exist in database
-    if(!(userExists(username){
-        //Display Error Message
-    }
-    else{
-        //Add username to "sharedWith" category
-    }
             
 }
 
