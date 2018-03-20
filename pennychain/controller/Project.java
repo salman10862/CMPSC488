@@ -54,6 +54,10 @@ public class Project {
     public ArrayList<String> getSharedWith(){
         return sharedWith;
     }
+    
+    public void shareWithUser(String username){
+        sharedWith.add(username);
+    }
 
     public void setMainMap(Map map){ this.mainMap = map;}
 
