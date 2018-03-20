@@ -27,7 +27,7 @@
                         <MenuItem mnemonicParsing="false" text="Load From Database" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" text="Save" />
-                        <MenuItem mnemonicParsing="false" text="Save as..." />
+                        <MenuItem fx:id="saveAsItem" mnemonicParsing="false" onAction="#handleSaveAs" text="Save as..." />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem fx:id="exitItem" mnemonicParsing="false" onAction="#handleExitItem" text="Exit" />
                     </items>
