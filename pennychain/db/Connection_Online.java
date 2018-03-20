@@ -126,9 +126,8 @@ public static CharSequence getSalt(String uname){	//returns the salt used with t
     return salt;
 }
     
-    public void shareProject(String username){  //share a project with user
-    //TODO: share project with user if they exist in database
-            
+    public void shareProject(Project project, String username){  //share a project with user
+        project.shareWithUser(username);    //Add username to sharedWith arraylist
 }
 
 public void saveProject(){
