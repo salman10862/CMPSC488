@@ -28,10 +28,32 @@ public class retrieveGasPrices {
     public static String BaseUrl = "https://www.gasbuddy.com";
 
 
+
     public static void main(String[] args) throws Exception {
         loadUrls();
+        int i = 1;
         for(String county : county_Urls) {
-            scrapCounties(county);
+            System.out.println("SCRAPING COUNTY" + "\n" + county);
+            Double totalPrices = 0.0;
+            Double avgGasPrice = 0.0;
+            ArrayList<Double> allGasPrices = new ArrayList<>();
+            ArrayList<String> cities = scrapCounty(county);
+            for(String city: cities)
+            {
+                System.out.println("SCRAPING CITY" + "\n" + city);
+                getGasPriceOfCity(city, allGasPrices);
+            }
+            for(Double price: allGasPrices)
+            {
+                totalPrices += price;
+            }
+            avgGasPrice = totalPrices/allGasPrices.size();
+            System.out.println(county + " " + avgGasPrice);
+            i++;
+            if(i > 3)
+            {
+                break;
+            }
         }
 
     }
@@ -46,15 +68,9 @@ public class retrieveGasPrices {
             county_Urls.add(sc.nextLine());
         }
 
-        for(String url: county_Urls){
-            System.out.println(url);
-        }
-
-
-
     }
 
-    public static ArrayList<String> scrapCounties(String url)
+    public static ArrayList<String> scrapCounty(String url)
     {
         ArrayList<String> cities_Urls = new ArrayList<>();
 
@@ -65,10 +81,6 @@ public class retrieveGasPrices {
 
         while (matcher.find()) {
             cities_Urls.add(BaseUrl + matcher.group(1).replace(" ", "%20"));
-        }
-        for(String curl : cities_Urls)
-        {
-            System.out.println(curl);
         }
         System.out.println("Done");
 
@@ -97,6 +109,25 @@ public class retrieveGasPrices {
             e.printStackTrace();
         }
         return htmlSource;
+    }
+
+    public static void getGasPriceOfCity(String url, ArrayList<Double> allGasPrices)
+    {
+        String htmlSource = retrieveHTMLSourceCode(url);
+        Pattern pattern = Pattern.compile("p.a = \\[(.*)]");
+        Matcher matcher = pattern.matcher(htmlSource);
+        while (matcher.find()) {
+            String gasPrice = matcher.group(1);
+            String[] totalCountyPrices =  gasPrice.split(",");
+            for(String price: totalCountyPrices)
+            {
+                if(price.compareTo("0") == 0){
+                    continue;
+                }
+                price = price.replace("\"", "");
+                allGasPrices.add(Double.valueOf(price));
+            }
+        }
     }
 
 }
