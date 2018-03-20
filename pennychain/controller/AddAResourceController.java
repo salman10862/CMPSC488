@@ -53,7 +53,8 @@ public class AddAResourceController{
         colorPicker.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                newRColor = colorPicker.getValue();
+                // Adjust any color selected to be slightly opaque
+                newRColor = colorPicker.getValue().deriveColor(0,1,1,0.3);
             }
         });
     }
@@ -63,7 +64,11 @@ public class AddAResourceController{
     @FXML protected void handleAddButton(ActionEvent event) {
         Stage s = (Stage) AddButton.getScene().getWindow();
         if(!labelField.getText().equals("")) {
-            project.addProjResource(new projResource(labelField.getText(), newRColor));
+            projResource newResource = new projResource(labelField.getText(), newRColor);
+
+            newResource.initializePlacement((int) project.getMainMap().getWidth(), (int) project.getMainMap().getLength());
+
+            project.addProjResource(newResource);
             rList.setItems(FXCollections.observableList(project.getStringsofResources()));
             s.hide();
         }

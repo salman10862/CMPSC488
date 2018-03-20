@@ -160,7 +160,7 @@ public class MapWindowController {
         stage.setOnHidden(new EventHandler<WindowEvent>(){
                               @Override
                               public void handle(WindowEvent windowEvent){
-                                  resourceChooser.getItems().addAll(project.getStringsofResources());
+                                  resourceChooser.getItems().setAll(project.getStringsofResources());
 
                                   System.out.println("Yep, it closed.");
                                   System.out.println(project.getStringsofResources());
@@ -198,8 +198,13 @@ public class MapWindowController {
         transGrid.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                //System.out.println("Canvas clicked at" + mouseEvent.getX());
-                drawSquare(mouseEvent.getX(), mouseEvent.getY(), Color.color(0.5,0.2,0.2,0.4));
+                // Check that there is a resource to draw on the map
+                if(!resourceChooser.getSelectionModel().isEmpty()) {
+                    int selected = resourceChooser.getSelectionModel().getSelectedIndex();
+                    projResource selected_Resource = project.getProjResourceList().get(selected);
+
+                    drawSquare(mouseEvent.getX(), mouseEvent.getY(), selected_Resource);
+                }
             }
         });
 
@@ -211,10 +216,11 @@ public class MapWindowController {
         defineConstraintsItem.setDisable(false);
     }
 
-    private  void drawSquare(double x, double y, Color rColor){
-
+    private  void drawSquare(double x, double y, projResource selected_Resource){
+        Color rColor = selected_Resource.getColor();
         GraphicsContext gc = transGrid.getGraphicsContext2D();
         gc.setFill(rColor);
+
 
         double[] coordinates = currentMap.getGridCoordinates(x, y);
         gc.fillRect(coordinates[0],coordinates[1],currentMap.getCell_width(),currentMap.getCell_length());
@@ -231,11 +237,15 @@ public class MapWindowController {
 
     @FXML protected void handleZoomIn(){
         int zoom = currentMap.getZoom();
-        currentZoom++;
-        transGrid.setScaleX(currentMap.googleZoomScales[currentZoom]/currentMap.googleZoomScales[zoom]);
-        transGrid.setScaleY(currentMap.googleZoomScales[currentZoom]/currentMap.googleZoomScales[zoom]);
-        webEngine.executeScript("zoomIn()");
-        layerPane.setDisable(true);
+        if(currentZoom < 19) {
+            currentZoom++;
+            transGrid.setScaleX(currentMap.googleZoomScales[currentZoom] / currentMap.googleZoomScales[zoom]);
+            transGrid.setScaleY(currentMap.googleZoomScales[currentZoom] / currentMap.googleZoomScales[zoom]);
+            webEngine.executeScript("zoomIn()");
+            layerPane.setDisable(true);
+            if(currentZoom == 19)
+                zoomInButton.setDisable(true);
+        }
     }
 
     @FXML protected void handleZoomOut(){
@@ -247,6 +257,8 @@ public class MapWindowController {
             webEngine.executeScript("zoomOut()");
             if(currentZoom == zoom)
                 reEnableMapEdit();
+            if(zoomInButton.isDisabled())
+                zoomInButton.setDisable(false);
         }
     }
 

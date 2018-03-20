@@ -13,6 +13,7 @@ public class Project {
     private String projLabel;
     private userProfile linked_userID;
     private Map mainMap;
+    private Map optimizedMap;
     private ArrayList<Map> scenarioMaps;
     private ArrayList<projResource> projResourceList;
     private ArrayList<String> settingsList;

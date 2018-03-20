@@ -12,6 +12,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,10 +25,14 @@ public class ConstraintController{
     private Project project;
     private Map currentMap;
 
+    private int[] desired_resourceList;
+    private projResource  selected_Resource;
+
     public ConstraintController(Project project)
     {
         this.project = project;
         this.currentMap = project.getMainMap();
+        this.desired_resourceList = new int[project.getProjResourceList().size()];
     }
 
     @FXML
@@ -46,19 +51,30 @@ public class ConstraintController{
                 String t = (String) cTypeList.getSelectionModel().getSelectedItem();
                 if(t.equals("Global"))
                     cList.setItems(FXCollections.observableList(global_values));
-                else if (t.equals("Reousrce-tied"))
-                    cList.setItems(FXCollections.observableList(project.getProjResourceList())); //TODO: Iterate over different types
-                else
+                else if (t.equals("Resource-tied")) {
+                    ArrayList<projResource> list = project.getProjResourceList();
+                    ArrayList<String> str_lst = new ArrayList<>();
+                    for (projResource res:
+                         list) {
+                        String str = res.getLabel() + "   Desired Amount: " + res.getDesired_amnt();
+                        str_lst.add(str);
+                    }
+                    cList.setItems(FXCollections.observableList(str_lst)); //TODO: Iterate over different types
+                    cList.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent mouseEvent) {
+                            selected_Resource = project.getProjResourceList().get(cList.getFocusModel().getFocusedIndex());
+                        }
+                    });
+                }else
                     cList.setItems(null);   //TODO: Update with District implementation
-
-                System.out.println("Constraint Click registered"); //simple debug, remove
             }
         });
 
     }
 
 
-    @FXML protected void handleAddButton(ActionEvent event) {
+    @FXML protected void handleApplyButton(ActionEvent event) {
 
     }
 
@@ -68,7 +84,7 @@ public class ConstraintController{
 
     }
 
-    @FXML protected void handleRemoveButton(ActionEvent event){
+    @FXML protected void handleEditButton(ActionEvent event){
 
     }
 
