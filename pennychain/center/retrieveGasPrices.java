@@ -1,13 +1,3 @@
-/*import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import net.sourceforge.htmlunit.corejs.javascript.JavaScriptException;
-
-import java.io.IOException;
-import java.net.MalformedURLException;*/
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
