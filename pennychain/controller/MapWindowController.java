@@ -36,12 +36,15 @@ import pennychain.usr.UserSession;
 
 public class MapWindowController {
 
+    @FXML private MenuBar menuBar;
+
     @FXML private MenuItem saveAsItem;
     @FXML private MenuItem aboutItem;
     @FXML private MenuItem exitItem;
     @FXML private MenuItem defineConstraintsItem;
     @FXML private MenuItem addAResourceItem;
     @FXML private MenuItem settingsItem;
+
     @FXML private WebEngine webEngine;
     @FXML private WebView webView;
 
@@ -72,8 +75,7 @@ public class MapWindowController {
     }
 
     @FXML protected void handleSaveAs(ActionEvent event) {
-        Node source = (Node) event.getSource();
-        Window stage = source.getScene().getWindow();
+        Window stage = menuBar.getScene().getWindow();
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Project");
