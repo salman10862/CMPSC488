@@ -1,6 +1,12 @@
 package pennychain.controller;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -10,6 +16,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
@@ -18,9 +25,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
-
 
 import pennychain.center.OptimizationRequest;
 import pennychain.usr.UserSession;
@@ -28,6 +36,7 @@ import pennychain.usr.UserSession;
 
 public class MapWindowController {
 
+    @FXML private MenuItem saveAsItem;
     @FXML private MenuItem aboutItem;
     @FXML private MenuItem exitItem;
     @FXML private MenuItem defineConstraintsItem;
@@ -61,6 +70,26 @@ public class MapWindowController {
         this.project = project;
         this.currentMap = project.getMainMap();
     }
+
+    @FXML protected void handleSaveAs(ActionEvent event) {
+        Node source = (Node) event.getSource();
+        Window stage = source.getScene().getWindow();
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Project");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("JSON", "*.json")
+        );
+        File file = fileChooser.showSaveDialog(stage);
+        try {
+            OutputStream out = new FileOutputStream(file);
+            project.projectToFile(out);
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+        
 
     @FXML protected void handledefineConstraintsItem(ActionEvent event) throws IOException {
 
