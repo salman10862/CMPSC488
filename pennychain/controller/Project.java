@@ -10,6 +10,7 @@ public class Project {
     private ArrayList<Map> scenarioMaps;
     private ArrayList<projResource> projResourceList;
     private ArrayList<String> settingsList;
+    private ArrayList<String> sharedWith;
 
     //private final DEFAULT_SETTINGS = new
     public Project(){
@@ -48,6 +49,10 @@ public class Project {
         }
 
         return  lst;
+    }
+    
+    public ArrayList<String> getSharedWith(){
+        return sharedWith;
     }
 
     public void setMainMap(Map map){ this.mainMap = map;}
