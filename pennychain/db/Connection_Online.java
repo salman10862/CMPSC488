@@ -132,6 +132,21 @@ public static CharSequence getSalt(String uname){	//returns the salt used with t
         project.shareWithUser(username);    //Add username to sharedWith arraylist
 }
 
+public String getUserEmail(String uname){
+    String email = "";
+
+    BasicDBObject whereQuery = new BasicDBObject();
+    whereQuery.put("username", uname);
+    DBCursor cursor = userCollection.find(whereQuery);
+    while(cursor.hasNext()){
+        if(cursor.next().get("username").equals(uname))
+            email = (String) cursor.next().get("email");
+    }
+
+    cursor.close();
+    return email;
+}    
+    
 public void saveProject(){
         //TODO: Save a project along with all relevant information to database
 }
