@@ -1,13 +1,16 @@
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.DoubleSummaryStatistics;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 /**
  * Created by Chris on 3/16/2018.
@@ -16,16 +19,28 @@ public class retrieveGasPrices {
 
     public static ArrayList<String> county_Urls;
     public static String BaseUrl = "https://www.gasbuddy.com";
-
+    public static int startIndex = 0;
+    public static int maxCounties = 10;
+    public static File file = new File("avgGasPrices.txt");
+    public static FileWriter fileWriter;
+    public static Double[] allAvgGasPrices;
+    public static int count = 0;
 
 
     public static void main(String[] args) throws Exception {
+        if(args.length > 0)
+        {
+            startIndex = Integer.valueOf(args[0]);
+            System.out.println("Start index: " + startIndex);
+            //file = new File("avgGasPrices" + startIndex + ".txt");
+            //fileWriter = new FileWriter(file);
+        }
         loadUrls();
-        int i = 1;
+        allAvgGasPrices = new Double[county_Urls.size()];
         for(String county : county_Urls) {
             System.out.println("SCRAPING COUNTY" + "\n" + county);
             Double totalPrices = 0.0;
-            Double avgGasPrice = 0.0;
+            Double avgGasPrice;
             ArrayList<Double> allGasPrices = new ArrayList<>();
             ArrayList<String> cities = scrapCounty(county);
             for(String city: cities)
@@ -38,26 +53,33 @@ public class retrieveGasPrices {
                 totalPrices += price;
             }
             avgGasPrice = totalPrices/allGasPrices.size();
-            System.out.println(county + " " + avgGasPrice);
-            i++;
-            if(i > 3)
-            {
-                break;
-            }
+            retreieveAllGasPrices(avgGasPrice);
+            System.out.println(county + " " + avgGasPrice + "\n");
+            //writeGasPricesToFile(county.split("/")[county.split("/").length - 2], avgGasPrice);
         }
+        //fileWriter.close();
 
     }
 
     public static void loadUrls() throws Exception
     {
-        String filename = "/home/pratted/urls.txt";
+        String filename = "C:\\Users\\Chris\\IdeaProjects\\GasPrices\\src\\urls.txt";
         Scanner sc = new Scanner(new File(filename));
         county_Urls = new ArrayList<>();
-
-        while (sc.hasNextLine()) {
+        while(sc.hasNextLine())
+        {
             county_Urls.add(sc.nextLine());
         }
-
+        /*for(int i = 1; i < startIndex; i++){
+            if(sc.hasNextLine()){
+                sc.nextLine();
+            }
+        }
+        int processed = 0;
+        while (sc.hasNextLine() && processed < maxCounties ) {
+            county_Urls.add(sc.nextLine());
+            processed++;
+        }*/
     }
 
     public static ArrayList<String> scrapCounty(String url)
@@ -118,6 +140,19 @@ public class retrieveGasPrices {
                 allGasPrices.add(Double.valueOf(price));
             }
         }
+    }
+
+    public static void writeGasPricesToFile(String county, Double price) throws IOException {
+        fileWriter.write(county + "," + price + "\n");
+        fileWriter.flush();
+    }
+
+    public static Double[] retreieveAllGasPrices(double price)
+    {
+        allAvgGasPrices[count] = price;
+        System.out.println(allAvgGasPrices[count]);
+        count++;
+        return allAvgGasPrices;
     }
 
 }
