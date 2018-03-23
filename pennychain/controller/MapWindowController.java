@@ -235,8 +235,7 @@ public class MapWindowController {
                         removeSquare(x_click, y_click);
                         Color rColor = Color.BLACK;
                         GraphicsContext gc =transGrid.getGraphicsContext2D();
-                        //GraphicsContext gc =
-                        //selected_Resource.blockCoordinate(cell_x, cell_y);
+                        //TODO: fill the rect
                     }
                     else {
                         if (selected_Resource.getValueAtGrid(cell_x, cell_y) != 1) {
