@@ -1,9 +1,11 @@
 package pennychain.controller;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.util.ArrayList;
 
 import com.google.gson.Gson;
@@ -27,6 +29,7 @@ public class Project {
         settingsList = new ArrayList<>();
         sharedWith = new ArrayList<>();
     }
+
     public Project(String projLabel, userProfile linked_userID){
         this.projLabel = projLabel;
         this.linked_userID = linked_userID;
@@ -87,17 +90,11 @@ public class Project {
         return s;
     }
     
-    public void projectToFile(OutputStream out) throws IOException, UnsupportedEncodingException {
-        String sharedWithStr = String.join(",", sharedWith); // Java 8 or later!
-
-        JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
-        writer.setIndent("    ");
-        writer.beginObject();
-        writer.name("projectName").value(projLabel);
-        writer.name("owner").value(linked_userID.getUsername());
-        writer.name("sharedWith").value(sharedWithStr);
-        writer.endObject();
-        writer.close();
+    public void projectToFile(Writer out) throws IOException, UnsupportedEncodingException {
+        Gson gson = new Gson();
+        String json = gson.toJson(this);
+        System.out.println(json);
+        gson.toJson(this, out);
     }
 
 

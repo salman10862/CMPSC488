@@ -3,9 +3,11 @@ package pennychain.controller;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -74,7 +76,7 @@ public class MapWindowController {
         this.currentMap = project.getMainMap();
     }
 
-    @FXML protected void handleSaveAs(ActionEvent event) {
+    @FXML protected void handleSaveAs(ActionEvent event) throws Exception {
         Window stage = menuBar.getScene().getWindow();
 
         FileChooser fileChooser = new FileChooser();
@@ -82,13 +84,22 @@ public class MapWindowController {
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("JSON", "*.json")
         );
+        fileChooser.setInitialFileName("*.JSON");
+        
         File file = fileChooser.showSaveDialog(stage);
-        try {
-            OutputStream out = new FileOutputStream(file);
-            project.projectToFile(out);
-        }
-        catch(Exception e) {
-            System.out.println(e.getMessage());
+        if(file != null) {
+            if(file.getName().endsWith(".JSON")) {
+                try {
+                    Writer out = new FileWriter(file);
+                    project.projectToFile(out);
+                }
+                catch(IOException e) {
+                    System.out.println(e.getMessage());
+                }
+            } else {
+                throw new Exception(file.getName()
+                        + " does not have valid extension. File type must be .JSON");
+            }
         }
     }
         
