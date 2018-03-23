@@ -217,13 +217,13 @@ public class MapWindowController {
                     double cell_length = currentMap.getCell_length();
                     double cell_width = currentMap.getCell_width();
 
-                    int cell_x = (int) (grid_coordinates[0]/cell_length);
-                    int cell_y = (int) (grid_coordinates[1]/cell_width);
-
+                    int cell_x = (int) (grid_coordinates[0]/cell_width);
+                    int cell_y = (int) (grid_coordinates[1]/cell_length);
 
                     if(mouseEvent.isControlDown()) {
                         removeSquare(x_click, y_click);
                         Color rColor = Color.BLACK;
+                        GraphicsContext gc =transGrid.getGraphicsContext2D();
                         //GraphicsContext gc =
                         //selected_Resource.blockCoordinate(cell_x, cell_y);
                     }
@@ -312,8 +312,6 @@ public class MapWindowController {
         System.out.println(layerPane.getChildren());
     }
 
-
-
     @FXML protected void initialize() {
         webEngine = webView.getEngine();
         webEngine.load(getClass().getResource("googlemap.html").toString());
@@ -325,8 +323,10 @@ public class MapWindowController {
                     + ")");
             lockMap.setDisable(true);
             currentZoom = project.getMainMap().getZoom();
-            if(!project.getStringsofResources().isEmpty())
+            if(!project.getStringsofResources().isEmpty()) {
                 resourceChooser.getItems().addAll(FXCollections.observableList(project.getStringsofResources()));
+
+            }
             resourceChooser.setVisible(true);
 
             resourceChooser.setOnAction(new EventHandler<ActionEvent>() {
