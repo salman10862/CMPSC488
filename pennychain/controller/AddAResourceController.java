@@ -65,8 +65,7 @@ public class AddAResourceController{
         Stage s = (Stage) AddButton.getScene().getWindow();
         if(!labelField.getText().equals("")) {
             projResource newResource = new projResource(labelField.getText(), newRColor);
-
-            newResource.initializePlacement((int) project.getMainMap().getWidth(), (int) project.getMainMap().getLength());
+            newResource.initializePlacement((int) ( project.getMainMap().getWidth() / project.getMainMap().getCell_width() ), (int) ( project.getMainMap().getLength() / project.getMainMap().getCell_length()) );
 
             project.addProjResource(newResource);
             rList.setItems(FXCollections.observableList(project.getStringsofResources()));

@@ -221,18 +221,22 @@ public class MapWindowController {
                     int cell_y = (int) (grid_coordinates[1]/cell_width);
 
 
-
-                    if(selected_Resource.getValueAtGrid(cell_x, cell_y) != 1) {
-                        drawSquare(mouseEvent.getX(), mouseEvent.getY(), selected_Resource);
-                        selected_Resource.placeCoordinate(cell_x, cell_y);
-                    }
-                    else if (selected_Resource.getValueAtGrid(cell_x, cell_y) == 1){
+                    if(mouseEvent.isControlDown()) {
                         removeSquare(x_click, y_click);
-                        selected_Resource.removeCoordinate(cell_x, cell_y);
+                        Color rColor = Color.BLACK;
+                        //GraphicsContext gc =
+                        //selected_Resource.blockCoordinate(cell_x, cell_y);
                     }
-                    //}
-                    //if(mouseEvent.isSecondaryButtonDown())
-
+                    else {
+                        if (selected_Resource.getValueAtGrid(cell_x, cell_y) != 1) {
+                            drawSquare(mouseEvent.getX(), mouseEvent.getY(), selected_Resource);
+                            selected_Resource.placeCoordinate(cell_x, cell_y);
+                        } else if (selected_Resource.getValueAtGrid(cell_x, cell_y) == 1) {
+                            removeSquare(x_click, y_click);
+                            selected_Resource.removeCoordinate(cell_x, cell_y);
+                        }
+                        //if(mouseEvent.isSecondaryButtonDown())
+                    }
                         //TODO: Say that this resource CANNOT be here
 
                 }
