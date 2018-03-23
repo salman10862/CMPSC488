@@ -1,5 +1,6 @@
 package pennychain.controller;
 
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import pennychain.db.Hash;
 import pennychain.db.Connection_Online;
@@ -32,7 +33,7 @@ public class SettingsController{
     //@FXML private double gridValue;
     @FXML private javafx.scene.control.TextField gridField;
     
-    @FXML private Button emailButton;
+    @FXML private ToggleButton emailButton;
 
     private Project project;
     private UserSession session;

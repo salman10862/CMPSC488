@@ -18,7 +18,7 @@ public class projResource {
 
 
     // For grid/map placement
-    private boolean[][] placement;
+    private int[][] placement;
 
 
     public projResource(String label, Color color){
@@ -70,22 +70,30 @@ public class projResource {
 
     // *** GRID PLACEMENT METHODS
     public void initializePlacement(int x, int y){
-        placement = new boolean[x][y];
+        placement = new int[x][y];
     }
 
-    public void placeOnCoordinate(int x, int y){
-        placement[x][y] = true;
+    public void placeCoordinate(int x, int y){
+        placement[x][y] = 1;
     }
 
-    public void removeFromCoordinate(int x, int y){
-        placement[x][y] = false;
+    public void removeCoordinate(int x, int y){
+        placement[x][y] = 0;
+    }
+
+    public void blockCoordinate(int x, int y){
+        placement[x][y] = -1;
+    }
+
+    public int getValueAtGrid(int x, int y){
+        return placement[x][y];
     }
 
     public ArrayList<Integer> getCoordinates(){
         ArrayList<Integer> coordinate = new ArrayList<>(placement.length * 2);
         for(int x = 0; x < placement.length; x++){
             for(int y = 0; y< placement[x].length; y++)
-                if(placement[x][y]){
+                if(placement[x][y] == 1){
                     coordinate.add(x);
                     coordinate.add(y);
                 }

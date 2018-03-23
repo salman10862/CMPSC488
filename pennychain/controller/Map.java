@@ -66,7 +66,7 @@ public class Map {
 
     public double[] getGridCoordinates(double x, double y){
         double[] coordinates = new double[4];
-        System.out.println("Looking for cell @ pt" + x + " " + y);
+        //System.out.println("Looking for cell @ pt" + x + " " + y);
         double left_x = 0;
         double left_y = 0;
         double right_x;
@@ -75,10 +75,7 @@ public class Map {
              gridCorners) {
              right_x = p.getX();
              right_y = p.getY();
-             System.out.println("Currently examing grid cell: " + left_x + " "
-                                                                + left_y + ","
-                                                                + right_x + " "
-                                                                + right_y + ".");
+             //System.out.println("Currently examing grid cell: " + left_x + " "+ left_y + ","+ right_x + " "+ right_y + ".");
              if(left_x <= x && right_x >= x) {
                  if (left_y <= y && right_y >= y) {
                      coordinates[0] = left_x;

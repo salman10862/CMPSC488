@@ -171,11 +171,14 @@ public class MapWindowController {
 
     @FXML protected void lockMapListener(MouseEvent event){
         int GRID_SIZE =40; //TODO: Talk to group about design of setting initial gride size
+        //Disable GoogleMaps UI
         webEngine.executeScript("disable()");
 
+        // Set "center" of Map
         Double latitude = (Double) webEngine.executeScript("getLongitude()");
         Double longitude = (Double) webEngine.executeScript("getLatitude()");
         int zoom = (Integer) webEngine.executeScript("getZoom()");
+
         //TODO: Compute and add grid distance parameters to the Map
         Map map = new Map(GRID_SIZE, webView.getWidth(), webView.getHeight(), zoom, latitude, longitude);
         project.setMainMap(map);
@@ -184,7 +187,8 @@ public class MapWindowController {
         lockMap.setVisible(false);
         if(!project.getStringsofResources().isEmpty())
             resourceChooser.getItems().addAll(FXCollections.observableList(project.getStringsofResources()));
-        resourceChooser.setVisible(true); //TODO: //Implement resourceBar
+
+        resourceChooser.setVisible(true);
 
         //Added Transparency Layer
         layerPane = new StackPane();
@@ -195,6 +199,8 @@ public class MapWindowController {
         windowPane.setCenter(layerPane);
 
         currentMap.initializeGrid();
+
+
         transGrid.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -203,7 +209,32 @@ public class MapWindowController {
                     int selected = resourceChooser.getSelectionModel().getSelectedIndex();
                     projResource selected_Resource = project.getProjResourceList().get(selected);
 
-                    drawSquare(mouseEvent.getX(), mouseEvent.getY(), selected_Resource);
+                    double x_click = mouseEvent.getX();
+                    double y_click = mouseEvent.getY();
+
+                    double[] grid_coordinates = currentMap.getGridCoordinates(x_click, y_click);
+
+                    double cell_length = currentMap.getCell_length();
+                    double cell_width = currentMap.getCell_width();
+
+                    int cell_x = (int) (grid_coordinates[0]/cell_length);
+                    int cell_y = (int) (grid_coordinates[1]/cell_width);
+
+
+
+                    if(selected_Resource.getValueAtGrid(cell_x, cell_y) != 1) {
+                        drawSquare(mouseEvent.getX(), mouseEvent.getY(), selected_Resource);
+                        selected_Resource.placeCoordinate(cell_x, cell_y);
+                    }
+                    else if (selected_Resource.getValueAtGrid(cell_x, cell_y) == 1){
+                        removeSquare(x_click, y_click);
+                        selected_Resource.removeCoordinate(cell_x, cell_y);
+                    }
+                    //}
+                    //if(mouseEvent.isSecondaryButtonDown())
+
+                        //TODO: Say that this resource CANNOT be here
+
                 }
             }
         });
@@ -221,16 +252,23 @@ public class MapWindowController {
         GraphicsContext gc = transGrid.getGraphicsContext2D();
         gc.setFill(rColor);
 
-
+        System.out.println("Trying to draw cell");
         double[] coordinates = currentMap.getGridCoordinates(x, y);
         gc.fillRect(coordinates[0],coordinates[1],currentMap.getCell_width(),currentMap.getCell_length());
+    }
+
+    private void removeSquare(double x, double y){
+        GraphicsContext gc = transGrid.getGraphicsContext2D();
+        double[] coordinates = currentMap.getGridCoordinates(x, y);
+        System.out.println("Trying to clear cell");
+        gc.clearRect(coordinates[0], coordinates[1], currentMap.getCell_width(), currentMap.getCell_length());
     }
 
     //This method (feel free to change the name as desired) is intended to be what is called when User tries to send an optimization request
     @FXML protected void sendOptimizationRequest() throws IOException{
         if(project.getMainMap() != null) {
             OptimizationRequest opreq = new OptimizationRequest(this.currentMap);
-            this.currentMap = opreq.sendRequest(project.getOptimizationPath()); 
+            this.currentMap = opreq.sendRequest(project.getOptimizationPath());
             project.setMainMap(this.currentMap);
         }
     }
@@ -286,6 +324,13 @@ public class MapWindowController {
             if(!project.getStringsofResources().isEmpty())
                 resourceChooser.getItems().addAll(FXCollections.observableList(project.getStringsofResources()));
             resourceChooser.setVisible(true);
+
+            resourceChooser.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+
+                }
+            });
         }
         //Alternative case, new Project and no Map
         else{
