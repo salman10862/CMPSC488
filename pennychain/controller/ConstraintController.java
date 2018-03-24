@@ -7,6 +7,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -22,6 +23,9 @@ public class ConstraintController{
     @FXML private ListView cTypeList;
     @FXML private ListView cList;
     @FXML private javafx.scene.control.Button cancelButton;
+
+    @FXML private TableView tView;
+
     private Project project;
     private Map currentMap;
 
@@ -43,7 +47,9 @@ public class ConstraintController{
         //TODO: Construct within the Project object a list of constraints associated, link it up to this
         List<String> global_values = Arrays.asList("Budget");
 
-        cTypeList.setItems(FXCollections.observableList(type_values));
+        //cTypeList.setItems(FXCollections.observableList(type_values));
+
+        //TODO: Edit this to work with table view
 
         cTypeList.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
