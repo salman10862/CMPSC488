@@ -214,7 +214,7 @@ public class MapWindowController {
 
         currentMap.initializeGrid();
 
-
+        resourceChooserListener();
         transGrid.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -348,8 +348,8 @@ public class MapWindowController {
                 // Fill in canvas for the selected projResource
                 ArrayList<Integer> placement_coordinates = selectedResource.getCoordinates();
                 for(int i =0; i<placement_coordinates.size(); i=i+2){
-                    double[] grid_cords = currentMap.getGridCoordinates(placement_coordinates.get(i), placement_coordinates.get(i+1));
-                    drawSquare(grid_cords[0], grid_cords[1], selectedResource);
+                    System.out.println("Attempt to draw coordinates:" + placement_coordinates.get(i) + " " + placement_coordinates.get(i+1));
+                    drawSquare(placement_coordinates.get(i)*currentMap.getCell_width(), placement_coordinates.get(i+1)*currentMap.getCell_length(), selectedResource);
                 }
             }
         });
