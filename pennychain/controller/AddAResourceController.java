@@ -31,11 +31,13 @@ public class AddAResourceController{
     @FXML private Text actiontarget;
     @FXML private Button cancelButton;
     @FXML private ListView rList;
+    @FXML private ChoiceBox<String> valueChoice;
     @FXML private ColorPicker colorPicker;
     @FXML private TextField labelField;
     @FXML private Button AddButton;
 
     private Color newRColor;
+    private int type_flag;
 
     public AddAResourceController(Project project)
     {
@@ -45,11 +47,28 @@ public class AddAResourceController{
     @FXML
     public void initialize()
     {
+        // Debugging scenario, when there is no project defined
         if(project == null)
             project = new Project("PROJECT NOT LINKED",new userProfile() );
+
+        // Display the list of current projResources on the left
         ArrayList<String> resourceList = project.getStringsofResources();
         rList.setItems(FXCollections.observableList(resourceList));
 
+        // Handle Resource Type
+        ArrayList<String> rTypeList = new ArrayList<>();
+        rTypeList.add("Generic Resource");
+        rTypeList.add("Distribution Endpoint");
+        valueChoice.setItems(FXCollections.observableList(rTypeList));
+
+        valueChoice.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                type_flag = valueChoice.getSelectionModel().getSelectedIndex();
+            }
+        });
+
+        // Handle color picking
         colorPicker.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -66,6 +85,7 @@ public class AddAResourceController{
         if(!labelField.getText().equals("")) {
             projResource newResource = new projResource(labelField.getText(), newRColor);
             newResource.initializePlacement((int) ( project.getMainMap().getWidth() / project.getMainMap().getCell_width() ), (int) ( project.getMainMap().getLength() / project.getMainMap().getCell_length()) );
+            newResource.setrType(type_flag);
 
             project.addProjResource(newResource);
             rList.setItems(FXCollections.observableList(project.getStringsofResources()));

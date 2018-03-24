@@ -12,9 +12,9 @@
         <Button fx:id="AddButton" layoutX="461.0" layoutY="311.0" mnemonicParsing="false" onAction="#handleAddButton" text="Add" />
         <TextField fx:id="labelField" layoutX="354.0" layoutY="53.0" />
         <Text layoutX="232.0" layoutY="68.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Resource Name" />
-        <Label layoutX="233.0" layoutY="101.0" text="Associated Value" />
+        <Label layoutX="233.0" layoutY="101.0" text="Resource Type" />
         <ColorPicker fx:id="colorPicker" layoutX="435.0" layoutY="135.0" />
         <Label layoutX="231.0" layoutY="141.0" text="Color Representation on Map" />
-        <ChoiceBox layoutX="375.0" layoutY="97.0" prefWidth="150.0" />
+        <ChoiceBox fx:id="valueChoice" layoutX="375.0" layoutY="97.0" prefWidth="150.0" />
     </children>
 </AnchorPane>

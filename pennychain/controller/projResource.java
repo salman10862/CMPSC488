@@ -11,6 +11,7 @@ public class projResource {
 
     private String label;
     private Color color;
+    private int rType;  // 1 if it's a population distribution center, 0 otherwise. See: AddAResourceController
     private ArrayList<projResource> constraint_list;
     private HashMap<projResource, Double> constraint_amnt;
     private HashMap<projResource, Double> constraint_dist;
@@ -66,6 +67,10 @@ public class projResource {
     public Double getConstraintDist(projResource rType){
         return constraint_dist.get(rType);
     }
+
+    //** RESOURCE TYPE METHODS
+    public int getrType(){return rType;}
+    public void setrType(int type){ rType = type;}
 
 
     // *** GRID PLACEMENT METHODS
