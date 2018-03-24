@@ -29,6 +29,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
@@ -71,7 +72,8 @@ public class MapWindowController {
 
     private StackPane layerPane;
     @FXML private ComboBox<String> resourceChooser = new ComboBox<>();
-
+    private ChoiceBox<Integer> grid_size_selection;
+    private Text grid_size_text;
 
     public MapWindowController(Project project, UserSession userSessionn)
     {
@@ -185,20 +187,35 @@ public class MapWindowController {
     }
 
     @FXML protected void lockMapListener(MouseEvent event){
-        int GRID_SIZE =40; //TODO: Talk to group about design of setting initial gride size
+        // Set the size of the overlay Grid if this is a new Map
+        int GRID_SIZE = 0;
+        if(grid_size_selection!=null) {
+            GRID_SIZE = grid_size_selection.getSelectionModel().getSelectedItem();
+            toolbar.getItems().remove(grid_size_selection);
+            toolbar.getItems().remove(grid_size_text);
+            toolbar.getItems().remove(lockMap);
+        }
+
         //Disable GoogleMaps UI
         webEngine.executeScript("disable()");
 
-        // Set "center" of Map
-        Double latitude = (Double) webEngine.executeScript("getLongitude()");
-        Double longitude = (Double) webEngine.executeScript("getLatitude()");
-        int zoom = (Integer) webEngine.executeScript("getZoom()");
+        if(project.getMainMap() != null){
+            currentMap = project.getMainMap();
+            currentZoom = currentMap.getZoom();
+        }
+        else {
+            // Set "center" of Map
+            Double latitude = (Double) webEngine.executeScript("getLongitude()");
+            Double longitude = (Double) webEngine.executeScript("getLatitude()");
+            int zoom = (Integer) webEngine.executeScript("getZoom()");
 
-        Map map = new Map(GRID_SIZE, webView.getWidth(), webView.getHeight(), zoom, latitude, longitude);
-        project.setMainMap(map);
-        currentMap = project.getMainMap();
-        currentZoom = zoom;
-        lockMap.setVisible(false);
+            Map map = new Map(GRID_SIZE, webView.getWidth(), webView.getHeight(), zoom, latitude, longitude);
+            project.setMainMap(map);
+            currentMap = project.getMainMap();
+            currentZoom = zoom;
+            currentMap.initializeGrid();
+        }
+
         if(!project.getStringsofResources().isEmpty())
             resourceChooser.getItems().addAll(FXCollections.observableList(project.getStringsofResources()));
 
@@ -212,7 +229,6 @@ public class MapWindowController {
         layerPane.getChildren().addAll(webView, transGrid);
         windowPane.setCenter(layerPane);
 
-        currentMap.initializeGrid();
 
         resourceChooserListener();
         transGrid.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -241,8 +257,7 @@ public class MapWindowController {
                         GraphicsContext gc =transGrid.getGraphicsContext2D();
                         gc.setFill(rColor);
                         //Fill Rectangle
-                        double[] coordinates = currentMap.getGridCoordinates(x_click, y_click);
-                        gc.fillRect(coordinates[0],coordinates[1],currentMap.getCell_width(),currentMap.getCell_length());
+                        gc.fillRect(grid_coordinates[0],grid_coordinates[1],cell_width,cell_length);
                         selected_Resource.blockCoordinate(cell_x, cell_y);
                     }
                     else {
@@ -332,7 +347,6 @@ public class MapWindowController {
     }
 
 
-    //TODO: TEST THIS
     //Handle resourceChooser ComboBox selections
     private void resourceChooserListener(){
         resourceChooser.setOnAction(new EventHandler<ActionEvent>() {
@@ -369,10 +383,9 @@ public class MapWindowController {
             currentZoom = project.getMainMap().getZoom();
             if(!project.getStringsofResources().isEmpty()) {
                 resourceChooser.getItems().addAll(FXCollections.observableList(project.getStringsofResources()));
-
             }
             resourceChooser.setVisible(true);
-
+            lockMap.fire();
         }
         //Alternative case, new Project and no Map
         else{
@@ -382,6 +395,17 @@ public class MapWindowController {
             defineConstraintsItem.setDisable(true);
             addAResourceItem.setDisable(true);
 
+            // Display a list of Grid Size options for the user to select
+            ArrayList<Integer> grid_size_list = new ArrayList<>();
+            grid_size_list.add(8); grid_size_list.add(16);
+            grid_size_list.add(32); grid_size_list.add(64);
+            grid_size_list.add(128); grid_size_list.add(256);
+            grid_size_selection = new ChoiceBox<Integer>();
+            grid_size_text = new Text("Grid Size: ");
+            grid_size_selection.setItems(FXCollections.observableList(grid_size_list));
+            grid_size_selection.setValue(Integer.valueOf(32));
+            toolbar.getItems().add(grid_size_text);
+            toolbar.getItems().add(grid_size_selection);
         }
     }
 

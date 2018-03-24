@@ -84,6 +84,7 @@ public class AddAResourceController{
         Stage s = (Stage) AddButton.getScene().getWindow();
         if(!labelField.getText().equals("")) {
             projResource newResource = new projResource(labelField.getText(), newRColor);
+            //TODO: Check math more vigorously
             newResource.initializePlacement((int) ( project.getMainMap().getWidth() / project.getMainMap().getCell_width() ), (int) ( project.getMainMap().getLength() / project.getMainMap().getCell_length()) );
             newResource.setrType(type_flag);
 
