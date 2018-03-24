@@ -8,9 +8,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.util.ArrayList;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -190,7 +194,6 @@ public class MapWindowController {
         Double longitude = (Double) webEngine.executeScript("getLatitude()");
         int zoom = (Integer) webEngine.executeScript("getZoom()");
 
-        //TODO: Compute and add grid distance parameters to the Map
         Map map = new Map(GRID_SIZE, webView.getWidth(), webView.getHeight(), zoom, latitude, longitude);
         project.setMainMap(map);
         currentMap = project.getMainMap();
@@ -231,24 +234,29 @@ public class MapWindowController {
                     int cell_x = (int) (grid_coordinates[0]/cell_width);
                     int cell_y = (int) (grid_coordinates[1]/cell_length);
 
+                    // Scenario 1: User specifies this cell can never contain this projResource
                     if(mouseEvent.isControlDown()) {
                         removeSquare(x_click, y_click);
                         Color rColor = Color.BLACK;
                         GraphicsContext gc =transGrid.getGraphicsContext2D();
-                        //TODO: fill the rect
+                        gc.setFill(rColor);
+                        //Fill Rectangle
+                        double[] coordinates = currentMap.getGridCoordinates(x_click, y_click);
+                        gc.fillRect(coordinates[0],coordinates[1],currentMap.getCell_width(),currentMap.getCell_length());
+                        selected_Resource.blockCoordinate(cell_x, cell_y);
                     }
                     else {
+                    // Scenario 2: User specifies that projResource is currently in this cell
                         if (selected_Resource.getValueAtGrid(cell_x, cell_y) != 1) {
                             drawSquare(mouseEvent.getX(), mouseEvent.getY(), selected_Resource);
                             selected_Resource.placeCoordinate(cell_x, cell_y);
-                        } else if (selected_Resource.getValueAtGrid(cell_x, cell_y) == 1) {
+                        }
+                    // Scenario 3: projResource is not currently at this location, but possibly could be placed here
+                        else if (selected_Resource.getValueAtGrid(cell_x, cell_y) == 1) {
                             removeSquare(x_click, y_click);
                             selected_Resource.removeCoordinate(cell_x, cell_y);
                         }
-                        //if(mouseEvent.isSecondaryButtonDown())
                     }
-                        //TODO: Say that this resource CANNOT be here
-
                 }
             }
         });
@@ -314,6 +322,7 @@ public class MapWindowController {
         }
     }
 
+    // Enable editing for the central WebView
     private void reEnableMapEdit(){
         webView.setDisable(false);
         transGrid.setDisable(false);
@@ -321,6 +330,31 @@ public class MapWindowController {
         transGrid.toFront();
         System.out.println(layerPane.getChildren());
     }
+
+
+    //TODO: TEST THIS
+    //Handle resourceChooser ComboBox selections
+    private void resourceChooserListener(){
+        resourceChooser.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // Remove all current rectangles from the canvas
+                GraphicsContext gc = transGrid.getGraphicsContext2D();
+                gc.clearRect(0,0, transGrid.getWidth(), transGrid.getHeight());
+
+                // Get corresponding projResource
+                projResource selectedResource = project.getProjResourceList().get(resourceChooser.getSelectionModel().getSelectedIndex());
+
+                // Fill in canvas for the selected projResource
+                ArrayList<Integer> placement_coordinates = selectedResource.getCoordinates();
+                for(int i =0; i<placement_coordinates.size(); i=i+2){
+                    double[] grid_cords = currentMap.getGridCoordinates(placement_coordinates.get(i), placement_coordinates.get(i+1));
+                    drawSquare(grid_cords[0], grid_cords[1], selectedResource);
+                }
+            }
+        });
+    }
+
 
     @FXML protected void initialize() {
         webEngine = webView.getEngine();
@@ -339,12 +373,6 @@ public class MapWindowController {
             }
             resourceChooser.setVisible(true);
 
-            resourceChooser.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-
-                }
-            });
         }
         //Alternative case, new Project and no Map
         else{
