@@ -15,6 +15,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -379,41 +380,51 @@ public class MapWindowController {
 
     @FXML protected void initialize() {
         webEngine = webView.getEngine();
+
+        // Add listener to activate when the webEngine has successfully loaded the .html file
+        webEngine.getLoadWorker().stateProperty().addListener(
+                new ChangeListener<Worker.State>() {
+                    public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
+                        if (newState == Worker.State.SUCCEEDED) {
+                            //Default case on loading an existing Map
+                            if(project.getMainMap()  != null) {
+                                webEngine.executeScript("setPerspective(" + project.getMainMap().getLatitude() + ", "
+                                        + project.getMainMap().getLongitude() + ", " + project.getMainMap().getZoom()
+                                        + ")");
+                                lockMap.setDisable(true);
+                                currentZoom = project.getMainMap().getZoom();
+                                if(!project.getStringsofResources().isEmpty()) {
+                                    resourceChooser.getItems().addAll(FXCollections.observableList(project.getStringsofResources()));
+                                }
+                                resourceChooser.setVisible(true);
+                                lockMap.fire();
+                            }
+                            //Alternative case, new Project and no Map
+                            else{
+                                zoomInButton.setDisable(true);
+                                zoomOutButton.setDisable(true);
+                                optimizeButton.setDisable(true);
+                                defineConstraintsItem.setDisable(true);
+                                addAResourceItem.setDisable(true);
+
+                                // Display a list of Grid Size options for the user to select
+                                ArrayList<Integer> grid_size_list = new ArrayList<>();
+                                grid_size_list.add(8); grid_size_list.add(16);
+                                grid_size_list.add(32); grid_size_list.add(64);
+                                grid_size_list.add(128); grid_size_list.add(256);
+                                grid_size_selection = new ChoiceBox<Integer>();
+                                grid_size_text = new Text("Grid Size: ");
+                                grid_size_selection.setItems(FXCollections.observableList(grid_size_list));
+                                grid_size_selection.setValue(Integer.valueOf(32));
+                                toolbar.getItems().add(grid_size_text);
+                                toolbar.getItems().add(grid_size_selection);
+                            }
+                        }
+                    }
+                });
+
+        // Load GoogleMaps html file
         webEngine.load(getClass().getResource("googlemap.html").toString());
-
-        //Default case on loading an existing Map
-        if(project.getMainMap()  != null) {
-            webEngine.executeScript("setPerspective(" + project.getMainMap().getLatitude() + ", "
-                    + project.getMainMap().getLongitude() + ", " + project.getMainMap().getZoom()
-                    + ")");
-            lockMap.setDisable(true);
-            currentZoom = project.getMainMap().getZoom();
-            if(!project.getStringsofResources().isEmpty()) {
-                resourceChooser.getItems().addAll(FXCollections.observableList(project.getStringsofResources()));
-            }
-            resourceChooser.setVisible(true);
-            lockMap.fire();
-        }
-        //Alternative case, new Project and no Map
-        else{
-            zoomInButton.setDisable(true);
-            zoomOutButton.setDisable(true);
-            optimizeButton.setDisable(true);
-            defineConstraintsItem.setDisable(true);
-            addAResourceItem.setDisable(true);
-
-            // Display a list of Grid Size options for the user to select
-            ArrayList<Integer> grid_size_list = new ArrayList<>();
-            grid_size_list.add(8); grid_size_list.add(16);
-            grid_size_list.add(32); grid_size_list.add(64);
-            grid_size_list.add(128); grid_size_list.add(256);
-            grid_size_selection = new ChoiceBox<Integer>();
-            grid_size_text = new Text("Grid Size: ");
-            grid_size_selection.setItems(FXCollections.observableList(grid_size_list));
-            grid_size_selection.setValue(Integer.valueOf(32));
-            toolbar.getItems().add(grid_size_text);
-            toolbar.getItems().add(grid_size_selection);
-        }
     }
 
 }
