@@ -38,6 +38,7 @@ import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 import pennychain.center.OptimizationRequest;
+import pennychain.db.Connection_Online;
 import pennychain.usr.UserSession;
 
 
@@ -46,6 +47,7 @@ public class MapWindowController {
     @FXML private MenuBar menuBar;
 
     @FXML private MenuItem saveAsItem;
+    @FXML private MenuItem saveToDbItem;
     @FXML private MenuItem aboutItem;
     @FXML private MenuItem exitItem;
     @FXML private MenuItem defineConstraintsItem;
@@ -98,6 +100,7 @@ public class MapWindowController {
                 try {
                     Writer out = new FileWriter(file);
                     project.projectToFile(out);
+                    out.close();
                 }
                 catch(IOException e) {
                     System.out.println(e.getMessage());
@@ -107,6 +110,10 @@ public class MapWindowController {
                         + " does not have valid extension. File type must be .JSON");
             }
         }
+    }
+
+    @FXML protected void handleSaveToDb(ActionEvent event) {
+        //TODO: implement
     }
         
 
