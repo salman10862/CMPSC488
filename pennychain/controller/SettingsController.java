@@ -57,7 +57,9 @@ public class SettingsController{
         cUser = project.getUserProfile();
         cMap = project.getMainMap();
 
-        gridField.setText(Integer.toString(project.getMainMap().getGrid_size()));
+        if(project.getMainMap() != null) {
+            gridField.setText(Integer.toString(project.getMainMap().getGrid_size()));
+        }
 
         //Try to get username from the UserProfile object
         userNameField.setText(cUser.getUsername());
@@ -86,7 +88,6 @@ public class SettingsController{
         String salt = Connection_Online.getSalt(session.getCurrentUser()).toString();
         String saltedHashedPass = Connection_Online.getHashedPass(session.getCurrentUser()).toString();
 
-
         if(Hash.verifyPassword(currentPassConfirm.getCharacters(), salt, saltedHashedPass)) {
             String newPass1 = newPassField1.getCharacters().toString();
             String newPass2 = newPassField2.getCharacters().toString();
@@ -96,7 +97,7 @@ public class SettingsController{
                     Hash.getHashAndSalt(newPassField2.getCharacters());
 
                 String[] base64Strings = newSaltAndSaltedHashedPw.split(":");
-                //Connection_Online.modifyRecord(); method not written yet!
+                Connection_Online.updatePassword(session.getCurrentUser(), base64Strings[0], base64Strings[1]);
 
                 pwChangeResponse.setText("Password updated");
                 pwChangeResponse.setTextFill(Color.web("00FF00"));

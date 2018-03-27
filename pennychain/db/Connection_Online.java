@@ -34,8 +34,6 @@ public class Connection_Online {
         //findRecordByUsername("ckw5071");
         //System.out.println(userExists("pranav412"));    //test to see if username exists in database
        // updatePassword("pranav412", "newPass12345");
-
-        updatePassword("pranav412", "pass12345");
     }
 
     //add a record to the database
@@ -161,20 +159,12 @@ public void loadProject(){
 }
 
     //change a password in the database
-    public static void updatePassword(String uname, String newPassword) throws InvalidKeySpecException, NoSuchAlgorithmException {
+    public static void updatePassword(String uname, String newSalt, String newSaltedHashedPass) {
         BasicDBObject newDoc = new BasicDBObject();
-
-        //generate password hash and salt
-        CharSequence result = Hash.getHashAndSalt(newPassword);
-
-        String[] parts = result.toString().split(":");
-
-        CharSequence newSalt = parts[0];   //get salt
-        CharSequence newPass = parts[1];   //get password
 
         //update the password
         newDoc.append("$set", new BasicDBObject().append("salt", newSalt));
-        newDoc.append("$set", new BasicDBObject().append("password", newPass));
+        newDoc.append("$set", new BasicDBObject().append("password", newSaltedHashedPass));
 
         //find collection where username is the one we specify
         BasicDBObject searchQuery = new BasicDBObject().append("username", uname);
@@ -186,6 +176,7 @@ public void loadProject(){
     }
 
     //method used for testing password retrieval
+    /*
     public static void testGettingPassword(String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
 
         CharSequence result = Hash.getHashAndSalt(password);
@@ -198,5 +189,6 @@ public void loadProject(){
         System.out.println(salt);
         System.out.println(pass);
     }
+    */
 }
 
