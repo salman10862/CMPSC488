@@ -14,7 +14,6 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -32,6 +31,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -194,35 +194,36 @@ public class MapWindowController {
         );
     }
 
-    @FXML protected void lockMapListener(MouseEvent event){
+    @FXML protected void lockMapListener(){
+        System.out.println("LOCKMAP BUTTON PRESSED");
+        toolbar.getItems().remove(lockMap);
+
         // Set the size of the overlay Grid if this is a new Map
         int GRID_SIZE = 0;
-        if(grid_size_selection!=null) {
-            GRID_SIZE = grid_size_selection.getSelectionModel().getSelectedItem();
+
+        if(project.getMainMap()!=null) {
             toolbar.getItems().remove(grid_size_selection);
             toolbar.getItems().remove(grid_size_text);
-            toolbar.getItems().remove(lockMap);
-        }
-
-        //Disable GoogleMaps UI
-        webEngine.executeScript("disable()");
-
-        if(project.getMainMap() != null){
             currentMap = project.getMainMap();
             currentZoom = currentMap.getZoom();
-        }
-        else {
+        } else {
             // Set "center" of Map
             Double latitude = (Double) webEngine.executeScript("getLongitude()");
             Double longitude = (Double) webEngine.executeScript("getLatitude()");
             int zoom = (Integer) webEngine.executeScript("getZoom()");
-
+            GRID_SIZE = grid_size_selection.getSelectionModel().getSelectedItem();
+            toolbar.getItems().remove(grid_size_selection);
+            toolbar.getItems().remove(grid_size_text);
             Map map = new Map(GRID_SIZE, webView.getWidth(), webView.getHeight(), zoom, latitude, longitude);
             project.setMainMap(map);
             currentMap = project.getMainMap();
             currentZoom = zoom;
             currentMap.initializeGrid();
         }
+
+
+        //Disable GoogleMaps UI
+        webEngine.executeScript("disable()");
 
         if(!project.getStringsofResources().isEmpty())
             resourceChooser.getItems().addAll(FXCollections.observableList(project.getStringsofResources()));
@@ -378,7 +379,7 @@ public class MapWindowController {
     }
 
 
-    @FXML protected void initialize() {
+    @FXML protected void initialize(){
         webEngine = webView.getEngine();
 
         // Add listener to activate when the webEngine has successfully loaded the .html file
@@ -386,18 +387,20 @@ public class MapWindowController {
                 new ChangeListener<Worker.State>() {
                     public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
                         if (newState == Worker.State.SUCCEEDED) {
+
                             //Default case on loading an existing Map
                             if(project.getMainMap()  != null) {
-                                webEngine.executeScript("setPerspective(" + project.getMainMap().getLatitude() + ", "
-                                        + project.getMainMap().getLongitude() + ", " + project.getMainMap().getZoom()
-                                        + ")");
-                                lockMap.setDisable(true);
-                                currentZoom = project.getMainMap().getZoom();
-                                if(!project.getStringsofResources().isEmpty()) {
-                                    resourceChooser.getItems().addAll(FXCollections.observableList(project.getStringsofResources()));
-                                }
-                                resourceChooser.setVisible(true);
-                                lockMap.fire();
+                                webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
+                                    @Override
+                                    public void handle(WebEvent<String> stringWebEvent) {
+                                        System.out.println("CURRENTLY OPENING EXISTING PROJECT");
+                                        currentZoom = project.getMainMap().getZoom();
+                                        webEngine.executeScript("setPerspective(" + project.getMainMap().getLatitude() + ", "
+                                              + project.getMainMap().getLongitude() + ", " + currentZoom
+                                            + ")");
+                                        lockMapListener();
+                                    }
+                                });
                             }
                             //Alternative case, new Project and no Map
                             else{
