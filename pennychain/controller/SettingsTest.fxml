@@ -78,7 +78,7 @@
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </Text>
-                                            <PasswordField fx:id="currenPassConfirm" minWidth="200.0" promptText="Click Here" />
+                                            <PasswordField fx:id="currentPassConfirm" minWidth="200.0" promptText="Click Here" />
                                  </children>
                                  <VBox.margin>
                                     <Insets bottom="10.0" />

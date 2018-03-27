@@ -310,10 +310,10 @@ public class MapWindowController {
         gc.clearRect(coordinates[0], coordinates[1], currentMap.getCell_width(), currentMap.getCell_length());
     }
 
-    //This method (feel free to change the name as desired) is intended to be what is called when User tries to send an optimization request
+    //This method should be changed to adequately display the optimized map (this.currentMap/project.setMainMap not correct I think)
     @FXML protected void sendOptimizationRequest() throws IOException{
         if(project.getMainMap() != null) {
-            OptimizationRequest opreq = new OptimizationRequest(this.currentMap);
+            OptimizationRequest opreq = new OptimizationRequest(project.getProjResourceList());
             this.currentMap = opreq.sendRequest(project.getOptimizationPath());
             project.setMainMap(this.currentMap);
         }

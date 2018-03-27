@@ -5,17 +5,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import pennychain.controller.Map;
+import pennychain.controller.projResource;
 
 public class OptimizationRequest {
 	private int varBound;
 	private int max_posi;
-	private ArrayList<String> variables = new ArrayList<>();
+	private ArrayList<String> sales_centers = new ArrayList<>();
+	private ArrayList<String> dist_centers = new ArrayList<>();
 	private ArrayList<String> constraints = new ArrayList<>();
 	private Map map;
+	private ArrayList<projResource> projectResourceList;
 	
-	public OptimizationRequest(Map new_map) {
-		this.map = new_map;
-		varBound = (int) map.getWidth();
+	public OptimizationRequest(ArrayList<projResource> projectResourceList) {
+		this.projectResourceList = projectResourceList;
+		varBound = (int) projectResourceList.size();
 	}
 	
 	public Map sendRequest(String path_name) throws IOException {
@@ -33,9 +36,9 @@ public class OptimizationRequest {
 		
 		String obj_func = this.create_objective();
 		
-		while(!(variables.isEmpty())) {
-			f.write("    int_" + variables.get(0) + " = 0, >=0, <=1" + System.getProperty("line.separator"));
-			variables.remove(0);
+		while(!(sales_centers.isEmpty())) {
+			f.write("    int_" + sales_centers.get(0) + " = 0, >=0, <=1" + System.getProperty("line.separator"));
+			sales_centers.remove(0);
 		}
 		f.write("  End Variables" + System.getProperty("line.separator") + System.getProperty("line.separator") + "  Equations" + System.getProperty("line.separator"));
 		while(!(constraints.isEmpty())) {
@@ -48,14 +51,16 @@ public class OptimizationRequest {
 	}
 	
 	private String create_objective() {
+	    /*
+	    New objective format:
+	    Minimize Z = (supply cost - demand value)(1 or 0) + ...
+	    where each supply cost = price of maintaining supply at this location (gas price * distance)
+	               demand value = expected value this location creates (population * target demographic weighting value)
+	     */
 		String obj_func = "Minimize ";
-		for(int i = 0; i < variables.size(); i++) {
-			for(int j = 0; j < variables.size(); j++) {
-				if(i != j) {
-					obj_func = obj_func + Math.sqrt((Math.floor((i-j)/varBound))*(Math.floor((i-j)/varBound)) + ((i-j)%varBound)*((i-j)%varBound)) + " * " + "int_" + variables.get(i) + " + ";
-				}
-			}
-		}
+		for(int i = 0; i < sales_centers.size(); i++) {
+		    obj_func = obj_func + (/*gas_price.get(i)*distance.get(i)-demand.get(i)*/1) + " * int_" +sales_centers.get(i) + " + ";
+		}   //TODO: obtain distances from google maps, obtain gas prices from online, calculate demand from census data
 		obj_func = obj_func + "0 " + System.getProperty("line.separator") + "  End Equations" + System.getProperty("line.separator") + "End Model";
 		return obj_func;
 	}
@@ -72,9 +77,24 @@ public class OptimizationRequest {
 	}
 	
 	private void read_map(String path) throws IOException {
-		
+
+	    //take variables from project resource list rather than map (from map is commented out below this)
+	    for(int i = 0; i < varBound; i++) {
+	        if(projectResourceList.get(i).getrType() == 0) {
+                sales_centers.add("X[" + i + "]");
+                constraints.add("X[" + i + "]=0");
+            } else if(projectResourceList.get(i).getrType() == 1) {
+                dist_centers.add("X[" + i + "]");
+                //add contraints pertaining to this variable
+            } else {
+                sales_centers.add("X[" + i + "]");
+                constraints.add("X[" + i + "]=0");
+            }
+        }
+
 		FileWriter f = new FileWriter(path);
-		for(int i = 0; i < varBound; i++) {
+		/*
+	    for(int i = 0; i < varBound; i++) {
         		for(int j = 0; j < varBound; j++) {
         			if(map.map_data[i][j] == 0) {
         				variables.add("X[" + (i*varBound+j) + "]");
@@ -84,14 +104,15 @@ public class OptimizationRequest {
         			}
         		}
 		}
-		for(int x = 0; x < variables.size(); x++) {
-			f.write("int_" + variables.get(x) + System.getProperty("line.separator"));
-                }
-                f.close();
+		*/
+		for(int x = 0; x < sales_centers.size(); x++) {
+			f.write("int_" + sales_centers.get(x) + System.getProperty("line.separator"));
+		}
+		f.close();
 		
 		String max_num_centers = "";
-		for(int i = 0; i < variables.size(); i++) {
-			max_num_centers = max_num_centers + "int_" + variables.get(i) + "+";
+		for(int i = 0; i < sales_centers.size(); i++) {
+			max_num_centers = max_num_centers + "int_" + sales_centers.get(i) + "+";
 		}
 		constraints.add(max_num_centers + "0 =" + max_posi);
 	}

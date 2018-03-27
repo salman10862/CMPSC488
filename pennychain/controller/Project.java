@@ -28,6 +28,8 @@ public class Project {
         projResourceList = new ArrayList<>();
         settingsList = new ArrayList<>();
         sharedWith = new ArrayList<>();
+
+        mainMap = null;
     }
 
     public Project(String projLabel, userProfile linked_userID){
