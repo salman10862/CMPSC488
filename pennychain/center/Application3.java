@@ -1,25 +1,32 @@
+package pennychain.center;
+
+import pennychain.center.APMpyth;
+import pennychain.controller.Dist;
+import pennychain.controller.Map;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class JavaApplication3 {
+public class Application3 {
 	private int varBound;
-        private int varBoundDem;
-        private int varBoundDist;
+	private int varBoundDem;
+	private int varBoundDist;
 	private int max_posi;
 	private ArrayList<String> variables = new ArrayList<String>();
 	private ArrayList<String> constraints = new ArrayList<String>();
-	private map Map;
-        private demand Demand;
-        private dist Dist;
+	private Map map;
+	//private demand Demand;
+	private double[] demand;
+	private Dist dist;
 	
-	public JavaApplication3(map new_map, demand new_demand, dist new_dist) {
-		this.Map = new_map;
-		varBound = Map.getSize();
-                this.Demand = new_demand;
-                varBoundDem = Demand.getSize();
-                this.Dist = new_dist;
-                varBoundDist = Dist.getSize();
+	public Application3(Map new_map, double[] new_demand, Dist new_dist) {
+		this.map = new_map;
+		varBound = new_map.getSize();
+		this.demand = new_demand;
+		varBoundDem = demand.length;
+		this.dist = new_dist;
+		varBoundDist = new_dist.getSize();
 	}
 
 
@@ -55,9 +62,10 @@ public class JavaApplication3 {
 	
 	private String create_objective() {
 		String obj_func = "Minimize ";
+		double[][] dist_data = dist.getDistData();
 		for(int i = 0; i < variables.size(); i++) {
 			for(int j = 0; j < varBoundDem; j++) {
-                                obj_func = obj_func + Demand.demand_data[j]* Dist.dist_data[i][j] + " * " + variables.get(i) + " + ";
+                                obj_func = obj_func + demand[j]* dist_data[i][j] + " * " + variables.get(i) + " + ";
 				/*if(i != j) {
                                     
 					obj_func = obj_func + Math.sqrt((Math.floor((i-j)/varBound))*(Math.floor((i-j)/varBound)) + ((i-j)%varBound)*((i-j)%varBound)) + " * " + variables.get(i) + " + ";
@@ -83,26 +91,28 @@ public class JavaApplication3 {
 		 * OBTAIN MAP DATA FROM GUI
 		 * 
 		 */
-                FileWriter f = new FileWriter("C:\\Users\\hgfel\\Documents\\NetBeansProjects\\JavaApplication3\\variables.txt");
+		FileWriter f = new FileWriter("C:\\Users\\hgfel\\Documents\\NetBeansProjects\\JavaApplication3\\variables.txt");
 
-                for( int i = 0; i <varBound; i++)
-                {
-                    
-                    variables.add("int_x[" + (i+1) + "]");
-                    
-                    if(Map.map_data[i]==1)
-                    {
-                        constraints.add("int_x[" + (i+1)+ "] = 1");
-                    }
-                    
-                    
-                }
-                for(int x = 0; x < variables.size(); x++)
-                {
-                    f.write(variables.get(x) + System.getProperty("line.separator"));
-                }
-                f.close();
-                
+		for( int i = 0; i <varBound; i++)
+		{
+
+			variables.add("int_x[" + (i+1) + "]");
+
+			// ??? This is for which data ???
+			/* Disabling for now
+			if(Map.map_data[i]==1)
+			{
+				constraints.add("int_x[" + (i+1)+ "] = 1");
+			}
+			*/
+
+		}
+		for(int x = 0; x < variables.size(); x++)
+		{
+			f.write(variables.get(x) + System.getProperty("line.separator"));
+		}
+		f.close();
+
 		String max_num_centers = "";
 		for(int i = 0; i < variables.size(); i++) {
 			max_num_centers = max_num_centers + variables.get(i) + "+";
