@@ -10,7 +10,7 @@ public class projResource {
             amnt = 0;
 
     private String label;
-    private Color color;
+    private String color_s;
     private int rType;  // 1 if it's a population distribution center, 0 otherwise. See: AddAResourceController
     private ArrayList<projResource> constraint_list;
     private HashMap<projResource, Double> constraint_amnt;
@@ -24,7 +24,7 @@ public class projResource {
 
     public projResource(String label, Color color){
         this.label = label;
-        this.color = color;
+        this.color_s = color.toString();
     }
 
     public String getLabel(){
@@ -43,7 +43,7 @@ public class projResource {
     // negative distance = distance not a concern
 
     public Color getColor() {
-        return color;
+        return Color.valueOf(color_s);
     }
 
 
@@ -105,6 +105,18 @@ public class projResource {
         }
 
         return coordinate;
+    }
+
+    public ArrayList<Integer> getBlockedCoordinates(){
+        ArrayList<Integer> block_coordinate = new ArrayList<>(placement.length * 2);
+        for(int x = 0; x < placement.length; x++){
+            for(int y = 0; y< placement[x].length; y++)
+                if(placement[x][y] == -1){
+                    block_coordinate.add(x);
+                    block_coordinate.add(y);
+                }
+        }
+        return block_coordinate;
     }
 
 }

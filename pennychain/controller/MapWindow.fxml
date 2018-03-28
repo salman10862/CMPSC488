@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
-<?import javafx.scene.canvas.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.web.*?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
@@ -30,6 +26,7 @@
                         <MenuItem fx:id="saveAsItem" mnemonicParsing="false" onAction="#handleSaveAs" text="Save as..." />
                         <MenuItem fx:id="saveToDbItem" mnemonicParsing="false" onAction="#handleSaveToDb" text="Save to DB" />
                         <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="logoutItem" mnemonicParsing="false" onAction="#handleLogout" text="Logout"/>
                         <MenuItem fx:id="exitItem" mnemonicParsing="false" onAction="#handleExitItem" text="Exit" />
                     </items>
                 </Menu>
@@ -55,11 +52,11 @@
     <bottom>
         <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <items>
-                <Button fx:id="lockMap" mnemonicParsing="false" onMouseClicked="#lockMapListener" text="Lock Map" />
                 <ComboBox fx:id="resourceChooser" prefWidth="150.0" promptText="Resources" />
-            <Button fx:id="optimizeButton" mnemonicParsing="false" text="Request Optimization" />
-            <Button fx:id="zoomInButton" mnemonicParsing="false" onMouseClicked="#handleZoomIn" text="Zoom In" />
-            <Button fx:id="zoomOutButton" mnemonicParsing="false" onMouseClicked="#handleZoomOut" text="Zoom Out" />
+                <Button fx:id="optimizeButton" mnemonicParsing="false" text="Request Optimization" />
+                <Button fx:id="zoomInButton" mnemonicParsing="false" onMouseClicked="#handleZoomIn" text="Zoom In" />
+                <Button fx:id="zoomOutButton" mnemonicParsing="false" onMouseClicked="#handleZoomOut" text="Zoom Out" />
+                <Button fx:id="lockMap" mnemonicParsing="false" onMouseClicked="#lockMapListener" text="Lock Map" />
             </items>
         </ToolBar>
     </bottom>
