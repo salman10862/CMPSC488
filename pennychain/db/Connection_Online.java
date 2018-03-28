@@ -14,6 +14,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.util.JSON;
 
 import pennychain.controller.Project;
 
@@ -54,18 +55,14 @@ public class Connection_Online {
         userCollection.insert(newUser);
     }
 
-    public static void addProjectRecord(String projName, String owner, String[] sharedWith)
+    public static void addProjectRecord(String json)
     {
         //Display the name of the database
         System.out.println("Database name: " + database.getName());
 
-        //insert record into database
-        DBObject newProject = new BasicDBObject();
-        newProject.put("projectName", projName);
-        newProject.put("owner", owner);
-        newProject.put("sharedWith", sharedWith);
+        DBObject dbObj = (DBObject) JSON.parse(json);
 
-        projectCollection.insert(newProject);
+        projectCollection.insert(dbObj);
     }
 
     //find a record in database
@@ -99,32 +96,32 @@ public class Connection_Online {
     return false;
 }
     
-    public static CharSequence getHashedPass(String uname){	//returns the hashed password for the specified username
+    public static String getHashedPass(String uname){	//returns the hashed password for the specified username
     BasicDBObject whereQuery = new BasicDBObject();
     whereQuery.put("username", uname);
     DBCursor cursor = userCollection.find(whereQuery);
 
     //hashed password to be returned
-    CharSequence pwd = "";
+    String pwd = "";
 
     while(cursor.hasNext()){	//should only return 1 document since usernames must be unique
-        pwd = (CharSequence) cursor.next().get("password");
+        pwd = (String) cursor.next().get("password");
     }
 
     cursor.close();
     return pwd;
 }
     
-public static CharSequence getSalt(String uname){	//returns the salt used with the password for the specified username
+public static String getSalt(String uname){	//returns the salt used with the password for the specified username
     BasicDBObject whereQuery = new BasicDBObject();
     whereQuery.put("username", uname);
     DBCursor cursor = userCollection.find(whereQuery);
 
     //hashed password to be returned
-    CharSequence salt = "";
+    String salt = "";
 
     while(cursor.hasNext()){	//should only return 1 document since usernames must be unique
-        salt = (CharSequence) cursor.next().get("salt");
+        salt = (String) cursor.next().get("salt");
     }
 
     cursor.close();
@@ -160,11 +157,9 @@ public void loadProject(){
 
     //change a password in the database
     public static void updatePassword(String uname, String newSalt, String newSaltedHashedPass) {
-        BasicDBObject newDoc = new BasicDBObject();
 
         //update the password
-        newDoc.append("$set", new BasicDBObject().append("salt", newSalt));
-        newDoc.append("$set", new BasicDBObject().append("password", newSaltedHashedPass));
+        BasicDBObject newDoc = new BasicDBObject ("$set", new BasicDBObject().append("salt", newSalt).append("password", newSaltedHashedPass));
 
         //find collection where username is the one we specify
         BasicDBObject searchQuery = new BasicDBObject().append("username", uname);
