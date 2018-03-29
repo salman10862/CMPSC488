@@ -209,8 +209,8 @@ public class MapWindowController {
             currentZoom = currentMap.getZoom();
         } else {
             // Set "center" of Map
-            Double latitude = (Double) webEngine.executeScript("getLongitude()");
-            Double longitude = (Double) webEngine.executeScript("getLatitude()");
+            Double longitude = (Double) webEngine.executeScript("getLongitude()");
+            Double latitude = (Double) webEngine.executeScript("getLatitude()");
             int zoom = (Integer) webEngine.executeScript("getZoom()");
             GRID_SIZE = grid_size_selection.getSelectionModel().getSelectedItem();
             toolbar.getItems().remove(grid_size_selection);

@@ -56,10 +56,12 @@
 
             function setPerspective(lt, lg, zm){
                 var ltlng = {lat: lt, lng: lg};
-                map.setOptions({
-                    center: ltlng,
-                    zoom: zm
+                var marker = new google.maps.Marker({
+                    position: ltlng,
+                    map: map
                 });
+                map.panTo(ltlng);
+                google.maps.event.trigger(map, 'resize');
             }
 
             function zoomIn(){
