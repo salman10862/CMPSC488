@@ -22,10 +22,12 @@
 <script language="javascript" >
             var map;
             var defaultZoom;
+            var geocoder;
             function initMap() {
                 var psuHbg = {lat: 40.2042945, lng: -76.7471177};
+                geocoder = new google.maps.Geocoder();
                 map = new google.maps.Map(document.getElementById('map'), {
-                    zoom: 15,
+                    zoom: 13,
                     center: psuHbg,
                     disableDefaultUI: true
                 });
@@ -80,6 +82,35 @@
                 var ltlng1 = new google.maps.LatLng(lt1, lg1);
                 var ltlng2 = new google.maps.LatLng(lt2, lg2);
                 return googlemaps.geometry.spherical.computeDistanceBetween(ltlng1, ltlng2);
+            }
+
+            function getCounty(lt, lg){
+                var latlng = new google.maps.LatLng(lt, lg);
+                geocoder.geocode({'latLng': latlng}, function(results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        if (results[1]) {
+                             //formatted address
+                            alert(results[0].formatted_address)
+                            //find country name
+                            for (var i=0; i<results[0].address_components.length; i++) {
+                                for (var b=0;b<results[0].address_components[i].types.length;b++) {
+                                    if (results[0].address_components[i].types[b] == "administrative_area_level_2") {
+                                       county = results[0].address_components[i];
+                                       break;
+                                }
+                            }
+                        }
+                        //Report County
+                        alert(county)
+                    }
+                    else {
+                        alert("No results found");
+                    }
+                }
+                else {
+                    alert("FAILURE");
+                }
+                });
             }
 
             function showAlert(){
