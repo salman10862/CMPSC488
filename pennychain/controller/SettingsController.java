@@ -85,8 +85,8 @@ public class SettingsController{
     @FXML protected void handleChangePassButton(MouseEvent event) throws java.security.NoSuchAlgorithmException,
     java.security.spec.InvalidKeySpecException
     {
-        String salt = Connection_Online.getSalt(session.getCurrentUser()).toString();
-        String saltedHashedPass = Connection_Online.getHashedPass(session.getCurrentUser()).toString();
+        String salt = Connection_Online.getSalt(session.getCurrentUser());
+        String saltedHashedPass = Connection_Online.getHashedPass(session.getCurrentUser());
 
         if(Hash.verifyPassword(currentPassConfirm.getCharacters(), salt, saltedHashedPass)) {
             String newPass1 = newPassField1.getCharacters().toString();

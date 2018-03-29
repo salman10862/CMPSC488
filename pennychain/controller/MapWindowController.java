@@ -38,6 +38,8 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
+import com.google.gson.Gson;
+
 import pennychain.center.OptimizationRequest;
 import pennychain.db.Connection_Online;
 import pennychain.usr.UserSession;
@@ -115,7 +117,10 @@ public class MapWindowController {
     }
 
     @FXML protected void handleSaveToDb(ActionEvent event) {
-        //TODO: implement
+        Gson gson = new Gson();
+        String json = gson.toJson(project);
+        Connection_Online.addProjectRecord(json);
+        //TODO: display some kind of confirmation
     }
         
 
