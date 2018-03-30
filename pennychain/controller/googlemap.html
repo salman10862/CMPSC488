@@ -92,23 +92,54 @@
                             // Parse through if there is an address attached
                             for (var i=0; i<results[0].address_components.length; i++) {
                                 for (var b=0;b<results[0].address_components[i].types.length;b++) {
-                                    if (results[0].address_components[i].types[b] == "administrative_area_level_2")
+                                    if (results[0].address_components[i].types[b] == "administrative_area_level_2") {
                                        county = results[0].address_components[i];
                                        break;
+                                    }
                                 }
                             }
-                        }
                         //Report County
-                        alert(county)
+                        return county;
+                        } else {
+                            alert("No results found");
+                        }
+                    } else {
+                        alert("FAILURE");
                     }
-                    else {
-                        alert("No results found");
-                    }
-                }
-                else {
-                    alert("FAILURE");
-                }
                 });
+            }
+
+            function getAddress(lt, lg){
+                var latlng = new google.maps.LatLng(lt, lg);
+                geocoder.geocode({'latLng': latlng}, function(results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        if (results[1]) {
+                            return results[1].formatted_address;
+                        } else {
+                            alert("No results found");
+                        }
+                    } else {
+                        alert("FAILURE");
+                    }
+                });
+            }
+            var distanceMatrix = new google.maps.DistanceMatrixService();
+            distanceMatrix.getDistanceMatrix(
+                {
+                    origins: origins,
+                    destinations: [destinationA, destinationB],
+                    travelMode: 'DRIVING',
+                    /* OPTIONAL FIELDS - NOT USED
+                    transitOptions: TransitOptions,
+                    drivingOptions: DrivingOptions,*/
+                    unitSystem: google.maps.UnitSystem.IMPERIAL,
+                    avoidHighways: false,
+                    avoidTolls: false,
+                }, distanceMatrixCallback);
+
+            function distanceMatrixCallback(response, status) {
+                // See Parsing the Results for
+                // the basics of a callback function.
             }
 
             function showLoadAlert(){
