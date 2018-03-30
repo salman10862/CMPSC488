@@ -20,6 +20,7 @@ public class Project {
     private ArrayList<projResource> projResourceList;
     private ArrayList<String> settingsList;
     private ArrayList<String> sharedWith;
+    private boolean optimization_implicit;
 
     //private final DEFAULT_SETTINGS = new
     public Project(){

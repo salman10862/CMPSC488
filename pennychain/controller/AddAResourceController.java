@@ -60,7 +60,6 @@ public class AddAResourceController{
         rTypeList.add("Generic Resource");
         rTypeList.add("Distribution Endpoint");
         valueChoice.setItems(FXCollections.observableList(rTypeList));
-
         valueChoice.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {

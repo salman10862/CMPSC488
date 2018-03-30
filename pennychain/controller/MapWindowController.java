@@ -403,12 +403,14 @@ public class MapWindowController {
                                 webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
                                     @Override
                                     public void handle(WebEvent<String> stringWebEvent) {
-                                        System.out.println("CURRENTLY OPENING EXISTING PROJECT");
-                                        currentZoom = project.getMainMap().getZoom();
-                                        webEngine.executeScript("setPerspective(" + project.getMainMap().getLatitude() + ", "
-                                              + project.getMainMap().getLongitude() + ", " + currentZoom
-                                            + ")");
-                                        lockMapListener();
+                                        if (stringWebEvent.toString().equals("LOADED")) {
+                                            System.out.println("CURRENTLY OPENING EXISTING PROJECT");
+                                            currentZoom = project.getMainMap().getZoom();
+                                            webEngine.executeScript("setPerspective(" + project.getMainMap().getLatitude() + ", "
+                                                    + project.getMainMap().getLongitude() + ", " + currentZoom
+                                                    + ")");
+                                            lockMapListener();
+                                        }
                                     }
                                 });
                             }
