@@ -20,13 +20,12 @@ public class LoginWindow extends Application {
         Scene scene = new Scene(root, 400, 400);
 
         stage = new Stage();
-            stage.setTitle("Application - Map Window");
-            stage.setScene(scene);
-            stage.show();
-        }
+        stage.setTitle("Application - Map Window");
+        stage.setScene(scene);
+        stage.show();
+    }
 
     public static void main(String[] args) {
-
         Application.launch(args);
     }
 }

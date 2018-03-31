@@ -220,8 +220,8 @@ public class MapWindowController {
             currentZoom = currentMap.getZoom();
         } else {
             // Set "center" of Map
-            Double latitude = (Double) webEngine.executeScript("getLongitude()");
-            Double longitude = (Double) webEngine.executeScript("getLatitude()");
+            Double longitude = (Double) webEngine.executeScript("getLongitude()");
+            Double latitude = (Double) webEngine.executeScript("getLatitude()");
             int zoom = (Integer) webEngine.executeScript("getZoom()");
             GRID_SIZE = grid_size_selection.getSelectionModel().getSelectedItem();
             toolbar.getItems().remove(grid_size_selection);
@@ -409,12 +409,14 @@ public class MapWindowController {
                                 webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
                                     @Override
                                     public void handle(WebEvent<String> stringWebEvent) {
-                                        System.out.println("CURRENTLY OPENING EXISTING PROJECT");
-                                        currentZoom = project.getMainMap().getZoom();
-                                        webEngine.executeScript("setPerspective(" + project.getMainMap().getLatitude() + ", "
-                                              + project.getMainMap().getLongitude() + ", " + currentZoom
-                                            + ")");
-                                        lockMapListener();
+                                        if (stringWebEvent.toString().equals("LOADED")) {
+                                            System.out.println("CURRENTLY OPENING EXISTING PROJECT");
+                                            currentZoom = project.getMainMap().getZoom();
+                                            webEngine.executeScript("setPerspective(" + project.getMainMap().getLatitude() + ", "
+                                                    + project.getMainMap().getLongitude() + ", " + currentZoom
+                                                    + ")");
+                                            lockMapListener();
+                                        }
                                     }
                                 });
                             }

@@ -17,15 +17,17 @@
         </style>
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&v=3&libraries=geometry"></script>
 </head>
-<body onload="showAlert()">
+<body onload="showLoadAlert()">
 <div id="map"></div>
 <script language="javascript" >
             var map;
             var defaultZoom;
+            var geocoder;
             function initMap() {
                 var psuHbg = {lat: 40.2042945, lng: -76.7471177};
+                geocoder = new google.maps.Geocoder();
                 map = new google.maps.Map(document.getElementById('map'), {
-                    zoom: 15,
+                    zoom: 13,
                     center: psuHbg,
                     disableDefaultUI: true
                 });
@@ -56,10 +58,12 @@
 
             function setPerspective(lt, lg, zm){
                 var ltlng = {lat: lt, lng: lg};
-                map.setOptions({
-                    center: ltlng,
-                    zoom: zm
+                var marker = new google.maps.Marker({
+                    position: ltlng,
+                    map: map
                 });
+                map.panTo(ltlng);
+                google.maps.event.trigger(map, 'resize');
             }
 
             function zoomIn(){
@@ -80,8 +84,66 @@
                 return googlemaps.geometry.spherical.computeDistanceBetween(ltlng1, ltlng2);
             }
 
-            function showAlert(){
-                alert("ALERT");
+            function getCounty(lt, lg){
+                var latlng = new google.maps.LatLng(lt, lg);
+                geocoder.geocode({'latLng': latlng}, function(results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        if (results[1]) {
+                            // Parse through if there is an address attached
+                            for (var i=0; i<results[0].address_components.length; i++) {
+                                for (var b=0;b<results[0].address_components[i].types.length;b++) {
+                                    if (results[0].address_components[i].types[b] == "administrative_area_level_2") {
+                                       county = results[0].address_components[i];
+                                       break;
+                                    }
+                                }
+                            }
+                        //Report County
+                        return county;
+                        } else {
+                            alert("No results found");
+                        }
+                    } else {
+                        alert("FAILURE");
+                    }
+                });
+            }
+
+            function getAddress(lt, lg){
+                var latlng = new google.maps.LatLng(lt, lg);
+                geocoder.geocode({'latLng': latlng}, function(results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        if (results[1]) {
+                            return results[1].formatted_address;
+                        } else {
+                            alert("No results found");
+                        }
+                    } else {
+                        alert("FAILURE");
+                    }
+                });
+            }
+            var distanceMatrix = new google.maps.DistanceMatrixService();
+            distanceMatrix.getDistanceMatrix(
+                {
+                    origins: origins,
+                    destinations: [destinationA, destinationB],
+                    travelMode: 'DRIVING',
+                    /* OPTIONAL FIELDS - NOT USED
+                    transitOptions: TransitOptions,
+                    drivingOptions: DrivingOptions,*/
+                    unitSystem: google.maps.UnitSystem.IMPERIAL,
+                    avoidHighways: false,
+                    avoidTolls: false,
+                }, distanceMatrixCallback);
+
+            function distanceMatrixCallback(response, status) {
+                // See Parsing the Results for
+                // the basics of a callback function.
+            }
+
+            function showLoadAlert(){
+                alert("LOADED");
             }
         </script>
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD7MjGyPPBoWoQaqQinDGn3lnn5P_9sL_w&callback=initMap">
