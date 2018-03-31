@@ -15,6 +15,7 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.util.JSON;
+import com.mongodb.WriteResult;
 
 import pennychain.controller.Project;
 
@@ -55,14 +56,15 @@ public class Connection_Online {
         userCollection.insert(newUser);
     }
 
-    public static void addProjectRecord(String json)
+    public static boolean addProjectRecord(String json)
     {
         //Display the name of the database
         System.out.println("Database name: " + database.getName());
 
         DBObject dbObj = (DBObject) JSON.parse(json);
-
-        projectCollection.insert(dbObj);
+        WriteResult result;
+        result = projectCollection.insert(dbObj);
+        return result.wasAcknowledged();
     }
 
     //find a record in database

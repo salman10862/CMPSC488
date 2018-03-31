@@ -116,11 +116,17 @@ public class MapWindowController {
         }
     }
 
-    @FXML protected void handleSaveToDb(ActionEvent event) {
-        Gson gson = new Gson();
-        String json = gson.toJson(project);
-        Connection_Online.addProjectRecord(json);
-        //TODO: display some kind of confirmation
+    @FXML protected void handleSaveToDb(ActionEvent event) throws IOException {
+        SaveDbController controller = new SaveDbController(project, userSession);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("SaveDbWindow.fxml"));
+        loader.setController(controller);
+        Parent root = loader.load();
+        Scene scene = new Scene(root, 500, 400);
+
+        Stage stage = new Stage();
+        stage.setTitle("Save to Database");
+        stage.setScene(scene);
+        stage.show();
     }
         
 

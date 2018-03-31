@@ -38,6 +38,10 @@ public class Project {
         projResourceList = new ArrayList<>();
     }
 
+    public void setProjLabel(String label) {
+        projLabel = label;
+    }
+
     public userProfile getUserProfile(){
         if(linked_userID == null)
             linked_userID = new userProfile();
