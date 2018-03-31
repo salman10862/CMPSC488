@@ -28,6 +28,7 @@ public class StartWindowController {
 
     @FXML private Button newProjectButton;
     @FXML private Button loadFromFileButton;
+    @FXML private Button loadFromDbButton;
     @FXML private Button exitButton;
     
     private UserSession userSession;
@@ -89,6 +90,21 @@ public class StartWindowController {
                 ((Node)(event.getSource())).getScene().getWindow().hide();
             }
         }
+    }
+
+    @FXML protected void handleLoadFromDb(MouseEvent event) {
+        LoadDbController loadDbController = new LoadDbController(userSession);
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("LoadDbWindow.fxml"));
+        loader.setController(loadDbController);
+        Parent root = loader.load();
+        Scene scene = new Scene(root, 500, 400);
+
+        Stage loadFromDbStage = new Stage();
+        loadFromDbStage.setTitle("Load Project from Database");
+        loadFromDbStage.setScene(scene);
+        loadFromDbStage.show();
+        ((Node)(event.getSource())).getScene().getWindow().hide();
     }
 
     @FXML protected void handleExitButton(MouseEvent event) {
