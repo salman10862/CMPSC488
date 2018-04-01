@@ -1,5 +1,7 @@
 package pennychain.controller;
 
+import java.awt.*;
+import java.awt.event.InputEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -16,15 +18,22 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
+import javafx.event.EventDispatchChain;
 import javafx.event.EventHandler;
+import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -206,9 +215,12 @@ public class MapWindowController {
         );
     }
 
-    @FXML protected void lockMapListener(){
+    @FXML protected void lockMapListener() throws AWTException{
         System.out.println("LOCKMAP BUTTON PRESSED");
         toolbar.getItems().remove(lockMap);
+
+        //Disable GoogleMaps UI
+        webEngine.executeScript("disable()");
 
         // Set the size of the overlay Grid if this is a new Map
         int GRID_SIZE = 0;
@@ -223,19 +235,43 @@ public class MapWindowController {
             Double longitude = (Double) webEngine.executeScript("getLongitude()");
             Double latitude = (Double) webEngine.executeScript("getLatitude()");
             int zoom = (Integer) webEngine.executeScript("getZoom()");
+
             GRID_SIZE = grid_size_selection.getSelectionModel().getSelectedItem();
-            toolbar.getItems().remove(grid_size_selection);
-            toolbar.getItems().remove(grid_size_text);
+
+            //Initialize other Map items
             Map map = new Map(GRID_SIZE, webView.getWidth(), webView.getHeight(), zoom, latitude, longitude);
             project.setMainMap(map);
             currentMap = project.getMainMap();
             currentZoom = zoom;
             currentMap.initializeGrid();
+
+            // Set the Lats/Lings for JS method calls
+            double[] langitudes = currentMap.getGridLangs();
+            double[] longitudes = currentMap.getGridLats();
+
+            ArrayList<Point> cell_centers = currentMap.getGridCenters();
+
+            for(int i = 0; i< cell_centers.size(); i++) {
+                double local_x = cell_centers.get(i).getX();
+                double local_y = cell_centers.get(i).getY();
+                Point2D screen_coordinates = webView.localToScreen(local_x, local_y);
+                //javafx.event.Event.fireEvent(webView, new MouseEvent(MouseEvent.MOUSE_PRESSED,
+                  //                          local_x, local_y, screen_coordinates.getX(), screen_coordinates.getY(), , 1,
+                    //                        false, false, false, false, true, false,
+                      //                      false, false, false, false, null));
+                Robot r = new Robot();
+                r.mouseMove((int)screen_coordinates.getX(), (int)screen_coordinates.getY());
+                r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+
+                //langitudes[i] = ;
+                //longitudes[i] = ;
+            }
+
+            // UI cleanup
+            toolbar.getItems().remove(grid_size_selection);
+            toolbar.getItems().remove(grid_size_text);
         }
 
-
-        //Disable GoogleMaps UI
-        webEngine.executeScript("disable()");
 
         if(!project.getStringsofResources().isEmpty())
             resourceChooser.getItems().addAll(FXCollections.observableList(project.getStringsofResources()));
@@ -415,7 +451,12 @@ public class MapWindowController {
                                             webEngine.executeScript("setPerspective(" + project.getMainMap().getLatitude() + ", "
                                                     + project.getMainMap().getLongitude() + ", " + currentZoom
                                                     + ")");
-                                            lockMapListener();
+                                            try{
+                                                lockMapListener();
+                                            }
+                                            catch (AWTException e){
+                                                e.printStackTrace();
+                                            }
                                         }
                                     }
                                 });

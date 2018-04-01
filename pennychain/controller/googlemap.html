@@ -35,6 +35,10 @@
                     position: psuHbg,
                     map: map
                 });
+
+                map.addListener('click', function() {
+
+                })
             }
 
             function getZoom(){
@@ -46,7 +50,6 @@
             function getLongitude(){
                 return map.center.lng();
             }
-
 
             function disable(){
                 map.setOptions({

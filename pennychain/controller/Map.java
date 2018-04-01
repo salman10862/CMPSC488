@@ -29,6 +29,7 @@ public class Map {
                                         73957193.820000,    147914387.600000,
                                         295828775.300000,   591657550.500000};
 
+
     private Double latitude,
             longitude;
 
@@ -38,6 +39,8 @@ public class Map {
 
     private ArrayList<Point> gridCorners;    //Stores the lower right-hand coordinates of each grid cell.
     private ArrayList<Point> gridCenters;    //Stores the center of each grid cell;
+    private double[] gridLats;
+    private double[] gridLangs;
 
     public Map(int grid_size, double width, double len, int zoom, Double latitude, Double longitude){
         this.grid_size = grid_size; //Grid size MUST be divisible by 4
@@ -55,6 +58,8 @@ public class Map {
         gridCenters = new ArrayList<>(grid_size);
         cell_length = len/(grid_size/2);
         cell_width = width/(grid_size/2);
+        gridLats = new double[grid_size];
+        gridLats = new double[grid_size];
         for(double l=cell_length; l<=len ;l=l+cell_length){
             for(double w=cell_width; w<=width ; w=w+cell_width){
                 gridCorners.add(new Point((int)w, (int)l));
@@ -95,6 +100,18 @@ public class Map {
         }
 
         return coordinates;
+    }
+
+    public double[] getGridLangs() {
+        return gridLangs;
+    }
+
+    public double[] getGridLats() {
+        return gridLats;
+    }
+
+    public ArrayList<Point> getGridCenters() {
+        return gridCenters;
     }
 
     public int getGrid_size(){ return grid_size; }
