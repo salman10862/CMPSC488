@@ -1,7 +1,13 @@
 package pennychain.center;
 
+import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
 import pennychain.controller.Map;
@@ -15,6 +21,8 @@ public class OptimizationRequest {
 	private ArrayList<String> constraints = new ArrayList<>();
 	private Map map;
 	private ArrayList<projResource> projectResourceList;
+
+
 	
 	public OptimizationRequest(ArrayList<projResource> projectResourceList) {
 		this.projectResourceList = projectResourceList;
@@ -120,5 +128,38 @@ public class OptimizationRequest {
 	public void setMaxCenters(int desired_max) {
 		this.max_posi = desired_max;
 	}
+
+	private String googleReverseGeocode() {
+        try {
+            double lat = 40.714224;
+            double lng = -73.961452;
+            URL myURL = new URL("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat + "," + lng + "&key=AIzaSyD7MjGyPPBoWoQaqQinDGn3lnn5P_9sL_w");
+            HttpURLConnection myURLConnection =(HttpURLConnection) myURL.openConnection();
+            myURLConnection.connect();
+            int status = myURLConnection.getResponseCode();
+
+
+            switch(status) {
+                case 200:
+                case 201:
+                    BufferedReader br = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
+                    String tempStr = "";
+                    StringBuilder sb = new StringBuilder();
+                    while (null != (tempStr = br.readLine())) {
+                        sb.append(tempStr + '\n');
+                    }
+                    return sb.toString();
+            }
+        }
+        catch (MalformedURLException e) {
+            // new URL() failed
+            // ...
+        }
+        catch (IOException e) {
+            // openConnection() failed
+            // ...
+        }
+        return null;
+    }
 
 }
