@@ -1,3 +1,5 @@
+package pennychain.center;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,11 +14,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-/**
- * Created by Chris on 3/16/2018.
- */
-public class retrieveGasPrices {
-
+class BackgroundThread implements Runnable {
+    private Thread thread;
+    private String threadName;
     public static ArrayList<String> county_Urls;
     public static String BaseUrl = "https://www.gasbuddy.com";
     public static int startIndex = 0;
@@ -24,51 +24,78 @@ public class retrieveGasPrices {
     public static File file = new File("avgGasPrices.txt");
     public static FileWriter fileWriter;
     public static Double[] allAvgGasPrices;
+
+    BackgroundThread(String name) {
+        threadName = name;
+        System.out.println("Creating " +  threadName );
+    }
+
+    public void run() {
+        System.out.println("Running " +  threadName );
+        try {
+            /*if(args.length > 0)
+            {
+                startIndex = Integer.valueOf(args[0]);
+                System.out.println("Start index: " + startIndex);
+                //file = new File("avgGasPrices" + startIndex + ".txt");
+                //fileWriter = new FileWriter(file);
+            }*/
+            retrieveGasPrices.loadUrls();
+            allAvgGasPrices = new Double[county_Urls.size()];
+            for(String county : county_Urls) {
+                System.out.println("SCRAPING COUNTY" + "\n" + county);
+                Double totalPrices = 0.0;
+                Double avgGasPrice;
+                ArrayList<Double> allGasPrices = new ArrayList<>();
+                ArrayList<String> cities = retrieveGasPrices.scrapCounty(county);
+                for(String city: cities)
+                {
+                    System.out.println("SCRAPING CITY" + "\n" + city);
+                    retrieveGasPrices.getGasPriceOfCity(city, allGasPrices);
+                }
+                for(Double price: allGasPrices)
+                {
+                    totalPrices += price;
+                }
+                avgGasPrice = totalPrices/allGasPrices.size();
+                retrieveGasPrices.retreieveAllGasPrices(avgGasPrice);
+                System.out.println(county + " " + avgGasPrice + "\n");
+                //writeGasPricesToFile(county.split("/")[county.split("/").length - 2], avgGasPrice);
+            }
+            //fileWriter.close();
+            Thread.sleep(100);
+        } catch (Exception e) {
+            System.out.println("Thread " +  threadName + " interrupted.");
+        }
+        System.out.println("Thread " +  threadName + " exiting.");
+    }
+
+    public void start () {
+        System.out.println("Starting " +  threadName );
+        if (thread == null) {
+            thread = new Thread (this, threadName);
+            thread.start();
+        }
+    }
+}
+
+public class retrieveGasPrices {
     public static int count = 0;
 
-
-    public static void main(String[] args) throws Exception {
-        if(args.length > 0)
-        {
-            startIndex = Integer.valueOf(args[0]);
-            System.out.println("Start index: " + startIndex);
-            //file = new File("avgGasPrices" + startIndex + ".txt");
-            //fileWriter = new FileWriter(file);
-        }
-        loadUrls();
-        allAvgGasPrices = new Double[county_Urls.size()];
-        for(String county : county_Urls) {
-            System.out.println("SCRAPING COUNTY" + "\n" + county);
-            Double totalPrices = 0.0;
-            Double avgGasPrice;
-            ArrayList<Double> allGasPrices = new ArrayList<>();
-            ArrayList<String> cities = scrapCounty(county);
-            for(String city: cities)
-            {
-                System.out.println("SCRAPING CITY" + "\n" + city);
-                getGasPriceOfCity(city, allGasPrices);
-            }
-            for(Double price: allGasPrices)
-            {
-                totalPrices += price;
-            }
-            avgGasPrice = totalPrices/allGasPrices.size();
-            retreieveAllGasPrices(avgGasPrice);
-            System.out.println(county + " " + avgGasPrice + "\n");
-            //writeGasPricesToFile(county.split("/")[county.split("/").length - 2], avgGasPrice);
-        }
-        //fileWriter.close();
-
+    public static void main(String args[])
+    {
+        BackgroundThread thread = new BackgroundThread("Thread-1");
+        thread.start();
     }
 
     public static void loadUrls() throws Exception
     {
         String filename = "C:\\Users\\Chris\\IdeaProjects\\GasPrices\\src\\urls.txt";
         Scanner sc = new Scanner(new File(filename));
-        county_Urls = new ArrayList<>();
+        BackgroundThread.county_Urls = new ArrayList<>();
         while(sc.hasNextLine())
         {
-            county_Urls.add(sc.nextLine());
+            BackgroundThread.county_Urls.add(sc.nextLine());
         }
         /*for(int i = 1; i < startIndex; i++){
             if(sc.hasNextLine()){
@@ -92,7 +119,7 @@ public class retrieveGasPrices {
         Matcher matcher = pattern.matcher(htmlSource);
 
         while (matcher.find()) {
-            cities_Urls.add(BaseUrl + matcher.group(1).replace(" ", "%20"));
+            cities_Urls.add(BackgroundThread.BaseUrl + matcher.group(1).replace(" ", "%20"));
         }
         System.out.println("Done");
 
@@ -143,16 +170,16 @@ public class retrieveGasPrices {
     }
 
     public static void writeGasPricesToFile(String county, Double price) throws IOException {
-        fileWriter.write(county + "," + price + "\n");
-        fileWriter.flush();
+        //fileWriter.write(county + "," + price + "\n");
+        //fileWriter.flush();
     }
 
     public static Double[] retreieveAllGasPrices(double price)
     {
-        allAvgGasPrices[count] = price;
-        System.out.println(allAvgGasPrices[count]);
+        BackgroundThread.allAvgGasPrices[count] = price;
+        System.out.println(BackgroundThread.allAvgGasPrices[count]);
         count++;
-        return allAvgGasPrices;
+        return BackgroundThread.allAvgGasPrices;
     }
 
 }
