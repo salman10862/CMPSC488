@@ -5,18 +5,14 @@ import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.List;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
+import com.mongodb.*;
 import com.mongodb.util.JSON;
-import com.mongodb.WriteResult;
 
+import org.bson.Document;
 import pennychain.controller.Project;
 
 public class Connection_Online {
@@ -36,6 +32,7 @@ public class Connection_Online {
         //findRecordByUsername("ckw5071");
         //System.out.println(userExists("pranav412"));    //test to see if username exists in database
        // updatePassword("pranav412", "newPass12345");
+        getUserProjects("pranav412");
     }
 
     //add a record to the database
@@ -134,7 +131,7 @@ public static String getSalt(String uname){	//returns the salt used with the pas
         project.shareWithUser(username);    //Add username to sharedWith arraylist
 }
 
-public String getUserEmail(String uname){
+public static String getUserEmail(String uname){
     String email = "";
 
     BasicDBObject whereQuery = new BasicDBObject();
@@ -147,7 +144,43 @@ public String getUserEmail(String uname){
 
     cursor.close();
     return email;
-}    
+}
+
+//returns an arraylist of all projects owned by a particular user
+public static ArrayList getUserProjects(String uname){       //TODO: add an "owner" field to project collection
+    ArrayList<String> projNames = new ArrayList<>();        //TODO: add "projLabel" field to project collection
+
+    BasicDBObject whereQuery = new BasicDBObject();
+    whereQuery.put("owner", uname);
+    DBCursor cursor = projectCollection.find(whereQuery);
+
+    while(cursor.hasNext()){
+        projNames.add((String) cursor.next().get("projLabel"));
+    }
+
+    cursor.close();
+
+    return projNames;
+}
+
+//returns an arraylist of all projects shared with a user
+public static void getAllUserProjects(String uname){    //TODO; test and update this method
+
+    ArrayList<String> projNames = new ArrayList<>();
+
+    //get all records from project collection
+    DBCursor cursor = projectCollection.find();
+
+    BasicDBList list = (BasicDBList) cursor.next().get("sharedWith");
+
+    //TODO: if the shared with array contains username, then add it to projNames
+
+    return projNames
+}
+
+public static void updateProjectRecords(){  //TODO: Implement method to overwrite fields in project
+        ;
+}
     
 public void saveProject(){
         //TODO: Save a project along with all relevant information to database

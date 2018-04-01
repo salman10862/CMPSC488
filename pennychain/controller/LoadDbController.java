@@ -25,7 +25,7 @@ public class LoadDbController {
         this.session = session;
     }
 
-    @FXML initialize(){
+    @FXML void initialize(){
         //TODO populate ListView with project names by querying db
     }
 
