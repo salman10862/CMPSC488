@@ -8,12 +8,15 @@ import java.security.spec.InvalidKeySpecException;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import com.mongodb.*;
 import com.mongodb.util.JSON;
 
 import org.bson.Document;
+import pennychain.controller.Map;
 import pennychain.controller.Project;
+import pennychain.controller.projResource;
 
 public class Connection_Online {
 
@@ -32,7 +35,12 @@ public class Connection_Online {
         //findRecordByUsername("ckw5071");
         //System.out.println(userExists("pranav412"));    //test to see if username exists in database
        // updatePassword("pranav412", "newPass12345");
-        getUserProjects("pranav412");
+        //ArrayList<String> projNames = getUserProjects("pranav412");
+        ArrayList<String> projNames = getSharedUserProjects("ckw5071");
+
+        for(String tmp: projNames){
+            System.out.println(tmp);
+        }
     }
 
     //add a record to the database
@@ -147,8 +155,8 @@ public static String getUserEmail(String uname){
 }
 
 //returns an arraylist of all projects owned by a particular user
-public static ArrayList getUserProjects(String uname){       //TODO: add an "owner" field to project collection
-    ArrayList<String> projNames = new ArrayList<>();        //TODO: add "projLabel" field to project collection
+public static ArrayList getUserProjects(String uname){
+    ArrayList<String> projNames = new ArrayList<>();
 
     BasicDBObject whereQuery = new BasicDBObject();
     whereQuery.put("owner", uname);
@@ -164,21 +172,29 @@ public static ArrayList getUserProjects(String uname){       //TODO: add an "own
 }
 
 //returns an arraylist of all projects shared with a user
-public static ArrayList getAllUserProjects(String uname){    //TODO; test and update this method
-
+public static ArrayList getSharedUserProjects(String uname){    //TODO; fix this method
     ArrayList<String> projNames = new ArrayList<>();
 
-    //get all records from project collection
+    //TODO: change this to not retrieve all projects(highly inefficient as it is)
     DBCursor cursor = projectCollection.find();
 
-    BasicDBList list = (BasicDBList) cursor.next().get("sharedWith");
+    while(cursor.hasNext()){
+        try {
+            if (cursor.next().get("sharedWith").toString().contains(uname)) {
+                projNames.add((String) cursor.next().get("projLabel"));
+            }
+        }catch (NoSuchElementException x){
+            ;
+        }
+    }
 
-    //TODO: if the shared with array contains username, then add it to projNames
+    cursor.close();
 
     return projNames;
 }
 
-public static void updateProjectRecords(){  //TODO: Implement method to overwrite fields in project
+    //TODO: Implement method to overwrite fields in project
+public static void updateProjectRecords(String projOwner, String projName, Map mainMap, Map[] scenarioMaps, projResource[] resources){
         ;
 }
     

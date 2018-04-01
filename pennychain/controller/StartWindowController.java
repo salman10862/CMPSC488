@@ -92,7 +92,7 @@ public class StartWindowController {
         }
     }
 
-    @FXML protected void handleLoadFromDb(MouseEvent event) {
+    @FXML protected void handleLoadFromDb(MouseEvent event) throws IOException {
         LoadDbController loadDbController = new LoadDbController(userSession);
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("LoadDbWindow.fxml"));
