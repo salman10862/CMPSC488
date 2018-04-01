@@ -52,7 +52,7 @@ public class Converter {
         double totalAmountToBeConverted = user_selection.nextDouble();
 
         if (user_currency_choice == desiredCurrency)
-            System.out.println("These are the same currencies. No need to convert!");
+            System.out.println("These are the same type of currencies. No need to convert!");
 
         if (user_currency_choice == 1 && desiredCurrency == 3)
         {
