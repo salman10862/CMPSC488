@@ -42,40 +42,15 @@ public class ConstraintController{
     @FXML
     public void initialize()
     {
-        List<String> type_values = Arrays.asList("Global", "Resource-tied", "District-tied");
+        List<String> type_values = Arrays.asList("Implicit", "Explicit");
 
         //TODO: Construct within the Project object a list of constraints associated, link it up to this
-        List<String> global_values = Arrays.asList("Budget");
+        //List<String> global_values = Arrays.asList("Budget");
 
-        //cTypeList.setItems(FXCollections.observableList(type_values));
+        cTypeList.setItems(FXCollections.observableList(type_values));
 
         //TODO: Edit this to work with table view
 
-        cTypeList.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                String t = (String) cTypeList.getSelectionModel().getSelectedItem();
-                if(t.equals("Global"))
-                    cList.setItems(FXCollections.observableList(global_values));
-                else if (t.equals("Resource-tied")) {
-                    ArrayList<projResource> list = project.getProjResourceList();
-                    ArrayList<String> str_lst = new ArrayList<>();
-                    for (projResource res:
-                         list) {
-                        String str = res.getLabel() + "   Desired Amount: " + res.getDesired_amnt();
-                        str_lst.add(str);
-                    }
-                    cList.setItems(FXCollections.observableList(str_lst)); //TODO: Iterate over different types
-                    cList.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent mouseEvent) {
-                            selected_Resource = project.getProjResourceList().get(cList.getFocusModel().getFocusedIndex());
-                        }
-                    });
-                }else
-                    cList.setItems(null);   //TODO: Update with District implementation
-            }
-        });
 
     }
 
