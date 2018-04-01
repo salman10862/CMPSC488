@@ -164,7 +164,7 @@ public static ArrayList getUserProjects(String uname){       //TODO: add an "own
 }
 
 //returns an arraylist of all projects shared with a user
-public static void getAllUserProjects(String uname){    //TODO; test and update this method
+public static ArrayList getAllUserProjects(String uname){    //TODO; test and update this method
 
     ArrayList<String> projNames = new ArrayList<>();
 
@@ -175,7 +175,7 @@ public static void getAllUserProjects(String uname){    //TODO; test and update 
 
     //TODO: if the shared with array contains username, then add it to projNames
 
-    return projNames
+    return projNames;
 }
 
 public static void updateProjectRecords(){  //TODO: Implement method to overwrite fields in project
