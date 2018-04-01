@@ -25,7 +25,11 @@ public class Converter {
     
     public static void displayCurrencyConverter()
     {
-        System.out.println("Please Select one of the Following for your currency choices: \n 1 - US dollars \n 2 - British Pounds \n 3 - Euros  \n 4 - Japanese Yen \n");
+        System.out.println("Please Select one of the Following for your currency choices: " +
+                            "\n 1 - US dollars " +
+                            "\n 2 - British Pounds " +
+                            "\n 3 - Euros  " +
+                            "\n 4 - Japanese Yen \n");
         System.out.println("Please choose the currency you want to convert from: ");
         Scanner user_selection = new Scanner(System.in);
         int user_currency_choice = user_selection.nextInt();
