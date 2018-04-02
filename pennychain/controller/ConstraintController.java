@@ -7,6 +7,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
@@ -45,11 +46,10 @@ public class ConstraintController{
         List<String> type_values = Arrays.asList("Implicit", "Explicit");
 
         //TODO: Construct within the Project object a list of constraints associated, link it up to this
-        //List<String> global_values = Arrays.asList("Budget");
 
         cTypeList.setItems(FXCollections.observableList(type_values));
 
-        //TODO: Edit this to work with table view
+
 
 
     }
