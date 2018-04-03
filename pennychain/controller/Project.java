@@ -71,7 +71,15 @@ public class Project {
 
         return  lst;
     }
-    
+
+    public boolean isOptimization_implicit() {
+        return optimization_implicit;
+    }
+
+    public void setOptimization_implicit(boolean b){
+        optimization_implicit = b;
+    }
+
     public ArrayList<String> getSharedWith(){
         return sharedWith;
     }
