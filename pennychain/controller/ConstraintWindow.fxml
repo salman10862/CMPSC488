@@ -14,8 +14,8 @@
          <content>
             <TableView fx:id="tView" layoutX="301.0" layoutY="37.0" prefHeight="303.0" prefWidth="284.0">
                <columns>
-                  <TableColumn prefWidth="142.0" text="Constraint" />
-                  <TableColumn prefWidth="141.0" text="Value" />
+                  <TableColumn fx:id="col1" prefWidth="142.0" text="Constraint" />
+                  <TableColumn fx:id="col2" prefWidth="141.0" text="Value" />
                </columns>
             </TableView>
          </content>
