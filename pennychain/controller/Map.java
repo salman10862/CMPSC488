@@ -122,8 +122,6 @@ public class Map {
     // D-to-D_matrix
     // TODO: Row = Major Redistribution Center: Distibution's Distrubtion
     // TODO: column = minor distribution: Customer's Distribution
-            //ASIDE (from Jason): Not 100% sure, but these may be what I indicated in comments near the map_data declaration. Let me know if its something else :^)
-
 
 
     // TODO: How many trucks each minor distrubtion center needs

@@ -215,7 +215,7 @@ public class MapWindowController {
         );
     }
 
-    @FXML protected void lockMapListener() throws AWTException{
+    @FXML protected void lockMapListener() throws AWTException, IOException {
         System.out.println("LOCKMAP BUTTON PRESSED");
         toolbar.getItems().remove(lockMap);
 
@@ -333,6 +333,11 @@ public class MapWindowController {
         zoomInButton.setDisable(false);
         zoomOutButton.setDisable(false);
         optimizeButton.setDisable(false);
+        try {
+            sendOptimizationRequest();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         addAResourceItem.setDisable(false);
         defineConstraintsItem.setDisable(false);
     }
@@ -355,10 +360,12 @@ public class MapWindowController {
 
     //This method should be changed to adequately display the optimized map (this.currentMap/project.setMainMap not correct I think)
     @FXML protected void sendOptimizationRequest() throws IOException{
+        System.out.println("Optimization Request called");
         if(project.getMainMap() != null) {
             OptimizationRequest opreq = new OptimizationRequest(project.getProjResourceList());
-            this.currentMap = opreq.sendRequest(project.getOptimizationPath());
-            project.setMainMap(this.currentMap);
+            opreq.sendRequest(project.getOptimizationPath());
+            //this.currentMap = opreq.sendRequest(project.getOptimizationPath());
+            //project.setMainMap(this.currentMap);
         }
     }
 
@@ -452,7 +459,11 @@ public class MapWindowController {
                                                     + project.getMainMap().getLongitude() + ", " + currentZoom
                                                     + ")");
                                             try{
-                                                lockMapListener();
+                                                try {
+                                                    lockMapListener();
+                                                } catch (IOException e) {
+                                                    e.printStackTrace();
+                                                }
                                             }
                                             catch (AWTException e){
                                                 e.printStackTrace();

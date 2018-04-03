@@ -1,13 +1,9 @@
 package pennychain.center;
 
-import java.io.BufferedReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 
 import pennychain.controller.Map;
@@ -28,16 +24,36 @@ public class OptimizationRequest {
         varBound = (int) projectResourceList.size();
     }
 
-    public Map sendRequest(String path_name) throws IOException {
+    public void sendRequest(String path_name) throws IOException {
         /*this.read_map(path_name);
         APMpyth apmpython = new APMpyth(path_name);
         this.bundle_data(path_name);
 
         String results = apmpython.sendData();
         */
-        googleReverseGeocode();
-        String results = "";
-        return this.display_on_map(results);
+        String[] destinations = new String[sales_centers.size()];
+        String[] origins = new String[dist_centers.size()];
+        int d = 0;
+        int o = 0;
+        for(int i = 0; i < projectResourceList.size(); i++) {
+            if(projectResourceList.get(i).getrType() == 0) {
+                destinations[d] = googleReverseGeocode(/*pass in lat/long of this resource*/);
+                d++;
+            } else if (projectResourceList.get(i).getrType() == 1) {
+                origins[o] = googleReverseGeocode(/*pass in lat/long of this resource*/);
+                o++;
+            }
+        }
+        //test vars//
+        String ori = "40.6655101,-73.89188969999998";
+        String des = "40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.659569%2C-73.933783%7C40.729029%2C-73.851524%7C40.6860072%2C-73.6334271%7C40.598566%2C-73.7527626%7C40.659569%2C-73.933783%7C40.729029%2C-73.851524%7C40.6860072%2C-73.6334271%7C40.598566%2C-73.7527626";
+        //end test vars//
+
+        //googleReverseGeocode();
+        System.out.println(googleDistanceMatrix(ori, des));
+
+        //String results = "";
+        //return this.display_on_map(results);
     }
 
     private void bundle_data(String path) throws IOException {
@@ -61,12 +77,6 @@ public class OptimizationRequest {
     }
 
     private String create_objective() {
-	    /*
-	    New objective format:
-	    Minimize Z = (supply cost - demand value)(1 or 0) + ...
-	    where each supply cost = price of maintaining supply at this location (gas price * distance)
-	               demand value = expected value this location creates (population * target demographic weighting value)
-	     */
         String obj_func = "Minimize ";
         for (int i = 0; i < sales_centers.size(); i++) {
             obj_func = obj_func + (/*gas_price.get(i)*distance.get(i)-demand.get(i)*/1) + " * int_" + sales_centers.get(i) + " + ";
@@ -88,7 +98,6 @@ public class OptimizationRequest {
 
     private void read_map(String path) throws IOException {
 
-        //take variables from project resource list rather than map (from map is commented out below this)
         for (int i = 0; i < varBound; i++) {
             if (projectResourceList.get(i).getrType() == 0) {
                 sales_centers.add("X[" + i + "]");
@@ -103,18 +112,7 @@ public class OptimizationRequest {
         }
 
         FileWriter f = new FileWriter(path);
-		/*
-	    for(int i = 0; i < varBound; i++) {
-        		for(int j = 0; j < varBound; j++) {
-        			if(map.map_data[i][j] == 0) {
-        				variables.add("X[" + (i*varBound+j) + "]");
-        			} else if (map.map_data[i][j] == 1) {
-        				variables.add("X[" + (i*varBound+j) + "]");
-        				constraints.add("X[" + (i*varBound+j) + "]=1");
-        			}
-        		}
-		}
-		*/
+
         for (int x = 0; x < sales_centers.size(); x++) {
             f.write("int_" + sales_centers.get(x) + System.getProperty("line.separator"));
         }
@@ -129,14 +127,6 @@ public class OptimizationRequest {
 
     public void setMaxCenters(int desired_max) {
         this.max_posi = desired_max;
-    }
-
-
-    //get addresses from lat/long coordinates
-    private void parseGeocodedString() {
-        String geocode = googleReverseGeocode();
-        String[] origins;
-        String[] destinations;
     }
 
     private String googleReverseGeocode() {
@@ -155,8 +145,11 @@ public class OptimizationRequest {
                     String tempStr = "";
                     StringBuilder sb = new StringBuilder();
                     while (null != (tempStr = br.readLine())) {
-                        sb.append(tempStr + '\n');
-                        System.out.println(tempStr);
+                        if(tempStr.contains("formatted_address")) {
+                            sb.append(tempStr + '\n');
+                            System.out.println(tempStr);
+                            break;
+                        }
                     }
                     return sb.toString();
             }
@@ -171,7 +164,52 @@ public class OptimizationRequest {
     }
 
     //get distances from supply centers to potential sales centers
-    private void googleDistanceMatrix() {
+    private String googleDistanceMatrix(String origins, String destinations) {
+        try {
+            URL myURL = new URL("https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=" + origins + "&destinations=" + destinations + "&key=AIzaSyD7MjGyPPBoWoQaqQinDGn3lnn5P_9sL_w");
+            HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+            myURLConnection.connect();
+            int status = myURLConnection.getResponseCode();
 
+            switch (status) {
+                case 200:
+                case 201:
+                    BufferedReader br = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
+                    String tempStr = "";
+                    StringBuilder sb = new StringBuilder();
+                    while (null != (tempStr = br.readLine())) {
+                        if(tempStr.contains("distance")) {
+                            String nxt = br.readLine();
+                            nxt = nxt.substring(28, nxt.length()-5);
+                            sb.append(nxt + '\n');
+                        }
+                    }
+                    return sb.toString();
+            }
+        } catch (MalformedURLException e) {            // new URL() failed
+
+            // ...
+        } catch (IOException e) {
+            // openConnection() failed
+            // ...
+        }
+        return null;
+    }
+
+    private String[] getMinDistanceSupply(String distances, int origins, int destinations) throws IOException {
+        String[] minDistance = new String[destinations];
+        BufferedReader br = new BufferedReader(new StringReader(distances));
+        String currentDistance;
+        for(int i = 0; i < origins; i++) {
+            for(int j = 0; j < destinations; j++) {
+                currentDistance = br.readLine();
+                if(minDistance[j].isEmpty()) {
+                    minDistance[j] = currentDistance;
+                } else if(Double.parseDouble(minDistance[j]) < Double.parseDouble(currentDistance)) {
+                    minDistance[j] = currentDistance;
+                }
+            }
+        }
+        return minDistance;
     }
 }
