@@ -21,6 +21,10 @@ public class userProfile {
         this.pass = pass;
     }
 
+    public void setUsername(String uname) {
+        this.name = uname;
+    }
+
     public String getUsername()
     {
         return name;

@@ -5,6 +5,7 @@ import pennychain.usr.UserSession;
 import pennychain.db.Connection_Online;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,8 +31,12 @@ public class LoadDbController {
         this.session = session;
     }
 
-    @FXML void initialize(){
-        //TODO populate ListView with project names by querying db
+    @FXML public void initialize() {
+        ArrayList<String> projectTitles = Connection_Online.getUserProjects(session.getCurrentUser());
+        for(String i : projectTitles) {
+            System.out.println(i);
+            listView.getItems().add(i);
+        }
     }
 
     @FXML protected void handleLoad(MouseEvent event) {

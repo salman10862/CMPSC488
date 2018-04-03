@@ -159,7 +159,7 @@ public static ArrayList getUserProjects(String uname){
     ArrayList<String> projNames = new ArrayList<>();
 
     BasicDBObject whereQuery = new BasicDBObject();
-    whereQuery.put("owner", uname);
+    whereQuery.put("linked_userID.name", uname);
     DBCursor cursor = projectCollection.find(whereQuery);
 
     while(cursor.hasNext()){
@@ -191,6 +191,15 @@ public static ArrayList getSharedUserProjects(String uname){    //TODO; fix this
     cursor.close();
 
     return projNames;
+}
+
+public static String getProjectJson(String uname, String projName) {
+    BasicDBObject whereQuery = new BasicDBObject();
+    whereQuery.put("linked_userID.name", uname);
+    whereQuery.put("projLabel", projName);
+
+    BasicDBObject result = (BasicDBObject) projectCollection.findOne(whereQuery);
+    return result.toJson();
 }
 
     //TODO: Implement method to overwrite fields in project
