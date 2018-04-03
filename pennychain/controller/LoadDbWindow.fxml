@@ -21,12 +21,12 @@
             </VBox>
             <VBox>
                <children>
-                  <Button fx:id="saveExisting" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#handleSaveExisting" text="Load Selected">
+                  <Button fx:id="loadButton" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#handleLoad" text="Load Selected">
                      <VBox.margin>
                         <Insets left="10.0" />
                      </VBox.margin>
                   </Button>
-                  <Button fx:id="cancel" layoutX="20.0" layoutY="40.0" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#handleCancel" text="Cancel">
+                  <Button fx:id="cancelButton" layoutX="20.0" layoutY="40.0" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#handleCancel" text="Cancel">
                      <VBox.margin>
                         <Insets left="10.0" top="5.0" />
                      </VBox.margin>
