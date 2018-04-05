@@ -172,20 +172,14 @@ public static ArrayList getUserProjects(String uname){
 }
 
 //returns an arraylist of all projects shared with a user
-public static ArrayList getSharedUserProjects(String uname){    //TODO; fix this method
+public static ArrayList getSharedUserProjects(String uname){
     ArrayList<String> projNames = new ArrayList<>();
 
-    //TODO: change this to not retrieve all projects(highly inefficient as it is)
     DBCursor cursor = projectCollection.find();
 
     while(cursor.hasNext()){
-        try {
-            if (cursor.next().get("sharedWith").toString().contains(uname)) {
-                projNames.add((String) cursor.next().get("projLabel"));
-            }
-        }catch (NoSuchElementException x){
-            ;
-        }
+        if(cursor.next().get("sharedWith").toString().contains(uname))
+            projNames.add(cursor.next().get("projLabel").toString());
     }
 
     cursor.close();
@@ -202,13 +196,26 @@ public static String getProjectJson(String uname, String projName) {
     return result.toJson();
 }
 
-    //TODO: Implement method to overwrite fields in project
-public static void updateProjectRecords(String projOwner, String projName, Map mainMap, Map[] scenarioMaps, projResource[] resources){
-        ;
-}
-    
-public void saveProject(){
-        //TODO: Save a project along with all relevant information to database
+    //TODO: Overwrite/update a project along with all relevant information to database
+public void updateProject(Project proj){
+    BasicDBObject whereQuery = new BasicDBObject();
+    whereQuery.put("owner", proj.getProjectOwner());
+    DBCursor cursor = projectCollection.find(whereQuery);
+
+    while(cursor.hasNext()){
+        if(cursor.next().get("owner").equals(proj.getProjectOwner())){   //overwrite document
+            cursor.next().put("projLabel", proj.getProjectLabel());
+            cursor.next().put("mainMap", proj.getMainMap());
+            cursor.next().put("scenarioMaps", proj.getScenarioMaps());
+            cursor.next().put("projResourceList", proj.getProjResourceList()); //double check this one since it returns array list
+            cursor.next().put("settingsList", proj.getSettingsList());
+            cursor.next().put("sharedWith", proj.getSharedWith());
+            cursor.next().put("optimization_implicit", proj.getOptimizationPath());
+        }
+
+    }
+
+    cursor.close();
 }
 
 public void loadProject(){
@@ -229,21 +236,5 @@ public void loadProject(){
 
         System.out.println("Password has been updated!");
     }
-
-    //method used for testing password retrieval
-    /*
-    public static void testGettingPassword(String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
-
-        CharSequence result = Hash.getHashAndSalt(password);
-
-        String[] parts = result.toString().split(":");
-
-        CharSequence salt = parts[0];   //get salt
-        CharSequence pass = parts[1];   //get password
-
-        System.out.println(salt);
-        System.out.println(pass);
-    }
-    */
 }
 
