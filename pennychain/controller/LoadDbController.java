@@ -1,11 +1,15 @@
 package pennychain.controller;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+
 import pennychain.usr.UserSession;
 import pennychain.db.Connection_Online;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.lang.reflect.Type;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -39,10 +43,25 @@ public class LoadDbController {
         }
     }
 
-    @FXML protected void handleLoad(MouseEvent event) {
-        Window stage = loadButton.getScene().getWindow();
+    @FXML protected void handleLoad(MouseEvent event) throws IOException {
         Gson gson = new Gson();
-        //TODO finish this
+        Type projObj = new TypeToken<Project>() {}.getType();
+        String projName = listView.getSelectionModel().getSelectedItem();
+        String json = Connection_Online.getProjectJson(session.getCurrentUser(), projName);
+        
+        Project project = gson.fromJson(json, projObj);
+        
+        MapWindowController controller = new MapWindowController(project, session);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("MapWindow.fxml"));
+        loader.setController(controller);
+        Parent root = loader.load();
+        Scene scene = new Scene(root, 800, 600);
+
+        Stage mapStage = new Stage();
+        mapStage.setTitle("Application - Map Window");
+        mapStage.setScene(scene);
+        mapStage.show();
+        ((Node)(event.getSource())).getScene().getWindow().hide();
     }
 
     @FXML protected void handleCancel(MouseEvent event) throws IOException {

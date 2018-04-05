@@ -4,6 +4,7 @@ import pennychain.db.Connection_Online;
 import pennychain.usr.UserSession;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -34,7 +35,10 @@ public class SaveDbController {
     }
 
     @FXML protected void initialize() {
-        //TODO
+        ArrayList<String> projectTitles = Connection_Online.getUserProjects(session.getCurrentUser());
+        for(String i : projectTitles) {
+            listView.getItems().add(i);
+        }
     }
 
     @FXML protected void handleSaveExisting(MouseEvent event) {
