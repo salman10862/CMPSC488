@@ -37,16 +37,16 @@ public class Connection_Online {
        // updatePassword("pranav412", "newPass12345");
         //ArrayList<String> projNames = getUserProjects("pranav412");
 
-       /* ArrayList<String> projNames = getSharedUserProjects("ckw5071");
+        ArrayList<String> projNames = getSharedUserProjects("ckw5071");
 
         for(String tmp: projNames){
             System.out.println(tmp);
-        }   */
+        }
 
-       Project prj = new Project("ian");
+      /* Project prj = new Project("ian");
        prj.setProjLabel("newTestProjLabel");
 
-       updateProject(prj);
+       updateProject(prj);  */
     }
 
     //add a record to the database
@@ -181,18 +181,26 @@ public static ArrayList getUserProjects(String uname){
 public static ArrayList getSharedUserProjects(String uname)throws NoSuchElementException{
     ArrayList<String> projNames = new ArrayList<>();
 
-    DBCursor cursor = projectCollection.find();
+    BasicDBObject searchQuery = new BasicDBObject();
+    searchQuery.put("sharedWith", uname);
 
-    while(cursor.hasNext()){    //TODO: method is still buggy, fix edge casees
-        if(cursor.next().get("sharedWith").toString().contains(uname))
-            projNames.add(cursor.next().get("projLabel").toString());
-        else {
-            cursor.tryNext();
-            //cursor.skip(1);
+    DBCursor cursor = projectCollection.find(searchQuery);
+
+    try {
+        while (cursor.hasNext()) {
+            System.out.println(projNames.add(cursor.next().get("projLabel").toString())); //workaround for NoSuchElementException
         }
+
+        System.out.println();
+
+        cursor.close();
     }
 
-    cursor.close();
+    catch(NoSuchElementException exp){
+        System.out.println("Unable to retrieve project records");
+        cursor.close();
+        System.exit(1);
+    }
 
     return projNames;
 }
@@ -206,7 +214,7 @@ public static String getProjectJson(String uname, String projName) {
     return result.toJson();
 }
 
-public static void updateProject(Project proj) throws NoSuchElementException{
+public static void updateProject(Project proj) throws NoSuchElementException{   //TODO: test this method using map data
     BasicDBObject updateFields = new BasicDBObject();
 
     updateFields.append("projLabel", proj.getProjectLabel());
