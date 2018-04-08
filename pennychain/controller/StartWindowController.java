@@ -38,7 +38,7 @@ public class StartWindowController {
     }
 
     @FXML protected void handleNewProjectButton(MouseEvent event) throws IOException {
-        Project project = new Project();
+        Project project = new Project(userSession);
 
         MapWindowController controller = new MapWindowController(project, userSession);
 

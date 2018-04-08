@@ -28,7 +28,7 @@
                   <Insets bottom="10.0" />
                </VBox.margin>
             </Button>
-            <Button minWidth="200.0" mnemonicParsing="false" text="Load Project From Database">
+            <Button fx:id="loadFromDbButton" minWidth="200.0" mnemonicParsing="false" onMouseClicked="#handleLoadFromDb" text="Load Project From Database">
                <VBox.margin>
                   <Insets bottom="10.0" />
                </VBox.margin>

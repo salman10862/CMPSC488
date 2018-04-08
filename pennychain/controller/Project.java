@@ -1,5 +1,7 @@
 package pennychain.controller;
 
+import pennychain.usr.UserSession;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -23,12 +25,15 @@ public class Project {
     private boolean optimization_implicit;
 
     //private final DEFAULT_SETTINGS = new
-    public Project(){
+    public Project(UserSession session){
         // init arraylists to prevent unexpected exceptions
         scenarioMaps = new ArrayList<>();
         projResourceList = new ArrayList<>();
         settingsList = new ArrayList<>();
         sharedWith = new ArrayList<>();
+
+        linked_userID = new userProfile();
+        linked_userID.setUsername(session.getCurrentUser());
 
         mainMap = null;
     }
@@ -71,7 +76,15 @@ public class Project {
 
         return  lst;
     }
-    
+
+    public boolean isOptimization_implicit() {
+        return optimization_implicit;
+    }
+
+    public void setOptimization_implicit(boolean b){
+        optimization_implicit = b;
+    }
+
     public ArrayList<String> getSharedWith(){
         return sharedWith;
     }
