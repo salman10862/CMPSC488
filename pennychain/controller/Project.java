@@ -16,6 +16,7 @@ import com.google.gson.stream.JsonWriter;
 public class Project {
     private String projLabel;
     private userProfile linked_userID;
+    private String owner;   //stores username of project owner
     private Map mainMap;
     private Map optimizedMap;
     private ArrayList<Map> scenarioMaps;
@@ -102,7 +103,16 @@ public class Project {
     public void removeProjResource(projResource res){
         projResourceList.remove(res);
     }
-    
+
+    public String getProjectOwner(){return owner;}
+
+    public String getProjectLabel(){return projLabel;}
+
+    public ArrayList getScenarioMaps(){return scenarioMaps;}
+
+    public ArrayList getSettingsList(){return settingsList;}
+
+    public boolean getOptimization_implicit(){return optimization_implicit;}
     
     //Function to get file directory used to pass map data between java and python
     public String getOptimizationPath() {

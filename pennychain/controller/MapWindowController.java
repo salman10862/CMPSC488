@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.locks.Lock;
 
-import com.sun.javafx.webkit.WebConsoleListener;
+//import com.sun.javafx.webkit.WebConsoleListener;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
