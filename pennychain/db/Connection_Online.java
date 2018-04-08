@@ -36,11 +36,17 @@ public class Connection_Online {
         //System.out.println(userExists("pranav412"));    //test to see if username exists in database
        // updatePassword("pranav412", "newPass12345");
         //ArrayList<String> projNames = getUserProjects("pranav412");
-        ArrayList<String> projNames = getSharedUserProjects("ckw5071");
+
+       /* ArrayList<String> projNames = getSharedUserProjects("ckw5071");
 
         for(String tmp: projNames){
             System.out.println(tmp);
-        }
+        }   */
+
+       Project prj = new Project("ian");
+       prj.setProjLabel("newTestProjLabel");
+
+       updateProject(prj);
     }
 
     //add a record to the database
@@ -172,14 +178,18 @@ public static ArrayList getUserProjects(String uname){
 }
 
 //returns an arraylist of all projects shared with a user
-public static ArrayList getSharedUserProjects(String uname){
+public static ArrayList getSharedUserProjects(String uname)throws NoSuchElementException{
     ArrayList<String> projNames = new ArrayList<>();
 
     DBCursor cursor = projectCollection.find();
 
-    while(cursor.hasNext()){
+    while(cursor.hasNext()){    //TODO: method is still buggy, fix edge casees
         if(cursor.next().get("sharedWith").toString().contains(uname))
             projNames.add(cursor.next().get("projLabel").toString());
+        else {
+            cursor.tryNext();
+            //cursor.skip(1);
+        }
     }
 
     cursor.close();
@@ -196,26 +206,28 @@ public static String getProjectJson(String uname, String projName) {
     return result.toJson();
 }
 
-    //TODO: Overwrite/update a project along with all relevant information to database
-public void updateProject(Project proj){
-    BasicDBObject whereQuery = new BasicDBObject();
-    whereQuery.put("owner", proj.getProjectOwner());
-    DBCursor cursor = projectCollection.find(whereQuery);
+public static void updateProject(Project proj) throws NoSuchElementException{
+    BasicDBObject updateFields = new BasicDBObject();
 
-    while(cursor.hasNext()){
-        if(cursor.next().get("owner").equals(proj.getProjectOwner())){   //overwrite document
-            cursor.next().put("projLabel", proj.getProjectLabel());
-            cursor.next().put("mainMap", proj.getMainMap());
-            cursor.next().put("scenarioMaps", proj.getScenarioMaps());
-            cursor.next().put("projResourceList", proj.getProjResourceList()); //double check this one since it returns array list
-            cursor.next().put("settingsList", proj.getSettingsList());
-            cursor.next().put("sharedWith", proj.getSharedWith());
-            cursor.next().put("optimization_implicit", proj.getOptimizationPath());
-        }
+    updateFields.append("projLabel", proj.getProjectLabel());
+    updateFields.append("mainMap", proj.getMainMap());
+    updateFields.append("scenarioMaps", proj.getScenarioMaps());
+    updateFields.append("projResourceList", proj.getProjResourceList());
+    updateFields.append("settingsList", proj.getSettingsList());
+    updateFields.append("sharedWith", proj.getSharedWith());
 
-    }
+    //updateFields.append("optimization_implicit", proj.getOptimizationPath());
 
-    cursor.close();
+    BasicDBObject setQuery = new BasicDBObject();
+    setQuery.append("$set", updateFields);
+
+    BasicDBObject searchQuery = new BasicDBObject();
+    searchQuery.put("owner", proj.getProjectOwner());
+
+    projectCollection.update(searchQuery, setQuery);
+
+    System.out.println("Project updated");
+
 }
 
 public void loadProject(){
