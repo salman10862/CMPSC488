@@ -8,12 +8,15 @@ import java.security.spec.InvalidKeySpecException;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import com.mongodb.*;
 import com.mongodb.util.JSON;
 
 import org.bson.Document;
+import pennychain.controller.Map;
 import pennychain.controller.Project;
+import pennychain.controller.projResource;
 
 public class Connection_Online {
 
@@ -32,7 +35,18 @@ public class Connection_Online {
         //findRecordByUsername("ckw5071");
         //System.out.println(userExists("pranav412"));    //test to see if username exists in database
        // updatePassword("pranav412", "newPass12345");
-        getUserProjects("pranav412");
+        //ArrayList<String> projNames = getUserProjects("pranav412");
+
+       /* ArrayList<String> projNames = getSharedUserProjects("ckw5071");
+
+        for(String tmp: projNames){
+            System.out.println(tmp);
+        }   */
+
+       Project prj = new Project("ian");
+       prj.setProjLabel("newTestProjLabel");
+
+       updateProject(prj);
     }
 
     //add a record to the database
@@ -147,11 +161,11 @@ public static String getUserEmail(String uname){
 }
 
 //returns an arraylist of all projects owned by a particular user
-public static ArrayList getUserProjects(String uname){       //TODO: add an "owner" field to project collection
-    ArrayList<String> projNames = new ArrayList<>();        //TODO: add "projLabel" field to project collection
+public static ArrayList getUserProjects(String uname){
+    ArrayList<String> projNames = new ArrayList<>();
 
     BasicDBObject whereQuery = new BasicDBObject();
-    whereQuery.put("owner", uname);
+    whereQuery.put("linked_userID.name", uname);
     DBCursor cursor = projectCollection.find(whereQuery);
 
     while(cursor.hasNext()){
@@ -164,26 +178,56 @@ public static ArrayList getUserProjects(String uname){       //TODO: add an "own
 }
 
 //returns an arraylist of all projects shared with a user
-public static ArrayList getAllUserProjects(String uname){    //TODO; test and update this method
-
+public static ArrayList getSharedUserProjects(String uname)throws NoSuchElementException{
     ArrayList<String> projNames = new ArrayList<>();
 
-    //get all records from project collection
     DBCursor cursor = projectCollection.find();
 
-    BasicDBList list = (BasicDBList) cursor.next().get("sharedWith");
+    while(cursor.hasNext()){    //TODO: method is still buggy, fix edge casees
+        if(cursor.next().get("sharedWith").toString().contains(uname))
+            projNames.add(cursor.next().get("projLabel").toString());
+        else {
+            cursor.tryNext();
+            //cursor.skip(1);
+        }
+    }
 
-    //TODO: if the shared with array contains username, then add it to projNames
+    cursor.close();
 
     return projNames;
 }
 
-public static void updateProjectRecords(){  //TODO: Implement method to overwrite fields in project
-        ;
+public static String getProjectJson(String uname, String projName) {
+    BasicDBObject whereQuery = new BasicDBObject();
+    whereQuery.put("linked_userID.name", uname);
+    whereQuery.put("projLabel", projName);
+
+    BasicDBObject result = (BasicDBObject) projectCollection.findOne(whereQuery);
+    return result.toJson();
 }
-    
-public void saveProject(){
-        //TODO: Save a project along with all relevant information to database
+
+public static void updateProject(Project proj) throws NoSuchElementException{
+    BasicDBObject updateFields = new BasicDBObject();
+
+    updateFields.append("projLabel", proj.getProjectLabel());
+    updateFields.append("mainMap", proj.getMainMap());
+    updateFields.append("scenarioMaps", proj.getScenarioMaps());
+    updateFields.append("projResourceList", proj.getProjResourceList());
+    updateFields.append("settingsList", proj.getSettingsList());
+    updateFields.append("sharedWith", proj.getSharedWith());
+
+    //updateFields.append("optimization_implicit", proj.getOptimizationPath());
+
+    BasicDBObject setQuery = new BasicDBObject();
+    setQuery.append("$set", updateFields);
+
+    BasicDBObject searchQuery = new BasicDBObject();
+    searchQuery.put("owner", proj.getProjectOwner());
+
+    projectCollection.update(searchQuery, setQuery);
+
+    System.out.println("Project updated");
+
 }
 
 public void loadProject(){
@@ -204,21 +248,5 @@ public void loadProject(){
 
         System.out.println("Password has been updated!");
     }
-
-    //method used for testing password retrieval
-    /*
-    public static void testGettingPassword(String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
-
-        CharSequence result = Hash.getHashAndSalt(password);
-
-        String[] parts = result.toString().split(":");
-
-        CharSequence salt = parts[0];   //get salt
-        CharSequence pass = parts[1];   //get password
-
-        System.out.println(salt);
-        System.out.println(pass);
-    }
-    */
 }
 

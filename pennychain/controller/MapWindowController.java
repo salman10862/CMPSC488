@@ -2,6 +2,7 @@ package pennychain.controller;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -11,7 +12,11 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.locks.Lock;
 
+//import com.sun.javafx.webkit.WebConsoleListener;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -25,6 +30,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
@@ -49,6 +55,7 @@ import javafx.stage.WindowEvent;
 
 import com.google.gson.Gson;
 
+import jdk.internal.util.xml.impl.Input;
 import pennychain.center.OptimizationRequest;
 import pennychain.db.Connection_Online;
 import pennychain.usr.UserSession;
@@ -222,21 +229,27 @@ public class MapWindowController {
         //Disable GoogleMaps UI
         webEngine.executeScript("disable()");
 
-        // Set the size of the overlay Grid if this is a new Map
-        int GRID_SIZE = 0;
-
         if(project.getMainMap()!=null) {
             toolbar.getItems().remove(grid_size_selection);
             toolbar.getItems().remove(grid_size_text);
             currentMap = project.getMainMap();
             currentZoom = currentMap.getZoom();
         } else {
+            // Set the size of the overlay Grid if this is a new Map
+            webEngine.executeScript("addCenterEvents()");
+            int GRID_SIZE = grid_size_selection.getSelectionModel().getSelectedItem();
+
+
+            //webView.getEngine().setOnAlert(latlngHandler);
+            //windowPane.getCenter();
+            //webEngine.executeScript("addCenterEvents()");
+
+
+
             // Set "center" of Map
             Double longitude = (Double) webEngine.executeScript("getLongitude()");
             Double latitude = (Double) webEngine.executeScript("getLatitude()");
             int zoom = (Integer) webEngine.executeScript("getZoom()");
-
-            GRID_SIZE = grid_size_selection.getSelectionModel().getSelectedItem();
 
             //Initialize other Map items
             Map map = new Map(GRID_SIZE, webView.getWidth(), webView.getHeight(), zoom, latitude, longitude);
@@ -244,10 +257,34 @@ public class MapWindowController {
             currentMap = project.getMainMap();
             currentZoom = zoom;
             currentMap.initializeGrid();
+            /**** EXPERIMENTAL METHODS
+             class Countdown {
+             private int count = 0;
+             public synchronized int getCount() { return count; }
+             public synchronized void addCount() {count++;}
+             }
+             // Set things up to store the grid Lat/Lng values
+             Queue<Double> lat_q = new LinkedList<>();
+             Queue<Double> long_q = new LinkedList<>();
+             Countdown count = new Countdown();
+             //EventHandler<WebEvent<String>> latlngHandler
+             webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
+            @Override
+            public void handle(WebEvent<String> stringWebEvent) {
+            String event_string = stringWebEvent.toString();
+            String[] temp_points = event_string.split(" / ", 2);
+            Double lat_val = Double.valueOf(temp_points[0]);
+            Double long_val = Double.valueOf(temp_points[1]);
+            lat_q.add(lat_val);
+            long_q.add(long_val);
+            count.addCount();
+            System.out.println("Adding coordinate " + count.getCount());
+            }
+            });
 
-            // Set the Lats/Lings for JS method calls
-            double[] langitudes = currentMap.getGridLangs();
-            double[] longitudes = currentMap.getGridLats();
+             // Get the Lats/Lings for JS method calls
+            double[] longitudes = currentMap.getGridLongs();
+            double[] latitudes = currentMap.getGridLats();
 
             ArrayList<Point> cell_centers = currentMap.getGridCenters();
 
@@ -255,19 +292,30 @@ public class MapWindowController {
                 double local_x = cell_centers.get(i).getX();
                 double local_y = cell_centers.get(i).getY();
                 Point2D screen_coordinates = webView.localToScreen(local_x, local_y);
+
                 //javafx.event.Event.fireEvent(webView, new MouseEvent(MouseEvent.MOUSE_PRESSED,
                   //                          local_x, local_y, screen_coordinates.getX(), screen_coordinates.getY(), , 1,
                     //                        false, false, false, false, true, false,
                       //                      false, false, false, false, null));
+
                 Robot r = new Robot();
                 r.mouseMove((int)screen_coordinates.getX(), (int)screen_coordinates.getY());
                 r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-
-                //langitudes[i] = ;
-                //longitudes[i] = ;
+                r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+                System.out.println(count.getCount());
+                while(count.getCount() != i+1){}
             }
 
+            while(count.getCount() != GRID_SIZE){}
+
+            for(int i = 0; i < cell_centers.size(); i++){
+                System.out.println("Putting in cell #" + i);
+                latitudes[i] = lat_q.remove();
+                longitudes[i] = long_q.remove();
+            }
+            ***************/
             // UI cleanup
+            windowPane.setCursor(Cursor.DEFAULT);
             toolbar.getItems().remove(grid_size_selection);
             toolbar.getItems().remove(grid_size_text);
         }
@@ -433,6 +481,7 @@ public class MapWindowController {
 
     @FXML protected void initialize(){
         webEngine = webView.getEngine();
+        webEngine.setJavaScriptEnabled(true);
 
         // Add listener to activate when the webEngine has successfully loaded the .html file
         webEngine.getLoadWorker().stateProperty().addListener(
@@ -453,6 +502,7 @@ public class MapWindowController {
                                                     + ")");
                                             try{
                                                 lockMapListener();
+                                                windowPane.getScene().setCursor(Cursor.CROSSHAIR);
                                             }
                                             catch (AWTException e){
                                                 e.printStackTrace();

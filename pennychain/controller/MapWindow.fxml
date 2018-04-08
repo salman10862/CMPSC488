@@ -53,7 +53,7 @@
         <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <items>
                 <ComboBox fx:id="resourceChooser" prefWidth="150.0" promptText="Resources" />
-                <Button fx:id="optimizeButton" mnemonicParsing="false" text="Request Optimization" />
+                <Button fx:id="optimizeButton" mnemonicParsing="false" text="Request Optimization" onMouseClicked="#sendOptimizationRequest"/>
                 <Button fx:id="zoomInButton" mnemonicParsing="false" onMouseClicked="#handleZoomIn" text="Zoom In" />
                 <Button fx:id="zoomOutButton" mnemonicParsing="false" onMouseClicked="#handleZoomOut" text="Zoom Out" />
                 <Button fx:id="lockMap" mnemonicParsing="false" onMouseClicked="#lockMapListener" text="Lock Map" />

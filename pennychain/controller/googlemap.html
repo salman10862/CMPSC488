@@ -23,6 +23,8 @@
             var map;
             var defaultZoom;
             var geocoder;
+            var listener1;
+
             function initMap() {
                 var psuHbg = {lat: 40.2042945, lng: -76.7471177};
                 geocoder = new google.maps.Geocoder();
@@ -31,14 +33,20 @@
                     center: psuHbg,
                     disableDefaultUI: true
                 });
-                var marker = new google.maps.Marker({
-                    position: psuHbg,
-                    map: map
+                google.maps.event.addListener(map, 'click', function(event) {
+
+                    window.alert(event.latLng.lat() + " / " + event.latLng.lng());
                 });
+            }
 
-                map.addListener('click', function() {
+            function addCenterEvents(){
+                listener1 = map.addListener('click', function(event) {
+                    alert(event.latLng.lat() + " / " + event.latLng.lng());
+                });
+            }
 
-                })
+            function removeCenterEvents(){
+                map.clearInstanceListener(listener1);
             }
 
             function getZoom(){
