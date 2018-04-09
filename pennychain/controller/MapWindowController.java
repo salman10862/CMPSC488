@@ -405,8 +405,8 @@ public class MapWindowController {
     @FXML protected void sendOptimizationRequest() throws IOException{
         if(project.getMainMap() != null) {
             OptimizationRequest opreq = new OptimizationRequest(project.getProjResourceList());
-            this.currentMap = opreq.sendRequest(project.getOptimizationPath());
-            project.setMainMap(this.currentMap);
+            opreq.sendRequest(project.getOptimizationPath(), project.getMainMap());
+            //project.setMainMap(this.currentMap);
         }
     }
 

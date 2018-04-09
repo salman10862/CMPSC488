@@ -117,7 +117,6 @@ public class projResource {
                     coordinate.add(y);
                 }
         }
-
         return coordinate;
     }
 
@@ -131,6 +130,10 @@ public class projResource {
                 }
         }
         return block_coordinate;
+    }
+
+    public int[][] getPlacement() {
+        return placement;
     }
 
 }
