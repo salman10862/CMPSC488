@@ -1,22 +1,16 @@
 package pennychain.db;
 
-import java.io.IOException;
 import java.net.UnknownHostException;
-import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import com.mongodb.*;
 import com.mongodb.util.JSON;
 
-import org.bson.Document;
-import pennychain.controller.Map;
 import pennychain.controller.Project;
-import pennychain.controller.projResource;
 
 public class Connection_Online {
 
@@ -29,7 +23,7 @@ public class Connection_Online {
     public static void main(String args[]) throws UnknownHostException, InvalidKeySpecException, NoSuchAlgorithmException {
         System.out.println("Connected to Server Successfully");
         //Add a project to database
-        String[] sharedWith = {"cwilson27", "pranav412","jt5689" };
+        //String[] sharedWith = {"cwilson27", "pranav412","jt5689" };
         //addProjectRecord("Sample Project 2", "ckw5071", sharedWith);
         //addUserRecord("chris", "williams", "ckw5071", "camisthebest27");
         //findRecordByUsername("ckw5071");
@@ -39,9 +33,6 @@ public class Connection_Online {
 
         ArrayList<String> projNames = getSharedUserProjects("ckw5071");
 
-        for(String tmp: projNames){
-            System.out.println(tmp);
-        }
 
       /* Project prj = new Project("ian");
        prj.setProjLabel("newTestProjLabel");
@@ -179,19 +170,43 @@ public static ArrayList getUserProjects(String uname){
 
 //returns an arraylist of all projects shared with a user
 public static ArrayList getSharedUserProjects(String uname)throws NoSuchElementException{
-    ArrayList<String> projNames = new ArrayList<>();
+    ArrayList<ArrayList> projNames = new ArrayList<>();  //arraylist which stores string arrays
+    ArrayList values;    //array to be stored inside arraylist
 
     BasicDBObject searchQuery = new BasicDBObject();
     searchQuery.put("sharedWith", uname);
 
     DBCursor cursor = projectCollection.find(searchQuery);
 
+    DBObject obj;
+    String projectName;
+    String ownerName;
+
     try {
         while (cursor.hasNext()) {
-            System.out.println(projNames.add(cursor.next().get("projLabel").toString())); //workaround for NoSuchElementException
-        }
+            obj = cursor.next();
 
-        System.out.println();
+            projectName = obj.get("projLabel").toString();
+            ownerName = obj.get("linked_userID").toString();
+
+            //split string user delimiter to get owner name by itself
+            String[] parts = ownerName.split(":");
+            String[] parts2 = parts[1].split(",");
+
+            ownerName = parts2[0].substring(2,parts2[0].length()-2);
+
+            values = new ArrayList();
+
+            values.add(projectName);    //name of the project
+            values.add(ownerName);      //name of the project owner
+
+            projNames.add(values);
+
+            //System.out.println(projectName);
+            //System.out.println(ownerName);
+
+            System.out.println();
+        }
 
         cursor.close();
     }
