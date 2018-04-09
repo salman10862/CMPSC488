@@ -24,23 +24,53 @@ public class OptimizationRequest {
         varBound = (int) projectResourceList.size();
     }
 
-    public void sendRequest(String path_name) throws IOException {
+    public void sendRequest(String path_name, Map projectMap) throws IOException {
         /*this.read_map(path_name);
         APMpyth apmpython = new APMpyth(path_name);
         this.bundle_data(path_name);
 
         String results = apmpython.sendData();
         */
-        String[] destinations = new String[sales_centers.size()];
-        String[] origins = new String[dist_centers.size()];
-        int d = 0;
-        int o = 0;
+
+        this.map = projectMap;
+        double[] latitudes = map.getGridLats();
+        double[] longitudes = map.getGridLongs();
+        String origins = "";
+        String destinations = "";
+        for(int i = 0; i < projectResourceList.size(); i++) {
+            int[][] placement = projectResourceList.get(i).getPlacement();
+            for(int j = 0; j < placement.length; j++) {
+                for(int t = 0; t < placement[j].length; t++) {
+                    if(placement[t][j] == 1) {
+                        if(projectResourceList.get(i).getrType() == 0 && i==0){
+                            if(destinations.equals("")) {
+                                destinations += Double.toString(latitudes[placement[j].length*j+t]) + "," + Double.toString(longitudes[placement[j].length*j+t]);
+                            } else {
+                                destinations += "|" + Double.toString(latitudes[placement[j].length*j+t]) + "," + Double.toString(longitudes[placement[j].length*j+t]);
+                            }
+                        } else if(projectResourceList.get(i).getrType() == 1){
+                            if(origins.equals("")) {
+                                origins += Double.toString(latitudes[placement[0].length * j + t]) + "," + Double.toString(longitudes[placement[0].length * j + t]);
+                            } else {
+                                origins += "|"+Double.toString(latitudes[placement[0].length * j + t]) + "," + Double.toString(longitudes[placement[0].length * j + t]);
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("O: " + origins);
+        System.out.println("D: " + destinations);
+
+        System.out.println("GDM: " +googleDistanceMatrix(origins, destinations));
+        /*
         for(int i = 0; i < projectResourceList.size(); i++) {
             if(projectResourceList.get(i).getrType() == 0) {
-                destinations[d] = googleReverseGeocode(/*pass in lat/long of this resource*/);
+                destinations[d] = googleReverseGeocode(//pass in lat/long of this resource);
                 d++;
             } else if (projectResourceList.get(i).getrType() == 1) {
-                origins[o] = googleReverseGeocode(/*pass in lat/long of this resource*/);
+                origins[o] = googleReverseGeocode();//pass in lat/long of this resource
                 o++;
             }
         }
@@ -51,7 +81,7 @@ public class OptimizationRequest {
 
         //googleReverseGeocode();
         System.out.println(googleDistanceMatrix(ori, des));
-
+*/
         //String results = "";
         //return this.display_on_map(results);
     }
@@ -195,6 +225,36 @@ public class OptimizationRequest {
         }
         return null;
     }
+
+    private String googleDirections(String origin, String destination) {
+        try {
+            URL myURL = new URL("https://maps.googleapis.com/maps/api/directions/json?origin=" + origin + "&destination=" + destination + "&key=AIzaSyD7MjGyPPBoWoQaqQinDGn3lnn5P_9sL_w");
+            HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+            myURLConnection.connect();
+            int status = myURLConnection.getResponseCode();
+
+            switch (status) {
+                case 200:
+                case 201:
+                    BufferedReader br = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
+                    String tempStr = "";
+                    StringBuilder sb = new StringBuilder();
+                    while (null != (tempStr = br.readLine())) {
+                        sb.append(tempStr + '\n');
+                        System.out.println(tempStr);
+                    }
+                    return sb.toString();
+            }
+        } catch (MalformedURLException e) {
+            // new URL() failed
+            // ...
+        } catch (IOException e) {
+            // openConnection() failed
+            // ...
+        }
+        return null;
+    }
+
 
     private String[] getMinDistanceSupply(String distances, int origins, int destinations) throws IOException {
         String[] minDistance = new String[destinations];

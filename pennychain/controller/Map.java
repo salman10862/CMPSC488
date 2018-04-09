@@ -52,8 +52,8 @@ public class Map {
         gridCenters = new ArrayList<>(grid_size);
         cell_length = len/(grid_size/2);
         cell_width = width/(grid_size/2);
-        gridLats = new double[grid_size];
-        gridLats = new double[grid_size];
+        gridLats = new double[grid_size/2 * grid_size/2];
+        gridLongs = new double[grid_size/2 * grid_size/2];
         for(double l=cell_length; l<=len ;l=l+cell_length){
             for(double w=cell_width; w<=width ; w=w+cell_width){
                 gridCorners.add(new Point((int)w, (int)l));
