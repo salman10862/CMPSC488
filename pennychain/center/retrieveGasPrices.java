@@ -7,8 +7,10 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.DoubleSummaryStatistics;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,6 +26,8 @@ class BackgroundThread implements Runnable {
     public static File file = new File("avgGasPrices.txt");
     public static FileWriter fileWriter;
     public static Double[] allAvgGasPrices;
+    private static double countyAvgGasPrice;
+    public static HashMap<String, Double> county_Price;
 
     BackgroundThread(String name) {
         threadName = name;
@@ -42,12 +46,14 @@ class BackgroundThread implements Runnable {
             }*/
             retrieveGasPrices.loadUrls();
             allAvgGasPrices = new Double[county_Urls.size()];
+            county_Price = new HashMap<>();
             for(String county : county_Urls) {
                 System.out.println("SCRAPING COUNTY" + "\n" + county);
                 Double totalPrices = 0.0;
                 Double avgGasPrice;
                 ArrayList<Double> allGasPrices = new ArrayList<>();
                 ArrayList<String> cities = retrieveGasPrices.scrapCounty(county);
+                ArrayList<String> counties = retrieveGasPrices.scrapCountyNames();
                 for(String city: cities)
                 {
                     System.out.println("SCRAPING CITY" + "\n" + city);
@@ -58,8 +64,17 @@ class BackgroundThread implements Runnable {
                     totalPrices += price;
                 }
                 avgGasPrice = totalPrices/allGasPrices.size();
-                retrieveGasPrices.retreieveAllGasPrices(avgGasPrice);
-                System.out.println(county + " " + avgGasPrice + "\n");
+                if(Double.valueOf(avgGasPrice).isNaN())
+                {
+                    avgGasPrice = 0.0;
+                }
+                for (int i = 0; i < counties.size(); i++)
+                {
+                    county_Price.put(counties.get(i), retrieveGasPrices.formatGasPrice(avgGasPrice));
+                }
+                countyAvgGasPrice = retrieveGasPrices.formatGasPrice(avgGasPrice);
+                retrieveGasPrices.retreieveAllGasPrices(countyAvgGasPrice);
+                System.out.println(county + " " + retrieveGasPrices.formatGasPrice(avgGasPrice) + "\n");
                 //writeGasPricesToFile(county.split("/")[county.split("/").length - 2], avgGasPrice);
             }
             //fileWriter.close();
@@ -126,6 +141,37 @@ public class retrieveGasPrices {
         return cities_Urls;
     }
 
+    public static ArrayList<String> scrapCountyNames() throws Exception
+    {
+        ArrayList<String> countyNames = new ArrayList<>();
+
+        String URLS = retrieveURLString();
+
+        Pattern pattern = Pattern.compile("a/([A-z][a-z]+)/");
+        Matcher matcher = pattern.matcher(URLS);
+
+        while (matcher.find())
+        {
+            countyNames.add(matcher.group(1));
+        }
+        return countyNames;
+    }
+
+    public static String retrieveURLString() throws Exception
+    {
+        String URLSource = "";
+        String filename = "C:\\Users\\Chris\\IdeaProjects\\GasPrices\\src\\urls.txt";
+        Scanner sc = new Scanner(new File(filename));
+
+        while(sc.hasNextLine())
+        {
+            URLSource += sc.nextLine() + "\n";
+        }
+
+        return URLSource;
+
+    }
+
     public static String retrieveHTMLSourceCode(String url)
     {
         URL current_url;
@@ -177,9 +223,15 @@ public class retrieveGasPrices {
     public static Double[] retreieveAllGasPrices(double price)
     {
         BackgroundThread.allAvgGasPrices[count] = price;
-        System.out.println(BackgroundThread.allAvgGasPrices[count]);
+        //System.out.println(BackgroundThread.allAvgGasPrices[count]);
         count++;
         return BackgroundThread.allAvgGasPrices;
+    }
+
+    public static double formatGasPrice(double price)
+    {
+        DecimalFormat formatPrice = new DecimalFormat("#.###");
+        return Double.valueOf(formatPrice.format(price));
     }
 
 }

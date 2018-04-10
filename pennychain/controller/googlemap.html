@@ -38,6 +38,7 @@
                 google.maps.event.addListener(map, 'click', function(event) {
                     bridge.log(event.latLng.lat().toString());
                     ltlngar.push(event.latLng);
+                    window.alert(event.latLng.lat() + " / " + event.latLng.lng());
                 });
             }
 
@@ -168,7 +169,7 @@
                                 var parseData = response.rows[i].elements;
                                 for (var j = 0; j < results.length; j++) {
                                     var element = parseData[j];
-                                    results.push(element.distance.text); //**Not sure this works
+                                    results.push(element.distance.text);
                                 }
                             }
                         }

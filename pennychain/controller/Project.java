@@ -25,6 +25,16 @@ public class Project {
     private ArrayList<String> sharedWith;
     private boolean optimization_implicit;
 
+    public Project(String ownr){
+        scenarioMaps = new ArrayList<>();
+        projResourceList = new ArrayList<>();
+        settingsList = new ArrayList<>();
+        sharedWith = new ArrayList<>();
+        owner = ownr;
+
+        mainMap = null;
+    }
+
     //private final DEFAULT_SETTINGS = new
     public Project(UserSession session){
         // init arraylists to prevent unexpected exceptions

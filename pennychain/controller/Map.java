@@ -10,12 +10,6 @@ public class Map {
             zoom,
             grid_size=100; // Default value for testing
 
-    //*****THE FOLLOWING IS IMPLEMENTED IN EACH INDIVIDUAL RESOURCE:
-    // You get it by going to Project->resourceList->placement, placement is a 2D array for each of the
-    public int[][] map_data; //This is the matrix defining existing infrastructure and invalid locations on the grid
-                                    //(current implementation is -1 for invalid locations, 0 for potential locations, 
-                                    //and 1 for those already being used, but this can be adjusted to accomodate additional options later)
-
     //Array for scaling ratios of GoogleMaps at the 20 zoom-in levels (index 0 -> zoom 0)
     //TODO: Implement the more exact latitude-based values (these are good in average case
     public double[] googleZoomScales = { 1128.497220,       2256.994440,
@@ -58,8 +52,8 @@ public class Map {
         gridCenters = new ArrayList<>(grid_size);
         cell_length = len/(grid_size/2);
         cell_width = width/(grid_size/2);
-        gridLats = new double[(grid_size/2) * (grid_size/2)];
-        gridLongs = new double[(grid_size/2) * (grid_size/2)];
+        gridLats = new double[grid_size/2 * grid_size/2];
+        gridLongs = new double[grid_size/2 * grid_size/2];
         for(double l=cell_length; l<=len ;l=l+cell_length){
             for(double w=cell_width; w<=width ; w=w+cell_width){
                 gridCorners.add(new Point((int)w, (int)l));
@@ -128,8 +122,6 @@ public class Map {
     // D-to-D_matrix
     // TODO: Row = Major Redistribution Center: Distibution's Distrubtion
     // TODO: column = minor distribution: Customer's Distribution
-            //ASIDE (from Jason): Not 100% sure, but these may be what I indicated in comments near the map_data declaration. Let me know if its something else :^)
-
 
 
     // TODO: How many trucks each minor distrubtion center needs

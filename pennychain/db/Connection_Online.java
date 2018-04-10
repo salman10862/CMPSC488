@@ -1,22 +1,16 @@
 package pennychain.db;
 
-import java.io.IOException;
 import java.net.UnknownHostException;
-import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import com.mongodb.*;
 import com.mongodb.util.JSON;
 
-import org.bson.Document;
-import pennychain.controller.Map;
 import pennychain.controller.Project;
-import pennychain.controller.projResource;
 
 public class Connection_Online {
 
@@ -29,18 +23,21 @@ public class Connection_Online {
     public static void main(String args[]) throws UnknownHostException, InvalidKeySpecException, NoSuchAlgorithmException {
         System.out.println("Connected to Server Successfully");
         //Add a project to database
-        String[] sharedWith = {"cwilson27", "pranav412","jt5689" };
+        //String[] sharedWith = {"cwilson27", "pranav412","jt5689" };
         //addProjectRecord("Sample Project 2", "ckw5071", sharedWith);
         //addUserRecord("chris", "williams", "ckw5071", "camisthebest27");
         //findRecordByUsername("ckw5071");
         //System.out.println(userExists("pranav412"));    //test to see if username exists in database
        // updatePassword("pranav412", "newPass12345");
         //ArrayList<String> projNames = getUserProjects("pranav412");
+
         ArrayList<String> projNames = getSharedUserProjects("ckw5071");
 
-        for(String tmp: projNames){
-            System.out.println(tmp);
-        }
+
+      /* Project prj = new Project("ian");
+       prj.setProjLabel("newTestProjLabel");
+
+       updateProject(prj);  */
     }
 
     //add a record to the database
@@ -172,17 +169,53 @@ public static ArrayList getUserProjects(String uname){
 }
 
 //returns an arraylist of all projects shared with a user
-public static ArrayList getSharedUserProjects(String uname){
-    ArrayList<String> projNames = new ArrayList<>();
+public static ArrayList getSharedUserProjects(String uname)throws NoSuchElementException{
+    ArrayList<ArrayList> projNames = new ArrayList<>();  //arraylist which stores string arrays
+    ArrayList values;    //array to be stored inside arraylist
 
-    DBCursor cursor = projectCollection.find();
+    BasicDBObject searchQuery = new BasicDBObject();
+    searchQuery.put("sharedWith", uname);
 
-    while(cursor.hasNext()){
-        if(cursor.next().get("sharedWith").toString().contains(uname))
-            projNames.add(cursor.next().get("projLabel").toString());
+    DBCursor cursor = projectCollection.find(searchQuery);
+
+    DBObject obj;
+    String projectName;
+    String ownerName;
+
+    try {
+        while (cursor.hasNext()) {
+            obj = cursor.next();
+
+            projectName = obj.get("projLabel").toString();
+            ownerName = obj.get("linked_userID").toString();
+
+            //split string user delimiter to get owner name by itself
+            String[] parts = ownerName.split(":");
+            String[] parts2 = parts[1].split(",");
+
+            ownerName = parts2[0].substring(2,parts2[0].length()-2);
+
+            values = new ArrayList();
+
+            values.add(projectName);    //name of the project
+            values.add(ownerName);      //name of the project owner
+
+            projNames.add(values);
+
+            //System.out.println(projectName);
+            //System.out.println(ownerName);
+
+            System.out.println();
+        }
+
+        cursor.close();
     }
 
-    cursor.close();
+    catch(NoSuchElementException exp){
+        System.out.println("Unable to retrieve project records");
+        cursor.close();
+        System.exit(1);
+    }
 
     return projNames;
 }
@@ -196,26 +229,28 @@ public static String getProjectJson(String uname, String projName) {
     return result.toJson();
 }
 
-    //TODO: Overwrite/update a project along with all relevant information to database
-public void updateProject(Project proj){
-    BasicDBObject whereQuery = new BasicDBObject();
-    whereQuery.put("owner", proj.getProjectOwner());
-    DBCursor cursor = projectCollection.find(whereQuery);
+public static void updateProject(Project proj) throws NoSuchElementException{   //TODO: test this method using map data
+    BasicDBObject updateFields = new BasicDBObject();
 
-    while(cursor.hasNext()){
-        if(cursor.next().get("owner").equals(proj.getProjectOwner())){   //overwrite document
-            cursor.next().put("projLabel", proj.getProjectLabel());
-            cursor.next().put("mainMap", proj.getMainMap());
-            cursor.next().put("scenarioMaps", proj.getScenarioMaps());
-            cursor.next().put("projResourceList", proj.getProjResourceList()); //double check this one since it returns array list
-            cursor.next().put("settingsList", proj.getSettingsList());
-            cursor.next().put("sharedWith", proj.getSharedWith());
-            cursor.next().put("optimization_implicit", proj.getOptimizationPath());
-        }
+    updateFields.append("projLabel", proj.getProjectLabel());
+    updateFields.append("mainMap", proj.getMainMap());
+    updateFields.append("scenarioMaps", proj.getScenarioMaps());
+    updateFields.append("projResourceList", proj.getProjResourceList());
+    updateFields.append("settingsList", proj.getSettingsList());
+    updateFields.append("sharedWith", proj.getSharedWith());
 
-    }
+    //updateFields.append("optimization_implicit", proj.getOptimizationPath());
 
-    cursor.close();
+    BasicDBObject setQuery = new BasicDBObject();
+    setQuery.append("$set", updateFields);
+
+    BasicDBObject searchQuery = new BasicDBObject();
+    searchQuery.put("owner", proj.getProjectOwner());
+
+    projectCollection.update(searchQuery, setQuery);
+
+    System.out.println("Project updated");
+
 }
 
 public void loadProject(){
