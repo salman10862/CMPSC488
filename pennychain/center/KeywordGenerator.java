@@ -22,7 +22,7 @@ public class KeywordGenerator {
     }
 
     public static String loadFile() throws FileNotFoundException {
-        String filename = "C:\\Users\\Chris\\IdeaProjects\\SexByAge\\src\\SexByAge.csv";
+        String filename = "pennychain\\center\\SexByAge.csv";
         Scanner input = new Scanner(new File(filename));
         String source = "";
 
@@ -30,7 +30,6 @@ public class KeywordGenerator {
         {
             source += input.nextLine() + "\n";
         }
-
         return source;
     }
 
