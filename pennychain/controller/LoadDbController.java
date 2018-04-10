@@ -41,12 +41,24 @@ public class LoadDbController {
             System.out.println(i);
             listView.getItems().add(i);
         }
+        
+        ArrayList<ArrayList<String>> sharedProjects =
+            Connection_Online.getSharedUserProjects(session.getCurrentUser());
+        for(ArrayList i : sharedProjects) {
+            listView.getItems().add(i.get(0) + " (shared by " + i.get(1) + ")");
+        }
     }
 
     @FXML protected void handleLoad(MouseEvent event) throws IOException {
         Gson gson = new Gson();
         Type projObj = new TypeToken<Project>() {}.getType();
         String projName = listView.getSelectionModel().getSelectedItem();
+
+        if(projName.contains("(shared by ")) {
+            int index = projName.lastIndexOf("(");
+            projName = projName.substring(0, index-1);
+        }
+
         String json = Connection_Online.getProjectJson(session.getCurrentUser(), projName);
         
         Project project = gson.fromJson(json, projObj);
