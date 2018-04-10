@@ -55,7 +55,7 @@ import javafx.stage.WindowEvent;
 
 import com.google.gson.Gson;
 
-import jdk.internal.util.xml.impl.Input;
+import jdk.internal.util.xml.impl.Input; // javac -XDignore.symbol.file=true
 import pennychain.center.OptimizationRequest;
 import pennychain.db.Connection_Online;
 import pennychain.usr.UserSession;
