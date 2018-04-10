@@ -10,24 +10,24 @@ import pennychain.controller.Map;
 import pennychain.controller.projResource;
 
 public class OptimizationRequest {
-    private int varBound;
-    private int max_posi;
-    private ArrayList<String> sales_centers = new ArrayList<>();
-    private ArrayList<String> dist_centers = new ArrayList<>();
-    private ArrayList<String> constraints = new ArrayList<>();
+    private int max_posi; //max # of resources to exist on returned map
     private Map map;
     private ArrayList<projResource> projectResourceList;
 
 
     public OptimizationRequest(ArrayList<projResource> projectResourceList) {
         this.projectResourceList = projectResourceList;
-        varBound = (int) projectResourceList.size();
     }
 
-    public void sendRequest(String path_name, Map projectMap) throws IOException {
-        /*this.read_map(path_name);
+    /* sendRequest:
+     *  Called to initiate an optimization request on the current project's map
+     *  Params: path_name, a string containing the path to exchange files with APMpython optimizer
+     *          projectMap, a Map containing the longitude/latitude of each existing and considerable resource position
+     * TODO: call APMPython and parse results into string array of origin,destination pairs to return
+     */
+    public String[] sendRequest(String path_name, Map projectMap) throws IOException {
+        /*
         APMpyth apmpython = new APMpyth(path_name);
-        this.bundle_data(path_name);
 
         String results = apmpython.sendData();
         */
@@ -37,6 +37,8 @@ public class OptimizationRequest {
         double[] longitudes = map.getGridLongs();
         String origins = "";
         String destinations = "";
+        int resAmt_origins = 0;
+        int resAmt_destinations = 0;
         for(int i = 0; i < projectResourceList.size(); i++) {
             int[][] placement = projectResourceList.get(i).getPlacement();
             for(int j = 0; j < placement.length; j++) {
@@ -45,8 +47,10 @@ public class OptimizationRequest {
                         if(projectResourceList.get(i).getrType() == 0 && i==0){
                             if(destinations.equals("")) {
                                 destinations += Double.toString(latitudes[placement[j].length*j+t]) + "," + Double.toString(longitudes[placement[j].length*j+t]);
+                                resAmt_destinations++;
                             } else {
                                 destinations += "|" + Double.toString(latitudes[placement[j].length*j+t]) + "," + Double.toString(longitudes[placement[j].length*j+t]);
+                                resAmt_origins++;
                             }
                         } else if(projectResourceList.get(i).getrType() == 1){
                             if(origins.equals("")) {
@@ -60,37 +64,64 @@ public class OptimizationRequest {
                 }
             }
         }
+
         System.out.println("O: " + origins);
         System.out.println("D: " + destinations);
+        String[] distanceMatrix = this.getMinDistanceSupply(googleDistanceMatrix(origins, destinations), resAmt_origins, resAmt_destinations);
+        System.out.println("GDM: " + distanceMatrix);
 
-        System.out.println("GDM: " +googleDistanceMatrix(origins, destinations));
-        /*
-        for(int i = 0; i < projectResourceList.size(); i++) {
-            if(projectResourceList.get(i).getrType() == 0) {
-                destinations[d] = googleReverseGeocode(//pass in lat/long of this resource);
-                d++;
-            } else if (projectResourceList.get(i).getrType() == 1) {
-                origins[o] = googleReverseGeocode();//pass in lat/long of this resource
-                o++;
-            }
-        }
-        //test vars//
-        String ori = "40.6655101,-73.89188969999998";
-        String des = "40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.659569%2C-73.933783%7C40.729029%2C-73.851524%7C40.6860072%2C-73.6334271%7C40.598566%2C-73.7527626%7C40.659569%2C-73.933783%7C40.729029%2C-73.851524%7C40.6860072%2C-73.6334271%7C40.598566%2C-73.7527626";
-        //end test vars//
-
-        //googleReverseGeocode();
-        System.out.println(googleDistanceMatrix(ori, des));
-*/
-        //String results = "";
-        //return this.display_on_map(results);
+        this.createOptimizableFile(path_name, distanceMatrix);
+        //TODO: call APMPython and parse results into string array of origin,destination pairs to return
+        return null;
     }
 
-    private void bundle_data(String path) throws IOException {
+    private void display_on_map(String map) {
+        /*
+         * Convert file from APMPyth to Map type to display on GUI
+         *
+         *
+         */
+    }
+
+
+    /*createOptimizableFile  (may split into multiple methods later)
+     * Extracts data and writes file readable by APMPython
+     *
+     * TODO: add census weighting for demand to objective funtion
+     */
+    private void createOptimizableFile(String path, String[] distance) throws IOException {
         FileWriter f = new FileWriter(path);
+        ArrayList<String> sales_centers = new ArrayList<>();
+        ArrayList<String> dist_centers = new ArrayList<>();
+        ArrayList<String> constraints = new ArrayList<>();
+
+        for (int i = 0; i < projectResourceList.size(); i++) {
+            if (projectResourceList.get(i).getrType() == 0) {
+                sales_centers.add("X["+i+"]");
+                constraints.add("X["+i+"]=0");
+            } else if (projectResourceList.get(i).getrType() == 1) {
+                dist_centers.add("X["+i+"]");
+                //add constraints pertaining to this variable
+            } else {
+                sales_centers.add("X["+i+"]");
+                constraints.add("X["+i+"]=0");
+            }
+        }
+
+        String max_num_centers = "";
+        for (int i = 0; i < sales_centers.size(); i++) {
+            f.write("int_" + sales_centers.get(i) + System.getProperty("line.separator"));
+            max_num_centers = max_num_centers + "int_" + sales_centers.get(i) + "+";
+        }
+        constraints.add(max_num_centers + "0 =" + max_posi);
+
         f.write("Model" + System.getProperty("line.separator") + "  Variables" + System.getProperty("line.separator"));
 
-        String obj_func = this.create_objective();
+        String obj_func = "Minimize ";
+        for (int i = 0; i < sales_centers.size(); i++) {
+            obj_func = obj_func + (distance[i] /*( * gasPrice[i] )*/ + " * int_" + sales_centers.get(i) + " + ");
+        }   //TODO: calculate demand from census data
+        obj_func = obj_func + "0 " + System.getProperty("line.separator") + "  End Equations" + System.getProperty("line.separator") + "End Model";
 
         while (!(sales_centers.isEmpty())) {
             f.write("    int_" + sales_centers.get(0) + " = 0, >=0, <=1" + System.getProperty("line.separator"));
@@ -106,63 +137,22 @@ public class OptimizationRequest {
         f.close();
     }
 
-    private String create_objective() {
-        String obj_func = "Minimize ";
-        for (int i = 0; i < sales_centers.size(); i++) {
-            obj_func = obj_func + (/*gas_price.get(i)*distance.get(i)-demand.get(i)*/1) + " * int_" + sales_centers.get(i) + " + ";
-        }   //TODO: obtain distances from google maps, obtain gas prices from online, calculate demand from census data
-        obj_func = obj_func + "0 " + System.getProperty("line.separator") + "  End Equations" + System.getProperty("line.separator") + "End Model";
-        return obj_func;
-    }
-
-    private Map display_on_map(String map) {
-        /*
-         *
-         * Convert file from APMPyth to Map type to display on GUI
-         *
-         */
-        Map opmap = new Map(this.map.getGrid_size(), this.map.getLength(), this.map.getWidth(), this.map.getZoom(), this.map.getLatitude(), this.map.getLongitude());
-        //TODO: populate map_data of opmap using results from apmpython
-        return opmap;
-    }
-
-    private void read_map(String path) throws IOException {
-
-        for (int i = 0; i < varBound; i++) {
-            if (projectResourceList.get(i).getrType() == 0) {
-                sales_centers.add("X[" + i + "]");
-                constraints.add("X[" + i + "]=0");
-            } else if (projectResourceList.get(i).getrType() == 1) {
-                dist_centers.add("X[" + i + "]");
-                //add contraints pertaining to this variable
-            } else {
-                sales_centers.add("X[" + i + "]");
-                constraints.add("X[" + i + "]=0");
-            }
-        }
-
-        FileWriter f = new FileWriter(path);
-
-        for (int x = 0; x < sales_centers.size(); x++) {
-            f.write("int_" + sales_centers.get(x) + System.getProperty("line.separator"));
-        }
-        f.close();
-
-        String max_num_centers = "";
-        for (int i = 0; i < sales_centers.size(); i++) {
-            max_num_centers = max_num_centers + "int_" + sales_centers.get(i) + "+";
-        }
-        constraints.add(max_num_centers + "0 =" + max_posi);
-    }
-
+    /*setMaxCenters:
+     * Sets maximum amount of resources, including pre-existing ones, to include in optimized result
+     * Params: user specified maximum amount of resources
+     */
     public void setMaxCenters(int desired_max) {
         this.max_posi = desired_max;
     }
 
-    private String googleReverseGeocode() {
+
+    /*
+     *  Below is Google Maps API HTTP Requests
+     *  and parsing methods for JSON results
+     *
+     */
+    private String googleReverseGeocode(double lat, double lng) {
         try {
-            double lat = 40.714224;
-            double lng = -73.961452;
             URL myURL = new URL("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat + "," + lng + "&key=AIzaSyD7MjGyPPBoWoQaqQinDGn3lnn5P_9sL_w");
             HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
             myURLConnection.connect();
@@ -216,8 +206,8 @@ public class OptimizationRequest {
                     }
                     return sb.toString();
             }
-        } catch (MalformedURLException e) {            // new URL() failed
-
+        } catch (MalformedURLException e) {
+            // new URL() failed
             // ...
         } catch (IOException e) {
             // openConnection() failed

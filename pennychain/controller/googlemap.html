@@ -178,6 +178,25 @@
                 return results;
             }
 
+            function displayRoutes(start, end) {
+                var directionsService = new google.maps.directionsService();
+                var directionsDisplay = new google.maps.directionsRenderer();
+                directionsDisplay.setMap(map);
+
+                var request = {
+                    origin:start,
+                    destination:end,
+                    travelMode: 'DRIVING'
+                };
+                directionsService.route(request, function(response, status) {
+                    if (status == 'OK') {
+                        directionsDisplay.setDirections(response);
+                    } else {
+                        window.alert('Directions request failed due to ' + status);
+                    }
+                });
+            }
+
             function showLoadAlert(){
                 alert("LOADED");
             }

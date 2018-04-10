@@ -393,12 +393,15 @@ public class MapWindowController {
         gc.clearRect(coordinates[0], coordinates[1], currentMap.getCell_width(), currentMap.getCell_length());
     }
 
-    //This method should be changed to adequately display the optimized map (this.currentMap/project.setMainMap not correct I think)
     @FXML protected void sendOptimizationRequest() throws IOException{
         if(project.getMainMap() != null) {
-            OptimizationRequest opreq = new OptimizationRequest(project.getProjResourceList());
-            opreq.sendRequest(project.getOptimizationPath(), project.getMainMap());
-            //project.setMainMap(this.currentMap);
+            String[] routes = new OptimizationRequest(project.getProjResourceList()).sendRequest(project.getOptimizationPath(), project.getMainMap());
+            for(int i = 0; i < routes.length; i++) {
+                String[] route = routes[i].split(",");
+                String origin = route[0];
+                String destination = route[1];
+                webEngine.executeScript("displayRoutes("+origin+","+destination+")");
+            }
         }
     }
 
