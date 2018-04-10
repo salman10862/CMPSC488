@@ -24,6 +24,7 @@
             var defaultZoom;
             var geocoder;
             var listener1;
+            var ltlngar;
 
             function initMap() {
                 var psuHbg = {lat: 40.2042945, lng: -76.7471177};
@@ -33,10 +34,16 @@
                     center: psuHbg,
                     disableDefaultUI: true
                 });
+                ltlngar = new Array();
                 google.maps.event.addListener(map, 'click', function(event) {
-
-                    window.alert(event.latLng.lat() + " / " + event.latLng.lng());
+                    bridge.log(event.latLng.lat().toString());
+                    ltlngar.push(event.latLng);
                 });
+            }
+
+            function getLtLngArray(){
+
+                return ltlngar;
             }
 
             function addCenterEvents(){
