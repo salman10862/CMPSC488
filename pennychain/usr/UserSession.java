@@ -4,6 +4,7 @@ public class UserSession {
 
     private static UserSession instance = null;
     private String currentUser = "default";
+    private boolean emailEnabled = false;
 
     private UserSession(){}
 
@@ -18,4 +19,6 @@ public class UserSession {
     public void setCurrentUser(String user) {
         currentUser = user;
     }
+    public boolean isEmailEnabled(){return emailEnabled;}
+    public void setEmailEnabled(boolean val){emailEnabled = val;}
 }

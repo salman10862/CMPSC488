@@ -15,11 +15,11 @@ import javax.mail.internet.MimeMessage;
 public class SendMail {
 
     public static void main(String[] args) {
-    	SendMail mailObj = new SendMail();
-    	mailObj.sendEmail("pranav726@live.com", "Sample Project");
+    	//mailObj.sendEmail("pranav726@live.com", "Sample Project");
+        System.out.println(Connection_Online.getUserEmail("ian"));
     }
     
-    public void sendEmail(String to, String projName){
+    public static void sendEmail(String to, String projName){
 
     	//Google email credentials
         final String username = "orteam123@gmail.com";	//default email account for this project
@@ -60,7 +60,7 @@ public class SendMail {
     }
 
     //email to be sent when project is shared with another user
-    public void sendShareEmail(String to, String sender){   //sender = sender's first name or username
+    public static void sendShareEmail(String to, String sender){   //sender = sender's first name or username
         //Google email credentials
         final String username = "orteam123@gmail.com";	//default email account for this project
         final String password = "pennychain1$";			//password for email account

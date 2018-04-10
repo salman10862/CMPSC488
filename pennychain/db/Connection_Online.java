@@ -141,13 +141,10 @@ public static String getUserEmail(String uname){
 
     BasicDBObject whereQuery = new BasicDBObject();
     whereQuery.put("username", uname);
-    DBCursor cursor = userCollection.find(whereQuery);
-    while(cursor.hasNext()){
-        if(cursor.next().get("username").equals(uname))
-            email = (String) cursor.next().get("email");
-    }
 
-    cursor.close();
+    DBObject doc = userCollection.findOne(whereQuery);
+    email = (String) doc.get("email");
+
     return email;
 }
 

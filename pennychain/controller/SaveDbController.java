@@ -1,6 +1,7 @@
 package pennychain.controller;
 
 import pennychain.db.Connection_Online;
+import pennychain.db.SendMail;
 import pennychain.usr.UserSession;
 
 import java.io.IOException;
@@ -44,6 +45,16 @@ public class SaveDbController {
     @FXML protected void handleSaveExisting(MouseEvent event) {
         String selectedProj = listView.getSelectionModel().getSelectedItem();
         // handle saving existing project
+
+
+
+        //send notification email when project is saved
+        if(session.isEmailEnabled()){
+            String userEmail = Connection_Online.getUserEmail(session.getCurrentUser());
+            String projName = listView.getSelectionModel().getSelectedItem();
+
+            SendMail.sendEmail(userEmail, projName);
+        }
     }
 
     @FXML protected void handleSaveNew(MouseEvent event) throws IOException {
