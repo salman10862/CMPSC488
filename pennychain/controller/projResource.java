@@ -11,7 +11,7 @@ public class projResource {
 
     private String label;
     private String color_s;
-    private int rType;  // 1 if it's a population distribution center, 0 otherwise. See: AddAResourceController
+    private int rType;  // 1 if it's a population distribution center, 0 otherwise. See: AddAResourceController, -1 for Results
     private ArrayList<projResource> constraint_list;
     //private HashMap<projResource, Double> constraint_amnt;
     //private HashMap<projResource, Double> constraint_dist;
@@ -117,7 +117,6 @@ public class projResource {
                     coordinate.add(y);
                 }
         }
-
         return coordinate;
     }
 
@@ -131,6 +130,10 @@ public class projResource {
                 }
         }
         return block_coordinate;
+    }
+
+    public int[][] getPlacement() {
+        return placement;
     }
 
 }

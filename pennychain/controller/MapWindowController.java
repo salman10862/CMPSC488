@@ -2,30 +2,21 @@ package pennychain.controller;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
-import java.awt.event.MouseMotionAdapter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.locks.Lock;
 
-//import com.sun.javafx.webkit.WebConsoleListener;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Worker;
-import javafx.event.ActionEvent;
-import javafx.event.EventDispatchChain;
-import javafx.event.EventHandler;
-import javafx.event.EventTarget;
+import javafx.event.*;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
@@ -40,6 +31,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -53,15 +45,17 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
-import com.google.gson.Gson;
-
-import jdk.internal.util.xml.impl.Input;
+import netscape.javascript.JSObject;
 import pennychain.center.OptimizationRequest;
 import pennychain.db.Connection_Online;
 import pennychain.usr.UserSession;
+import sun.awt.Mutex;
 
 
 public class MapWindowController {
+
+    public ArrayList<String> COORDINATE_LOG;
+    private EventHandler<WebEvent<String>> clickHandler;
 
     @FXML private MenuBar menuBar;
 
@@ -76,7 +70,6 @@ public class MapWindowController {
 
     @FXML private WebEngine webEngine;
     @FXML private WebView webView;
-
     @FXML private Button lockMap;
     @FXML private Button zoomInButton;
     @FXML private Button zoomOutButton;
@@ -222,7 +215,7 @@ public class MapWindowController {
         );
     }
 
-    @FXML protected void lockMapListener() throws AWTException{
+    @FXML protected void lockMapListener() throws AWTException, InterruptedException{
         System.out.println("LOCKMAP BUTTON PRESSED");
         toolbar.getItems().remove(lockMap);
 
@@ -236,13 +229,14 @@ public class MapWindowController {
             currentZoom = currentMap.getZoom();
         } else {
             // Set the size of the overlay Grid if this is a new Map
-            webEngine.executeScript("addCenterEvents()");
+            //webEngine.executeScript("addCenterEvents()");
             int GRID_SIZE = grid_size_selection.getSelectionModel().getSelectedItem();
 
 
+            JSObject window = (JSObject) webEngine.executeScript("window");
+            window.setMember("bridge", new JavaBridge());
+
             //webView.getEngine().setOnAlert(latlngHandler);
-            //windowPane.getCenter();
-            //webEngine.executeScript("addCenterEvents()");
 
 
 
@@ -257,67 +251,65 @@ public class MapWindowController {
             currentMap = project.getMainMap();
             currentZoom = zoom;
             currentMap.initializeGrid();
-            /**** EXPERIMENTAL METHODS
-             class Countdown {
-             private int count = 0;
-             public synchronized int getCount() { return count; }
-             public synchronized void addCount() {count++;}
+/*
+             class  Countdown {
+                 private int count = 0;
+                 public synchronized int getCount() { return count; }
+                 public synchronized void addCount() {count++;}
              }
+
              // Set things up to store the grid Lat/Lng values
-             Queue<Double> lat_q = new LinkedList<>();
+             Queue<Double>  lat_q = new LinkedList<>();
              Queue<Double> long_q = new LinkedList<>();
              Countdown count = new Countdown();
-             //EventHandler<WebEvent<String>> latlngHandler
-             webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
-            @Override
-            public void handle(WebEvent<String> stringWebEvent) {
-            String event_string = stringWebEvent.toString();
-            String[] temp_points = event_string.split(" / ", 2);
-            Double lat_val = Double.valueOf(temp_points[0]);
-            Double long_val = Double.valueOf(temp_points[1]);
-            lat_q.add(lat_val);
-            long_q.add(long_val);
-            count.addCount();
-            System.out.println("Adding coordinate " + count.getCount());
-            }
+
+            webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
+                @Override
+                public void handle(WebEvent<String> stringWebEvent) {
+                    String event_string = stringWebEvent.getData();
+                    String[] temp_points = event_string.split(" / ", 2);
+                    Double lat_val = Double.valueOf(temp_points[0]);
+                    Double long_val = Double.valueOf(temp_points[1]);
+                    lat_q.add(lat_val);
+                    long_q.add(long_val);
+                    count.addCount();
+                    System.out.println(lat_val);
+                    System.out.println(long_val);
+                }
             });
 
-             // Get the Lats/Lings for JS method calls
+            // Get the Lats/Lings for JS method calls
             double[] longitudes = currentMap.getGridLongs();
             double[] latitudes = currentMap.getGridLats();
 
             ArrayList<Point> cell_centers = currentMap.getGridCenters();
-
-            for(int i = 0; i< cell_centers.size(); i++) {
+            Robot r = new Robot();
+           for(int i = 0; i< cell_centers.size(); i++) {
                 double local_x = cell_centers.get(i).getX();
                 double local_y = cell_centers.get(i).getY();
                 Point2D screen_coordinates = webView.localToScreen(local_x, local_y);
-
-                //javafx.event.Event.fireEvent(webView, new MouseEvent(MouseEvent.MOUSE_PRESSED,
-                  //                          local_x, local_y, screen_coordinates.getX(), screen_coordinates.getY(), , 1,
-                    //                        false, false, false, false, true, false,
-                      //                      false, false, false, false, null));
-
-                Robot r = new Robot();
+                //MouseEvent mouseEvent = new MouseEvent(MouseEvent.MOUSE_CLICKED, local_x, local_y, screen_coordinates.getX(), screen_coordinates.getY(), MouseButton.PRIMARY, 1, false, false, false, true, false, false, false, true, false, true, null);
+            //javafx.event.Event.fireEvent(l, mouseEvent);
                 r.mouseMove((int)screen_coordinates.getX(), (int)screen_coordinates.getY());
-                r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-                r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-                System.out.println(count.getCount());
-                while(count.getCount() != i+1){}
-            }
+                r.mousePress(InputEvent.BUTTON1_MASK);;
+                r.mouseRelease(InputEvent.BUTTON1_MASK);
 
-            while(count.getCount() != GRID_SIZE){}
+            }
 
             for(int i = 0; i < cell_centers.size(); i++){
-                System.out.println("Putting in cell #" + i);
-                latitudes[i] = lat_q.remove();
-                longitudes[i] = long_q.remove();
+                //System.out.println("Putting in cell #" + i);
+                //String[] temp_points = event_string.split(" / ");
+                //Double lat_val = Double.valueOf(temp_points[0]);
+                //Double long_val = Double.valueOf(temp_points[1]);
+                //latitudes[i] = lat_val;
+                //longitudes[i] = long_val;
             }
-            ***************/
+            */
             // UI cleanup
             windowPane.setCursor(Cursor.DEFAULT);
             toolbar.getItems().remove(grid_size_selection);
             toolbar.getItems().remove(grid_size_text);
+
         }
 
 
@@ -405,8 +397,8 @@ public class MapWindowController {
     @FXML protected void sendOptimizationRequest() throws IOException{
         if(project.getMainMap() != null) {
             OptimizationRequest opreq = new OptimizationRequest(project.getProjResourceList());
-            this.currentMap = opreq.sendRequest(project.getOptimizationPath());
-            project.setMainMap(this.currentMap);
+            opreq.sendRequest(project.getOptimizationPath(), project.getMainMap());
+            //project.setMainMap(this.currentMap);
         }
     }
 
@@ -504,15 +496,21 @@ public class MapWindowController {
                                                 lockMapListener();
                                                 windowPane.getScene().setCursor(Cursor.CROSSHAIR);
                                             }
-                                            catch (AWTException e){
+                                            catch (Exception e){
                                                 e.printStackTrace();
                                             }
-                                        }
+                                    }
                                     }
                                 });
                             }
                             //Alternative case, new Project and no Map
                             else{
+                                webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
+                                    @Override
+                                    public void handle(WebEvent<String> stringWebEvent) {
+                                        System.out.println(stringWebEvent.getData());
+                                    }
+                                });
                                 zoomInButton.setDisable(true);
                                 zoomOutButton.setDisable(true);
                                 optimizeButton.setDisable(true);
@@ -539,4 +537,14 @@ public class MapWindowController {
         webEngine.load(getClass().getResource("googlemap.html").toString());
     }
 
+    public class JavaBridge
+    {
+        public void log(String text)
+        {
+            COORDINATE_LOG.add(text);
+            System.out.println("added" + text);
+        }
+    }
+
 }
+
