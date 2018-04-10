@@ -1,16 +1,17 @@
 package pennychain.center;
 
-import pennychain.db.Hash;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.Buffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CensusReader {
 
+    public static int itemIndex = 0;
+    public static String[] columnContents = new String[68];
 
     public static void main(String[] args) throws FileNotFoundException, IOException
     {
@@ -32,13 +33,21 @@ public class CensusReader {
             }
         }
 
-        String[] cencusData = new String[x];
-        cencusData = str.split(",");
+        String[] censusData = new String[x];
+        censusData = str.split(",");
         String[][] fullData = new String[68][x];
 
-        HashMap<String,Integer> headers = getHeaders(cencusData, x);
-        holder++;
-        getColumnContents(cencusData, fullData, str, br, x, holder);
+        //HashMap<String,Integer> headers = getHeadersFromFile(censusData, x);
+        //holder++;
+        getColumnContentsFromFile(censusData, fullData, str, br, x, holder);
+        retrieveColumnHeaderFromArray(fullData, censusData, x);
+        String[] example = retrieveColumnContentsFromArray(fullData, censusData);
+
+        for(int i = 0; i < example.length; i++)
+        {
+
+            System.out.println(example[i]);
+        }
 
 
         //for loop adding the first line to the multideminsional array
@@ -60,17 +69,16 @@ public class CensusReader {
         }*/
         //System.out.println(cenusData.toArray());
     }
-        public static HashMap<String,Integer> getHeaders(String[] data, int boundary)
+        public static HashMap<String,Integer> getHeadersFromFile(String[] data, int boundary)
         {
             HashMap<String,Integer> headers = new HashMap<>();
 
-            //CensusDataGraber example = new CensusDataGraber();
             //for loop adding the first line to the multideminsional array
             for(int y = 0; y < boundary; y++)
             {
                 //fullData[holder][y]=cencusData[y];
                 headers.put(data[y], y);
-                System.out.println(headers.get(data[y]));
+                //System.out.println(headers.get(data[y]));
             }
             //holder++;
             //System.out.println(example.retriveColumnHeader(fullData));
@@ -80,7 +88,7 @@ public class CensusReader {
             return headers;
         }
 
-    public static String[][] getColumnContents(String[] data, String[][] totalData, String source, BufferedReader br, int boundary, int holder) throws IOException {
+    public static String[][] getColumnContentsFromFile(String[] data, String[][] totalData, String source, BufferedReader br, int boundary, int holder) throws IOException {
 
 
         //While/for loop adding all the lines of the file to multidimensional array
@@ -90,14 +98,79 @@ public class CensusReader {
             for(int y = 0; y < boundary; y++)
             {
                 totalData[holder][y]= data[y];
-                System.out.println(totalData[holder][y]);
+                //System.out.println(totalData[holder][y]);
             }
             holder++;
 
         }
-        System.out.println(totalData[0][59]);
         return totalData;
 
+    }
+
+    public static String[] retrieveColumnHeaderFromArray(String[][] totalData, String[] data, int boundary) throws FileNotFoundException {
+
+        int column_index = 0;
+        int content_index = 0;
+        int counter = 0;
+
+        KeywordGenerator keys = new KeywordGenerator();
+        ArrayList<String> all_keys = keys.grabKeywords();
+
+        HashMap<String,Integer> headers = getHeadersFromFile(data, boundary);
+
+        boolean succeeded = false;
+
+        while(succeeded != true)
+        {
+            if (headers.containsKey(all_keys.get(counter)))
+            {
+                columnContents[content_index] = all_keys.get(counter);
+                itemIndex = headers.get(all_keys.get(counter));
+                succeeded = true;
+            }
+            else
+            {
+                column_index++;
+            }
+            counter++;
+        }
+
+        /*for (int i = 0; i < sizeOfArray; i++)
+        {
+            while (column_index != sizeOfArray - 1)
+            {
+                if (totalData[row_index][column_index] == all_keys.get(counter))
+                {
+                    columnContents[content_index] = totalData[row_index][column_index];
+                    succeeded = true;
+                    break;
+                }
+                else
+                {
+                    column_index++;
+                    itemIndex++;
+                    sizeOfArray--;
+                }
+            }
+            counter++;
+        }*/
+
+        return columnContents;
+    }
+
+    public static String[] retrieveColumnContentsFromArray(String[][] totalData, String[] data)
+    {
+        int row_index = 1;
+        int counter = 1;
+
+        while(row_index != totalData.length)
+        {
+            columnContents[counter] = totalData[row_index][itemIndex];
+            counter++;
+            row_index++;
+        }
+
+        return columnContents;
     }
 
 }
