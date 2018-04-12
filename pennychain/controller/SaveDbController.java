@@ -29,6 +29,7 @@ public class SaveDbController {
 
     private Project project;
     private UserSession session;
+    private HashMap<String, ArrayList<String>> sharedProjsMap;
 
     public SaveDbController(Project project, UserSession session) {
         this.project = project;
@@ -36,24 +37,52 @@ public class SaveDbController {
     }
 
     @FXML protected void initialize() {
+        sharedProjsMap = new HashMap<>();
         ArrayList<String> projectTitles = Connection_Online.getUserProjects(session.getCurrentUser());
+
         for(String i : projectTitles) {
             listView.getItems().add(i);
         }
+
+        ArrayList<ArrayList<String>> sharedProjects =
+            Connection_Online.getSharedUserProjects(session.getCurrentUser());
+
+        for(ArrayList i : sharedProjects) {
+            System.out.println(i);
+
+            String key = i.get(0) + " (shared by " + i.get(1) + ")";
+            sharedProjsMap.put(key, i);
+            listView.getItems().add(key);
+        }
     }
 
-    @FXML protected void handleSaveExisting(MouseEvent event) {
+    @FXML protected void handleSaveExisting(MouseEvent event) throws Exception {
+        Gson gson = new Gson();
+        String json = "";
         String selectedProj = listView.getSelectionModel().getSelectedItem();
-        // handle saving existing project
 
+        if(sharedProjsMap.containsKey(selectedProj)) {
+            ArrayList<String> value = sharedProjsMap.get(projName);
+            json = Connection_Online.getProjectJson(value.get(1), value.get(0));
+        } else {
+            json = Connection_Online.getProjectJson(session.getCurrentUser(), projName);
+        }
 
+        if(Connection_Online.updateProject(json)) {
 
-        //send notification email when project is saved
-        if(session.isEmailEnabled()){
-            String userEmail = Connection_Online.getUserEmail(session.getCurrentUser());
-            String projName = listView.getSelectionModel().getSelectedItem();
+            //send notification email when project is saved
+            if(session.isEmailEnabled()){
+                String userEmail = Connection_Online.getUserEmail(session.getCurrentUser());
+                String projName = listView.getSelectionModel().getSelectedItem();
 
-            SendMail.sendEmail(userEmail, projName);
+                SendMail.sendEmail(userEmail, projName);
+            }
+
+            Stage stage = (Stage) saveExisting.getScene().getWindow();
+            stage.close();
+
+        } else {
+            throw new Exception("Something went wrong saving to DB...");
         }
     }
 
