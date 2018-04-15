@@ -46,6 +46,7 @@ import javafx.stage.WindowEvent;
 
 import pennychain.center.OptimizationRequest;
 import pennychain.usr.UserSession;
+import pennychain.db.Connection_Online;
 
 
 public class MapWindowController {
