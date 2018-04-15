@@ -31,8 +31,9 @@ public class Connection_Online {
        // updatePassword("pranav412", "newPass12345");
         //ArrayList<String> projNames = getUserProjects("pranav412");
 
-        ArrayList<String> projNames = getSharedUserProjects("ckw5071");
+        //ArrayList<String> projNames = getSharedUserProjects("ckw5071");
 
+        getSharedWithForProject("ian", "ians_project");
 
       /* Project prj = new Project("ian");
        prj.setProjLabel("newTestProjLabel");
@@ -53,6 +54,7 @@ public class Connection_Online {
         newUser.put("password", pwd);
         newUser.put("salt", salt);
         newUser.put("email", email);
+        newUser.put("emailNotifications", false);
 
         //add record to database
         userCollection.insert(newUser);
@@ -147,6 +149,51 @@ public static String getUserEmail(String uname){
 
     return email;
 }
+
+public static void enableOrDisableEmail(String uname){
+    BasicDBObject searchQuery = new BasicDBObject();
+    searchQuery.put("username", uname);
+
+    DBObject doc = userCollection.findOne(searchQuery);
+    boolean emailNotif = (boolean) doc.get("emailNotifications");
+
+    if(emailNotif == true){
+        //disable email
+        BasicDBObject updateFields = new BasicDBObject();
+        updateFields.append("emailNotifications", false);
+        BasicDBObject setQuery = new BasicDBObject();
+        setQuery.append("$set", updateFields);
+
+        userCollection.update(searchQuery, setQuery);
+    }
+    else if(emailNotif == false){
+        //enable email
+        BasicDBObject updateFields = new BasicDBObject();
+        updateFields.append("emailNotifications", true);
+        BasicDBObject setQuery = new BasicDBObject();
+        setQuery.append("$set", updateFields);
+
+        userCollection.update(searchQuery, setQuery);
+    }
+}
+
+    public static boolean emailEnabled(String uname){
+        boolean result = false;
+
+        BasicDBObject searchQuery = new BasicDBObject();
+        searchQuery.put("username", uname);
+
+        DBCursor cursor = userCollection.find(searchQuery);
+
+        while(cursor.hasNext()){
+            if(cursor.next().get("emailNotifications").toString().equals("false"))
+                result = false;
+            else
+                result = true;
+        }
+
+        return result;
+    }
 
 //returns an arraylist of all projects owned by a particular user
 public static ArrayList getUserProjects(String uname){
@@ -248,6 +295,39 @@ public static void updateProject(Project proj) throws NoSuchElementException{   
 
     System.out.println("Project updated");
 
+}
+
+//return a list of all users a particular project is shared with
+public static ArrayList<String> getSharedWithForProject(String uname, String projName){
+    //array list of usernames to be returned
+    ArrayList<String> usernames = new ArrayList<>();
+
+    BasicDBObject searchQuery = new BasicDBObject();
+    searchQuery.put("projLabel", projName);
+
+    //first find all projects with a particular name
+    DBCursor cursor = projectCollection.find(searchQuery);
+    DBObject obj;
+
+    while(cursor.hasNext()){
+        obj = cursor.next();
+        if(obj.get("linked_userID").toString().contains(uname)){    //if this project belongs to given user
+                                                                    //get who the project is shared with
+
+            String names = obj.get("sharedWith").toString().substring(2, obj.get("sharedWith").toString().length()-1);
+            String[] parts = names.split(",");
+
+            //use regex to get usernames by themselves
+            for(int i = 0; i < parts.length; i++){
+                parts[i] = parts[i].replaceAll("\\s", "");
+                parts[i] = parts[i].replaceAll("\"", "");
+
+                usernames.add(parts[i]);
+            }
+        }
+    }
+
+    return usernames;
 }
 
 public void loadProject(){

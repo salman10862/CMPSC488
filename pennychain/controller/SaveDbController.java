@@ -19,6 +19,8 @@ import javafx.stage.Window;
 
 import com.google.gson.Gson;
 
+import javax.mail.Session;
+
 public class SaveDbController {
 
     @FXML private ListView<String> listView;
@@ -48,12 +50,29 @@ public class SaveDbController {
 
 
 
-        //send notification email when project is saved
+        //send notification email to project owner
         if(session.isEmailEnabled()){
             String userEmail = Connection_Online.getUserEmail(session.getCurrentUser());
             String projName = listView.getSelectionModel().getSelectedItem();
 
             SendMail.sendEmail(userEmail, projName);
+        }
+
+        //send notification email to users project is shared with
+        String project = selectedProj;
+
+        if(project.contains("(")){
+            project = project.split("(")[0];    //remove the shared by portion to get project name by itself
+        }
+
+        //get list of users project is shared with
+        ArrayList<String> list = Connection_Online.getSharedWithForProject(session.getCurrentUser(), project);
+
+        //send notificatiion email to each user
+        for(String uname: list){
+            if(Connection_Online.emailEnabled(uname)){  //if user has email notifications enabled
+                SendMail.sendEmail(Connection_Online.getUserEmail(uname), project);
+            }
         }
     }
 
