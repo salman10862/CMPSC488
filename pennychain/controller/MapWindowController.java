@@ -233,8 +233,9 @@ public class MapWindowController {
             double local_y = cell_centers.get(i).getY();
             Point2D screen_coordinates = webView.localToScreen(local_x, local_y);
             r.mouseMove((int)screen_coordinates.getX(), (int)screen_coordinates.getY());
-            r.mousePress(InputEvent.BUTTON1_MASK);
-            r.mouseRelease(InputEvent.BUTTON1_MASK);
+            r.delay(500);
+            r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             System.out.println("OUT THE ROBOT");
         }
         else{
@@ -306,13 +307,16 @@ public class MapWindowController {
                     project.getMainMap().getGridLongs()[count.getCount()] = long_val;
                     count.addCount();
                     System.out.println("Count is: " + count.getCount());
-                    MapWindowController.this.advanceMouse(count.getCount());
+                    advanceMouse(count.getCount());
+                    //MapWindowController.this.advanceMouse(count.getCount());
                     System.out.println(lat_val);
                     System.out.println(long_val);
                 }
             };
 
             webEngine.setOnAlert(latlng);
+
+
 
             r = new Robot();
             advanceMouse(0);
