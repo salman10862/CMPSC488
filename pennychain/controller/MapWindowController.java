@@ -7,8 +7,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -16,22 +14,18 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Worker;
 import javafx.event.*;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -45,18 +39,11 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
-import netscape.javascript.JSObject;
 import pennychain.center.OptimizationRequest;
-import pennychain.db.Connection_Online;
 import pennychain.usr.UserSession;
-import sun.awt.Mutex;
 
 
 public class MapWindowController {
-
-    public ArrayList<String> COORDINATE_LOG;
-    private EventHandler<WebEvent<String>> clickHandler;
-
     @FXML private MenuBar menuBar;
 
     @FXML private MenuItem saveAsItem;
@@ -82,6 +69,7 @@ public class MapWindowController {
     private Project project;
     private Map currentMap;
     private UserSession userSession;
+    EventHandler<MouseEvent> mouseListener;
 
     private int currentZoom;
 
@@ -204,40 +192,60 @@ public class MapWindowController {
         stage.show();
 
         stage.setOnHidden(new EventHandler<WindowEvent>(){
-                              @Override
-                              public void handle(WindowEvent windowEvent){
-                                  resourceChooser.getItems().setAll(project.getStringsofResources());
-
-                                  System.out.println("Yep, it closed.");
-                                  System.out.println(project.getStringsofResources());
-                              }
-                          }
-        );
+            @Override
+            public void handle(WindowEvent windowEvent){
+              resourceChooser.getItems().setAll(project.getStringsofResources());
+            }
+        });
     }
 
-    @FXML protected void lockMapListener() throws AWTException, InterruptedException{
-        System.out.println("LOCKMAP BUTTON PRESSED");
+    Robot r;
+    public void advanceMouse(int i){
+        ArrayList<Point> cell_centers = currentMap.getGridCenters();
+        if(i<cell_centers.size()){
+            System.out.println("IN THE ROBOT");
+            double local_x = cell_centers.get(i).getX();
+            double local_y = cell_centers.get(i).getY();
+            Point2D screen_coordinates = webView.localToScreen(local_x, local_y);
+            r.mouseMove((int)screen_coordinates.getX(), (int)screen_coordinates.getY());
+            r.mousePress(InputEvent.BUTTON1_MASK);
+            r.mouseRelease(InputEvent.BUTTON1_MASK);
+            System.out.println("OUT THE ROBOT");
+        }
+        else{
+            //Added Transparency Layer
+            layerPane = new StackPane();
+
+            transGrid.setWidth(webView.getWidth());
+            transGrid.setHeight(webView.getHeight());
+            layerPane.getChildren().addAll(webView, transGrid);
+            windowPane.setCenter(layerPane);
+            for(int n = 0; n<cell_centers.size(); n++)
+                System.out.println(currentMap.getGridLats()[n]);
+        }
+    }
+
+    @FXML protected void lockMapListener() throws AWTException{
         toolbar.getItems().remove(lockMap);
 
-        //Disable GoogleMaps UI
-        webEngine.executeScript("disable()");
 
         if(project.getMainMap()!=null) {
             toolbar.getItems().remove(grid_size_selection);
             toolbar.getItems().remove(grid_size_text);
             currentMap = project.getMainMap();
             currentZoom = currentMap.getZoom();
+
+            //Added Transparency Layer
+            layerPane = new StackPane();
+
+            transGrid.setWidth(webView.getWidth());
+            transGrid.setHeight(webView.getHeight());
+            layerPane.getChildren().addAll(webView, transGrid);
+            windowPane.setCenter(layerPane);
         } else {
             // Set the size of the overlay Grid if this is a new Map
-            //webEngine.executeScript("addCenterEvents()");
+            webEngine.executeScript("addCenterEvents()");
             int GRID_SIZE = grid_size_selection.getSelectionModel().getSelectedItem();
-
-
-            JSObject window = (JSObject) webEngine.executeScript("window");
-            window.setMember("bridge", new JavaBridge());
-
-            //webView.getEngine().setOnAlert(latlngHandler);
-
 
 
             // Set "center" of Map
@@ -251,60 +259,41 @@ public class MapWindowController {
             currentMap = project.getMainMap();
             currentZoom = zoom;
             currentMap.initializeGrid();
-/*
+
+
              class  Countdown {
                  private int count = 0;
                  public synchronized int getCount() { return count; }
                  public synchronized void addCount() {count++;}
              }
 
-             // Set things up to store the grid Lat/Lng values
-             Queue<Double>  lat_q = new LinkedList<>();
-             Queue<Double> long_q = new LinkedList<>();
              Countdown count = new Countdown();
 
-            webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
+
+            EventHandler<WebEvent <String>> latlng = new EventHandler<WebEvent<String>>() {
                 @Override
                 public void handle(WebEvent<String> stringWebEvent) {
+                    System.out.println("HALP");
                     String event_string = stringWebEvent.getData();
-                    String[] temp_points = event_string.split(" / ", 2);
+                    String[] temp_points = event_string.split("/", 2);
                     Double lat_val = Double.valueOf(temp_points[0]);
                     Double long_val = Double.valueOf(temp_points[1]);
-                    lat_q.add(lat_val);
-                    long_q.add(long_val);
+                    project.getMainMap().getGridLats()[count.getCount()] = lat_val;
+                    project.getMainMap().getGridLongs()[count.getCount()] = long_val;
                     count.addCount();
+                    System.out.println("Count is: " + count.getCount());
+                    MapWindowController.this.advanceMouse(count.getCount());
                     System.out.println(lat_val);
                     System.out.println(long_val);
                 }
-            });
+            };
 
-            // Get the Lats/Lings for JS method calls
-            double[] longitudes = currentMap.getGridLongs();
-            double[] latitudes = currentMap.getGridLats();
+            webEngine.setOnAlert(latlng);
 
-            ArrayList<Point> cell_centers = currentMap.getGridCenters();
-            Robot r = new Robot();
-           for(int i = 0; i< cell_centers.size(); i++) {
-                double local_x = cell_centers.get(i).getX();
-                double local_y = cell_centers.get(i).getY();
-                Point2D screen_coordinates = webView.localToScreen(local_x, local_y);
-                //MouseEvent mouseEvent = new MouseEvent(MouseEvent.MOUSE_CLICKED, local_x, local_y, screen_coordinates.getX(), screen_coordinates.getY(), MouseButton.PRIMARY, 1, false, false, false, true, false, false, false, true, false, true, null);
-            //javafx.event.Event.fireEvent(l, mouseEvent);
-                r.mouseMove((int)screen_coordinates.getX(), (int)screen_coordinates.getY());
-                r.mousePress(InputEvent.BUTTON1_MASK);;
-                r.mouseRelease(InputEvent.BUTTON1_MASK);
+            r = new Robot();
+            advanceMouse(0);
+            System.out.println("Beyond the robot");
 
-            }
-
-            for(int i = 0; i < cell_centers.size(); i++){
-                //System.out.println("Putting in cell #" + i);
-                //String[] temp_points = event_string.split(" / ");
-                //Double lat_val = Double.valueOf(temp_points[0]);
-                //Double long_val = Double.valueOf(temp_points[1]);
-                //latitudes[i] = lat_val;
-                //longitudes[i] = long_val;
-            }
-            */
             // UI cleanup
             windowPane.setCursor(Cursor.DEFAULT);
             toolbar.getItems().remove(grid_size_selection);
@@ -312,23 +301,18 @@ public class MapWindowController {
 
         }
 
+        //Disable GoogleMaps UI
+        webEngine.executeScript("disable()");
+
 
         if(!project.getStringsofResources().isEmpty())
             resourceChooser.getItems().addAll(FXCollections.observableList(project.getStringsofResources()));
 
         resourceChooser.setVisible(true);
 
-        //Added Transparency Layer
-        layerPane = new StackPane();
-
-        transGrid.setWidth(webView.getWidth());
-        transGrid.setHeight(webView.getHeight());
-        layerPane.getChildren().addAll(webView, transGrid);
-        windowPane.setCenter(layerPane);
-
 
         resourceChooserListener();
-        transGrid.setOnMouseClicked(new EventHandler<MouseEvent>() {
+         mouseListener = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 // Check that there is a resource to draw on the map
@@ -367,7 +351,8 @@ public class MapWindowController {
                     }
                 }
             }
-        });
+        };
+        transGrid.setOnMouseClicked(mouseListener);
 
         //Enable map interactions
         zoomInButton.setDisable(false);
@@ -441,6 +426,35 @@ public class MapWindowController {
         System.out.println(layerPane.getChildren());
     }
 
+    private void setOptimizedResults(ArrayList<projResource> results){
+        ComboBox<String> optimizedResults = new ComboBox<>();
+        ArrayList<String> optimized_list = new ArrayList<>();
+        for (projResource r:
+             results) {
+            optimized_list.add(r.getLabel() + " (RESULT)");
+        }
+        optimizedResults.getItems().setAll(optimized_list);
+        toolbar.getItems().add(optimizedResults);
+        optimizedResults.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                //Remove all current rectangles from canvas
+                // Remove all current rectangles from the canvas
+                GraphicsContext gc = transGrid.getGraphicsContext2D();
+                gc.clearRect(0,0, transGrid.getWidth(), transGrid.getHeight());
+
+                // Get corresponding optimizedResource
+                projResource selectedResult = results.get(optimizedResults.getSelectionModel().getSelectedIndex());
+
+                //DRAW IT
+                ArrayList<Integer> placement_coordinates = selectedResult.getCoordinates();
+                for(int i =0; i<placement_coordinates.size(); i=i+2){
+                    drawSquare(placement_coordinates.get(i)*currentMap.getCell_width() + 1, (placement_coordinates.get(i+1)+1)*currentMap.getCell_length(), selectedResult.getColor());
+                }
+                transGrid.setOnMouseClicked(null);
+            }
+        });
+    }
 
     //Handle resourceChooser ComboBox selections
     private void resourceChooserListener(){
@@ -465,6 +479,7 @@ public class MapWindowController {
                     System.out.println("Attempt to draw blocks");
                     drawSquare(block_coordinates.get(i)*currentMap.getCell_width()+1, (block_coordinates.get(i+1)+1)*currentMap.getCell_length(),Color.BLACK);
                 }
+                transGrid.setOnMouseClicked(mouseListener);
             }
         });
     }
@@ -528,7 +543,7 @@ public class MapWindowController {
                                 grid_size_selection = new ChoiceBox<Integer>();
                                 grid_size_text = new Text("Grid Size: ");
                                 grid_size_selection.setItems(FXCollections.observableList(grid_size_list));
-                                grid_size_selection.setValue(Integer.valueOf(32));
+                                grid_size_selection.setValue(Integer.valueOf(8));
                                 toolbar.getItems().add(grid_size_text);
                                 toolbar.getItems().add(grid_size_selection);
                             }
@@ -539,15 +554,6 @@ public class MapWindowController {
         // Load GoogleMaps html file
         webEngine.load(getClass().getResource("googlemap.html").toString());
     }
-
-    public class JavaBridge
-    {
-        public void log(String text)
-        {
-            COORDINATE_LOG.add(text);
-            System.out.println("added" + text);
-        }
-    }
-
 }
+
 

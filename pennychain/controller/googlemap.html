@@ -34,18 +34,8 @@
                     center: psuHbg,
                     disableDefaultUI: true
                 });
-                ltlngar = new Array();
-                google.maps.event.addListener(map, 'click', function(event) {
-                    bridge.log(event.latLng.lat().toString());
-                    ltlngar.push(event.latLng);
-                    window.alert(event.latLng.lat() + " / " + event.latLng.lng());
-                });
             }
 
-            function getLtLngArray(){
-
-                return ltlngar;
-            }
 
             function addCenterEvents(){
                 listener1 = map.addListener('click', function(event) {
