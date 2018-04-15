@@ -273,7 +273,7 @@ public static String getProjectJson(String uname, String projName) {
     return result.toJson();
 }
 
-public static void updateProject(Project proj) throws NoSuchElementException{   //TODO: test this method using map data
+public static boolean updateProject(Project proj) throws NoSuchElementException{   //TODO: test this method using map data
     BasicDBObject updateFields = new BasicDBObject();
 
     updateFields.append("projLabel", proj.getProjectLabel());
@@ -291,10 +291,16 @@ public static void updateProject(Project proj) throws NoSuchElementException{   
     BasicDBObject searchQuery = new BasicDBObject();
     searchQuery.put("owner", proj.getProjectOwner());
 
-    projectCollection.update(searchQuery, setQuery);
+    try {
+        projectCollection.update(searchQuery, setQuery);
+        System.out.println("Project updated");
+    }
+    catch(Exception e){
+        return false;
+    }
 
-    System.out.println("Project updated");
 
+    return true;
 }
 
 //return a list of all users a particular project is shared with

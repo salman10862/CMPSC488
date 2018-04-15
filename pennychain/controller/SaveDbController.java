@@ -1,11 +1,14 @@
 package pennychain.controller;
 
+import com.google.gson.reflect.TypeToken;
 import pennychain.db.Connection_Online;
 import pennychain.db.SendMail;
 import pennychain.usr.UserSession;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -62,6 +65,11 @@ public class SaveDbController {
         Gson gson = new Gson();
         String json = "";
         String selectedProj = listView.getSelectionModel().getSelectedItem();
+        String projName = selectedProj;
+
+        if(projName.contains("(")){
+            projName = projName.split("(")[0];
+        }
 
         if(sharedProjsMap.containsKey(selectedProj)) {
             ArrayList<String> value = sharedProjsMap.get(projName);
@@ -70,12 +78,16 @@ public class SaveDbController {
             json = Connection_Online.getProjectJson(session.getCurrentUser(), projName);
         }
 
-        if(Connection_Online.updateProject(json)) {
+        //Taken from LoadDbController
+        Type projObj = new TypeToken<Project>() {}.getType();
+        Project project = gson.fromJson(json, projObj);
+
+        if(Connection_Online.updateProject(project)) {
 
             //send notification email when project is saved
             if(session.isEmailEnabled()){
                 String userEmail = Connection_Online.getUserEmail(session.getCurrentUser());
-                String projName = listView.getSelectionModel().getSelectedItem();
+                //String projName = listView.getSelectionModel().getSelectedItem();
 
                 SendMail.sendEmail(userEmail, projName);
             }
@@ -88,19 +100,19 @@ public class SaveDbController {
         }
 
         //send notification email to users project is shared with
-        String project = selectedProj;
+        String proj1 = selectedProj;
 
-        if(project.contains("(")){
-            project = project.split("(")[0];    //remove the shared by portion to get project name by itself
+        if(proj1.contains("(")){
+            proj1 = proj1.split("(")[0];    //remove the shared by portion to get project name by itself
         }
 
         //get list of users project is shared with
-        ArrayList<String> list = Connection_Online.getSharedWithForProject(session.getCurrentUser(), project);
+        ArrayList<String> list = Connection_Online.getSharedWithForProject(session.getCurrentUser(), proj1);
 
         //send notificatiion email to each user
         for(String uname: list){
             if(Connection_Online.emailEnabled(uname)){  //if user has email notifications enabled
-                SendMail.sendEmail(Connection_Online.getUserEmail(uname), project);
+                SendMail.sendEmail(Connection_Online.getUserEmail(uname), proj1);
             }
         }
     }
