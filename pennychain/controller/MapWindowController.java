@@ -7,6 +7,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Optional;
+import java.util.Queue;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -21,6 +24,8 @@ import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -54,6 +59,7 @@ public class MapWindowController {
     @FXML private MenuItem addAResourceItem;
     @FXML private MenuItem settingsItem;
     @FXML private MenuItem logoutItem;
+    @FXML private MenuItem shareItem;
 
     @FXML private WebEngine webEngine;
     @FXML private WebView webView;
@@ -126,6 +132,24 @@ public class MapWindowController {
         stage.show();
     }
         
+    @FXML protected void handleShare(ActionEvent event) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Share Project");
+        dialog.setHeaderText("Allow Another User Access to Your Project");
+        dialog.setContentText("Enter the username you wish to share this project with: ");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent() && Connection_Online.userExists(result.get())) {
+            project.shareWithUser(result.get());
+        } else {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Share Error");
+            alert.setHeaderText("Oops! There was a problem sharing your project.");
+            alert.setContentText("Either the username you provided does not exist, or " +
+                    "a connection to the database could not be established.");
+            alert.showAndWait();
+        }
+    }
 
     @FXML protected void handledefineConstraintsItem(ActionEvent event) throws IOException {
 
@@ -273,7 +297,6 @@ public class MapWindowController {
             EventHandler<WebEvent <String>> latlng = new EventHandler<WebEvent<String>>() {
                 @Override
                 public void handle(WebEvent<String> stringWebEvent) {
-                    System.out.println("HALP");
                     String event_string = stringWebEvent.getData();
                     String[] temp_points = event_string.split("/", 2);
                     Double lat_val = Double.valueOf(temp_points[0]);
