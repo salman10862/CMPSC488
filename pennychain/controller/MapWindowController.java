@@ -23,6 +23,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -514,8 +515,19 @@ public class MapWindowController {
         });
     }
 
-    @FXML protected void handleLogout() throws IOException{
-        //TODO: Write logout function
+    @FXML protected void handleLogout(ActionEvent event) throws IOException{
+        userSession = null;
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginWindow.fxml"));
+        LoginWindowController controller = new LoginWindowController();
+        loader.setController(controller);
+        Parent root = loader.load();
+
+        Stage stage = new Stage();
+        Scene scene = new Scene(root, 400, 400);
+        stage.setTitle("Application - Login Window");
+        stage.setScene(scene);
+        stage.show();
+        ((Node) menuBar).getScene().getWindow().hide();
     }
 
 
