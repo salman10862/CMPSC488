@@ -403,6 +403,9 @@ public class MapWindowController {
                 webEngine.executeScript("displayRoutes("+origin+","+destination+")");
             }
         }
+        String origin = "40.2042945,-76.7471177";
+        String destination = "40.2007294,-76.7550847";
+        webEngine.executeScript("displayRoutes("+origin+","+destination+")");
     }
 
     @FXML protected void handleZoomIn(){
