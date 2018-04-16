@@ -46,7 +46,7 @@ public class Map {
     }
 
 
-    //TODO: Bring up computation concerns with group
+
     public void initializeGrid(){
         gridCorners = new ArrayList<>(grid_size);
         gridCenters = new ArrayList<>(grid_size);
@@ -119,17 +119,6 @@ public class Map {
     public double getWidth() {return this.width;}
     public double getLength() {return this.len;}
 
-    // D-to-D_matrix
-    // TODO: Row = Major Redistribution Center: Distibution's Distrubtion
-    // TODO: column = minor distribution: Customer's Distribution
-
-
     // TODO: How many trucks each minor distrubtion center needs
-
-    // TODO: Gas price for a region per distnace
-
-
-    //
-    //TODO: Full list of what we want to reasonably abstract from GoogleMaps API (look over KXL formats)
 
 }
