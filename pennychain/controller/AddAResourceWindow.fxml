@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
@@ -13,8 +14,10 @@
         <TextField fx:id="labelField" layoutX="354.0" layoutY="53.0" />
         <Text layoutX="232.0" layoutY="68.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Resource Name" />
         <Label layoutX="233.0" layoutY="101.0" text="Resource Type" />
-        <ColorPicker fx:id="colorPicker" layoutX="435.0" layoutY="135.0" />
-        <Label layoutX="231.0" layoutY="141.0" text="Color Representation on Map" />
+        <ColorPicker fx:id="colorPicker" layoutX="375.0" layoutY="135.0" />
+        <Label layoutX="231.0" layoutY="141.0" text="Color on Map" />
         <ChoiceBox fx:id="valueChoice" layoutX="375.0" layoutY="97.0" prefWidth="150.0" />
+      <Text layoutX="231.0" layoutY="195.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Desired Amount" />
+      <TextField fx:id="desired_amnt_field" layoutX="357.0" layoutY="178.0" />
     </children>
 </AnchorPane>

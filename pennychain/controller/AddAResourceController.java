@@ -25,6 +25,7 @@ public class AddAResourceController{
     @FXML private ColorPicker colorPicker;
     @FXML private TextField labelField;
     @FXML private Button AddButton;
+    @FXML private TextField desired_amnt_field;
 
     private Color newRColor;
     private int type_flag;
@@ -79,6 +80,8 @@ public class AddAResourceController{
             newResource.setrType(type_flag);
 
             project.addProjResource(newResource);
+            if(!desired_amnt_field.toString().isEmpty())
+                newResource.setDesired_amnt(Integer.parseInt(desired_amnt_field.getCharacters().toString()));
             rList.setItems(FXCollections.observableList(project.getStringsofResources()));
             s.hide();
         }
