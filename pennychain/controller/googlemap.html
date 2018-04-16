@@ -30,9 +30,10 @@
                 var psuHbg = {lat: 40.2042945, lng: -76.7471177};
                 geocoder = new google.maps.Geocoder();
                 map = new google.maps.Map(document.getElementById('map'), {
-                    zoom: 13,
+                    zoom: 11,
                     center: psuHbg,
-                    disableDefaultUI: true
+                    disableDefaultUI: true,
+                    clickableIcons: false
                 });
             }
 
