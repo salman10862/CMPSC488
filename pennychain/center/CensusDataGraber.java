@@ -1,5 +1,7 @@
 package pennychain.center;
 
+import pennychain.db.Hash;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,13 +16,15 @@ public class CensusDataGraber {
     public static int itemIndex = 0;
     public static String[] columnContents = new String[68];
     public static String[][] multipleColumnContents = new String[68][68];
+    public static HashMap<String, Integer> sums = new HashMap<>();
+    public static String[] choices = {"POP100", "P012001", "P012002", "P012003", "P012004"};
 
     public static void main(String args[]) throws IOException {
         retrieveColumnHeaderFromArray();
         String[] example = retrieveColumnContentsFromArray();
-        for(int i = 0; i < example.length; i++) {
+        /*for(int i = 0; i < example.length; i++) {
             System.out.println(example[i]);
-        }
+        }*/
 
     }
 
@@ -78,21 +82,18 @@ public class CensusDataGraber {
 
         HashMap<String,Integer> headers = getHeadersFromFile();
 
-       String[] choices = {"POP100", "P012001", "P012002"};
-
         boolean succeeded = false;
 
         while(succeeded != true)
         {
             for (String choice: choices)
             {
-                if (headers.containsKey(choice))
-                {
                     columnContents[content_index] = all_keys.get(position.get(choice));
                     multipleColumnContents[content_index][column_index] = all_keys.get(position.get(choice));
                     itemIndex = headers.get(all_keys.get(position.get(choice)));
+                    sums.put(choice, sumColumnContents(itemIndex));
+                    System.out.println(sums.get(choice) + "\n");
                     column_index++;
-                }
             }
             succeeded = true;
         }
@@ -123,15 +124,44 @@ public class CensusDataGraber {
     public static String[] retrieveColumnContentsFromArray() throws IOException {
         int row_index = 1;
         int counter = 1;
+        int sum = 0;
+        int count = 1;
+        int column_index = 0;
         String[][] totalData = getColumnContentsFromFile(CensusReader.getFullData(), CensusReader.holder);
 
         while(row_index != totalData.length)
         {
             columnContents[counter] = totalData[row_index][itemIndex];
+            sum += Integer.valueOf(totalData[row_index][itemIndex]);
             counter++;
             row_index++;
         }
+        /*while(column_index != choices.length) {
+            sums[count][column_index] = String.valueOf(sum);
+            column_index++;
+        }
+
+        //System.out.println(String.valueOf(sum) + "\n");
+        for(int i = 0; i < sums.length; i++) {
+            System.out.println(sums[1][i]);
+        }*/
 
         return columnContents;
+    }
+
+    public static int sumColumnContents(int ItemIndex) throws IOException
+    {
+        int row_index = 1;
+        int sum = 0;
+        String[][] totalData = getColumnContentsFromFile(CensusReader.getFullData(), CensusReader.holder);
+
+        while(row_index != totalData.length)
+        {
+            sum += Integer.valueOf(totalData[row_index][ItemIndex]);
+            row_index++;
+        }
+        //System.out.println(sum + "\n");
+
+        return sum;
     }
 }

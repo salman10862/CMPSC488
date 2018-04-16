@@ -303,6 +303,46 @@ public static boolean updateProject(Project proj) throws NoSuchElementException{
     return true;
 }
 
+    public static boolean updateProject(String json) throws Exception{   //TODO: update and test updateProject method
+        DBObject dbObj = (DBObject) JSON.parse(json);
+
+        //get the project owner
+        String projectOwner = dbObj.get("linked_userID").toString();
+        projectOwner = projectOwner.split(",")[0];
+        projectOwner = projectOwner.replaceAll("\\s", "");
+        projectOwner = projectOwner.replace("\"","");
+
+        BasicDBObject searchQuery = new BasicDBObject();
+        searchQuery.put("owner", projectOwner);
+
+        BasicDBObject updateFields = new BasicDBObject();
+
+        updateFields.append("projLabel", dbObj.get("projLabel"));
+        updateFields.append("mainMap", dbObj.get("mainMap"));
+        updateFields.append("scenarioMaps", dbObj.get("scenarioMaps"));
+        updateFields.append("projResourceList", dbObj.get("projResourceList"));
+        updateFields.append("settingsList", dbObj.get("settingsList"));
+        updateFields.append("sharedWith", dbObj.get("sharedWith"));
+
+        //updateFields.append("optimization_implicit", proj.getOptimizationPath());
+
+        BasicDBObject setQuery = new BasicDBObject();
+        setQuery.append("$set", updateFields);
+
+        WriteResult result;
+
+        try {
+            result = projectCollection.update(searchQuery, setQuery);
+            System.out.println("Project updated");
+
+            return result.wasAcknowledged();
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
 //return a list of all users a particular project is shared with
 public static ArrayList<String> getSharedWithForProject(String uname, String projName){
     //array list of usernames to be returned

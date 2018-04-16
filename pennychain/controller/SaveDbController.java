@@ -65,6 +65,7 @@ public class SaveDbController {
         Gson gson = new Gson();
         String json = "";
         String selectedProj = listView.getSelectionModel().getSelectedItem();
+
         String projName = selectedProj;
 
         if(projName.contains("(")){
@@ -78,17 +79,12 @@ public class SaveDbController {
             json = Connection_Online.getProjectJson(session.getCurrentUser(), projName);
         }
 
-        //Taken from LoadDbController
-        Type projObj = new TypeToken<Project>() {}.getType();
-        Project project = gson.fromJson(json, projObj);
+        if(Connection_Online.updateProject(json)) {  //initially arg was "project" instead of "json"
 
-        if(Connection_Online.updateProject(project)) {
 
             //send notification email when project is saved
             if(session.isEmailEnabled()){
                 String userEmail = Connection_Online.getUserEmail(session.getCurrentUser());
-                //String projName = listView.getSelectionModel().getSelectedItem();
-
                 SendMail.sendEmail(userEmail, projName);
             }
 
