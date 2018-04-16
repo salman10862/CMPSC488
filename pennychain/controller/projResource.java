@@ -12,9 +12,8 @@ public class projResource {
     private String label;
     private String color_s;
     private int rType;  // 1 if it's a population distribution center, 0 otherwise. See: AddAResourceController, -1 for Results
-    private ArrayList<projResource> constraint_list;
-    //private HashMap<projResource, Double> constraint_amnt;
-    //private HashMap<projResource, Double> constraint_dist;
+    private ArrayList<String> constraint_list;
+    private HashMap<String, Double> constraint_amnt;
     private int desired_amnt = 0;
 
 
@@ -36,9 +35,12 @@ public class projResource {
         this.label = label;
     }
 
-    public ArrayList<projResource> getConstraint_list() {
+    public ArrayList<String> getConstraint_list() {
         return constraint_list;
     }
+    public void addToConstraints(String name, Double amnt){ constraint_list.add(name); constraint_amnt.put(name, amnt);}
+    public void removeConstraint(String name){constraint_list.remove(name); constraint_amnt.remove(name);}
+    public Double getConstraint_amnt(String type) {return constraint_amnt.get(type);}
 
     // Adds a constraint where a certain amount of the resource needs to be within a certain distance
     // negative distance = distance not a concern
@@ -50,13 +52,6 @@ public class projResource {
 
     // *** CONSTRAINT METHODS
     public int getDesired_amnt(){return desired_amnt;}
-
-    public void addConstraint(projResource rType, double dist , double amnt_min){
-        constraint_list.add(rType);
-
-        /*constraint_amnt.put(rType, amnt_min);
-        constraint_dist.put(rType, dist);*/
-    }
 
 
     public void setDesired_amnt(int amnt){ desired_amnt = amnt;}
