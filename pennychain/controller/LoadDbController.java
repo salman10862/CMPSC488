@@ -9,6 +9,7 @@ import pennychain.db.Connection_Online;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.lang.reflect.Type;
 
 import javafx.fxml.FXML;
@@ -30,13 +31,16 @@ public class LoadDbController {
     @FXML Button cancelButton;
 
     private UserSession session;
+    private HashMap<String, ArrayList<String>> sharedProjsMap;
 
     public LoadDbController(UserSession session) {
         this.session = session;
     }
 
     @FXML public void initialize() {
+        sharedProjsMap = new HashMap<>();
         ArrayList<String> projectTitles = Connection_Online.getUserProjects(session.getCurrentUser());
+
         for(String i : projectTitles) {
             System.out.println(i);
             listView.getItems().add(i);
@@ -44,22 +48,28 @@ public class LoadDbController {
         
         ArrayList<ArrayList<String>> sharedProjects =
             Connection_Online.getSharedUserProjects(session.getCurrentUser());
+
         for(ArrayList i : sharedProjects) {
-            listView.getItems().add(i.get(0) + " (shared by " + i.get(1) + ")");
+            System.out.println(i);
+
+            String key = i.get(0) + " (shared by " + i.get(1) + ")";
+            sharedProjsMap.put(key, i);
+            listView.getItems().add(key);
         }
     }
 
     @FXML protected void handleLoad(MouseEvent event) throws IOException {
         Gson gson = new Gson();
+        String json = "";
         Type projObj = new TypeToken<Project>() {}.getType();
         String projName = listView.getSelectionModel().getSelectedItem();
 
-        if(projName.contains("(shared by ")) {
-            int index = projName.lastIndexOf("(");
-            projName = projName.substring(0, index-1);
+        if(sharedProjsMap.containsKey(projName)) {
+            ArrayList<String> value = sharedProjsMap.get(projName);
+            json = Connection_Online.getProjectJson(value.get(1), value.get(0));
+        } else {
+            json = Connection_Online.getProjectJson(session.getCurrentUser(), projName);
         }
-
-        String json = Connection_Online.getProjectJson(session.getCurrentUser(), projName);
         
         Project project = gson.fromJson(json, projObj);
         

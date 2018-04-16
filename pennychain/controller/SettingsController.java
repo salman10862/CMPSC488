@@ -117,12 +117,14 @@ public class SettingsController{
         @FXML protected void handleEmailButton(ActionEvent event){
         if(emailButton.getText().equals("Notifications On")){
             emailButton.setText("Notifications Off");
-            session.setEmailEnabled(false);
+            //session.setEmailEnabled(false);
+            Connection_Online.enableOrDisableEmail(session.getCurrentUser());
         }
 
         else if(emailButton.getText().equals("Notifications Off")){
             emailButton.setText("Notifications On");
-            session.setEmailEnabled(true);
+            //session.setEmailEnabled(true);
+            Connection_Online.enableOrDisableEmail(session.getCurrentUser());
         }
 
     }
