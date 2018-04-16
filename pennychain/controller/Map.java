@@ -62,6 +62,13 @@ public class Map {
         }
     }
 
+    public boolean isInGrid(double y){
+        Point last_point = gridCorners.get(gridCorners.size()-1);
+        if(y<=last_point.getY())
+            return true;
+        else
+            return false;
+    }
     public double[] getGridCoordinates(double x, double y){
         double[] coordinates = new double[4];
         //System.out.println("Looking for cell @ pt" + x + " " + y);

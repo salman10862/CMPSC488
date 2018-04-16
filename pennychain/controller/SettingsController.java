@@ -64,6 +64,12 @@ public class SettingsController{
         //Try to get username from the UserProfile object
         userNameField.setText(cUser.getUsername());
 
+        //set email button to current user's setting
+        if(Connection_Online.emailEnabled(session.getCurrentUser())){
+            emailButton.setSelected(true);
+            emailButton.setText("Notifications On");
+        }
+
     }
 
     @FXML protected void handleApplyButton(ActionEvent event) {

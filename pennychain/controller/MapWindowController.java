@@ -282,7 +282,7 @@ public class MapWindowController {
             int zoom = (Integer) webEngine.executeScript("getZoom()");
 
             //Initialize other Map items
-            Map map = new Map(GRID_SIZE, webView.getWidth(), webView.getHeight(), zoom, latitude, longitude);
+            Map map = new Map(GRID_SIZE, webView.getWidth(), webView.getHeight()-26, zoom, latitude, longitude);
             project.setMainMap(map);
             currentMap = project.getMainMap();
             currentZoom = zoom;
@@ -352,30 +352,31 @@ public class MapWindowController {
                     double x_click = mouseEvent.getX();
                     double y_click = mouseEvent.getY();
 
-                    double[] grid_coordinates = currentMap.getGridCoordinates(x_click, y_click);
+                    if (currentMap.isInGrid(y_click)) {
+                        double[] grid_coordinates = currentMap.getGridCoordinates(x_click, y_click);
 
-                    double cell_length = currentMap.getCell_length();
-                    double cell_width = currentMap.getCell_width();
+                        double cell_length = currentMap.getCell_length();
+                        double cell_width = currentMap.getCell_width();
 
-                    int cell_x = (int) (grid_coordinates[0]/cell_width);
-                    int cell_y = (int) (grid_coordinates[1]/cell_length);
+                        int cell_x = (int) (grid_coordinates[0] / cell_width);
+                        int cell_y = (int) (grid_coordinates[1] / cell_length);
 
-                    // Scenario 1: User specifies this cell can never contain this projResource
-                    if(mouseEvent.isControlDown()) {
-                        removeSquare(x_click, y_click);
-                        selected_Resource.blockCoordinate(cell_x, cell_y);
-                        drawSquare(x_click, y_click, Color.BLACK);
-                    }
-                    else {
-                    // Scenario 2: User specifies that projResource is currently in this cell
-                        if (selected_Resource.getValueAtGrid(cell_x, cell_y) != 1) {
-                            drawSquare(mouseEvent.getX(), mouseEvent.getY(), selected_Resource.getColor());
-                            selected_Resource.placeCoordinate(cell_x, cell_y);
-                        }
-                    // Scenario 3: projResource is not currently at this location, but possibly could be placed here
-                        else if (selected_Resource.getValueAtGrid(cell_x, cell_y) == 1) {
+                        // Scenario 1: User specifies this cell can never contain this projResource
+                        if (mouseEvent.isControlDown()) {
                             removeSquare(x_click, y_click);
-                            selected_Resource.removeCoordinate(cell_x, cell_y);
+                            selected_Resource.blockCoordinate(cell_x, cell_y);
+                            drawSquare(x_click, y_click, Color.BLACK);
+                        } else {
+                            // Scenario 2: User specifies that projResource is currently in this cell
+                            if (selected_Resource.getValueAtGrid(cell_x, cell_y) != 1) {
+                                drawSquare(mouseEvent.getX(), mouseEvent.getY(), selected_Resource.getColor());
+                                selected_Resource.placeCoordinate(cell_x, cell_y);
+                            }
+                            // Scenario 3: projResource is not currently at this location, but possibly could be placed here
+                            else if (selected_Resource.getValueAtGrid(cell_x, cell_y) == 1) {
+                                removeSquare(x_click, y_click);
+                                selected_Resource.removeCoordinate(cell_x, cell_y);
+                            }
                         }
                     }
                 }

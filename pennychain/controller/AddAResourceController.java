@@ -79,9 +79,11 @@ public class AddAResourceController{
             newResource.initializePlacement((int) ( project.getMainMap().getWidth() / project.getMainMap().getCell_width() ), (int) ( project.getMainMap().getLength() / project.getMainMap().getCell_length()) );
             newResource.setrType(type_flag);
 
-            project.addProjResource(newResource);
-            if(!desired_amnt_field.toString().isEmpty())
+            if(!desired_amnt_field.getCharacters().toString().isEmpty())
                 newResource.setDesired_amnt(Integer.parseInt(desired_amnt_field.getCharacters().toString()));
+
+            project.addProjResource(newResource);
+
             rList.setItems(FXCollections.observableList(project.getStringsofResources()));
             s.hide();
         }
