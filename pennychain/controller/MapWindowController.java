@@ -7,9 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Optional;
-import java.util.Queue;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -25,7 +23,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -224,6 +221,7 @@ public class MapWindowController {
         });
     }
 
+
     Robot r;
     public void advanceMouse(int i){
         ArrayList<Point> cell_centers = currentMap.getGridCenters();
@@ -248,6 +246,7 @@ public class MapWindowController {
             windowPane.setCenter(layerPane);
             for(int n = 0; n<cell_centers.size(); n++)
                 System.out.println(currentMap.getGridLats()[n]);
+            windowPane.setCursor(Cursor.DEFAULT);
         }
     }
 
@@ -269,6 +268,8 @@ public class MapWindowController {
             layerPane.getChildren().addAll(webView, transGrid);
             windowPane.setCenter(layerPane);
         } else {
+            //windowPane.getScene().setCursor(Cursor.NONE);
+
             // Set the size of the overlay Grid if this is a new Map
             webEngine.executeScript("addCenterEvents()");
             int GRID_SIZE = grid_size_selection.getSelectionModel().getSelectedItem();
@@ -308,7 +309,6 @@ public class MapWindowController {
                     count.addCount();
                     System.out.println("Count is: " + count.getCount());
                     advanceMouse(count.getCount());
-                    //MapWindowController.this.advanceMouse(count.getCount());
                     System.out.println(lat_val);
                     System.out.println(long_val);
                 }
@@ -454,6 +454,8 @@ public class MapWindowController {
         System.out.println(layerPane.getChildren());
     }
 
+
+    /// *********** FOR RECEIVING OPTIMIZER RESULTS
     private void setOptimizedResults(ArrayList<projResource> results){
         ComboBox<String> optimizedResults = new ComboBox<>();
         ArrayList<String> optimized_list = new ArrayList<>();
@@ -501,7 +503,7 @@ public class MapWindowController {
                 ArrayList<Integer> block_coordinates = selectedResource.getBlockedCoordinates();
                 for(int i =0; i<placement_coordinates.size(); i=i+2){
                     System.out.println("Attempt to draw coordinates:" + placement_coordinates.get(i) + " " + placement_coordinates.get(i+1));
-                    drawSquare(placement_coordinates.get(i)*currentMap.getCell_width() + 1, (placement_coordinates.get(i+1)+1)*currentMap.getCell_length(), selectedResource.getColor());
+                    drawSquare(placement_coordinates.get(i)*currentMap.getCell_width(), (placement_coordinates.get(i+1))*currentMap.getCell_length(), selectedResource.getColor());
                 }
                 for(int i=0; i<block_coordinates.size(); i=i+2){
                     System.out.println("Attempt to draw blocks");
