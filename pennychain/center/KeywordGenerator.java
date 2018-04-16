@@ -1,8 +1,12 @@
 package pennychain.center;
 
+import pennychain.db.Hash;
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,8 +17,9 @@ import java.util.regex.Pattern;
 public class KeywordGenerator {
 
 
-    public static void main(String args[]) throws FileNotFoundException {
+    public static void main(String args[]) throws IOException {
         ArrayList<String> keys = grabKeywords();
+        keyPostion();
         for(int i = 0; i < keys.size(); i++)
         {
             System.out.println(keys.get(i));
@@ -33,22 +38,51 @@ public class KeywordGenerator {
         return source;
     }
 
-    public static ArrayList<String> grabKeywords() throws FileNotFoundException {
+    public static ArrayList<String> grabKeywords() throws IOException {
 
         String keySource = loadFile();
+        String[] data = CensusReader.getCensusData();
+        String pop_source = "";
+
+        for(int i = 0; i < data.length; i++)
+        {
+            pop_source += data[i] + ",";
+        }
 
         ArrayList<String> keywords = new ArrayList<>();
 
 
-        Pattern pattern = Pattern.compile("9,P\\d+");
-        Matcher matcher = pattern.matcher(keySource);
+        Pattern pattern = Pattern.compile("ME,\\w+,");
+        Matcher matcher = pattern.matcher(pop_source);
+
+
+        Pattern pattern2 = Pattern.compile("9,P\\d+");
+        Matcher matcher2 = pattern2.matcher(keySource);
 
         while(matcher.find())
         {
-            keywords.add(matcher.group(0).replace("9,", ""));
+            keywords.add(matcher.group(0).replace("ME,", "").replace(",", ""));
+        }
+
+        while(matcher2.find())
+        {
+            keywords.add(matcher2.group(0).replace("9,", ""));
         }
 
         return keywords;
+    }
+
+    public static HashMap<String, Integer> keyPostion() throws IOException
+    {
+        ArrayList<String> keys = grabKeywords();
+        HashMap<String, Integer> postions = new HashMap<>();
+        for(int i = 0; i < keys.size(); i++)
+        {
+            postions.put(keys.get(i), i);
+        }
+
+        return postions;
+
     }
 }
 
