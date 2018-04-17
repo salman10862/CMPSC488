@@ -1,7 +1,5 @@
 package pennychain.center;
 
-import pennychain.db.Hash;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -17,24 +15,26 @@ public class CensusDataGraber {
     public static int populationIndex = 0;
     public static String[] columnContents = new String[68];
     public static String[] populationContents = new String[68];
-    //public static String[][] multipleColumnContents = new String[68][68];
+    public static String[] choices = {"POP100","P012001", "P012002", "P012003", "P012004" };
+    public static String[] multipleColumnHeaders = new String[choices.length];
     //public static HashMap<String, Integer> sums = new HashMap<>();
     public static HashMap<String, String> county_Populations = new HashMap<>();
-    public static String[] choices = {"POP100","P012001", "P012002", "P012003", "P012004" };
 
     public static void main(String args[]) throws IOException {
         retrieveColumnHeaderFromArray();
         /*String[] example = retrievePopulationContentsFromArray();
         for(int i = 0; i < example.length; i++) {
             System.out.println(example[i]);
-        }*/
+        }
         ArrayList<String> county_names = KeywordGenerator.getCountyNames();
         HashMap<String, String> pops = countyPopulations();
 
         for (int i = 0; i < pops.size(); i++)
         {
             System.out.println(pops.get(county_names.get(i)));
-        }
+        }*/
+        sumColumnContents();
+       // countyPopulations();
 
     }
 
@@ -178,15 +178,41 @@ public class CensusDataGraber {
         return county_Populations;
     }
 
-    public static int sumColumnContents(int ItemIndex) throws IOException
+    public static int sumColumnContents() throws IOException
     {
+        KeywordGenerator keys = new KeywordGenerator();
+        ArrayList<String> all_keys = keys.grabKeywords();
+        HashMap<String, Integer> position = keys.keyPostion();
+        HashMap<String, Integer> headers = getHeadersFromFile();
+
+        int[] sums = new int[68];
+        int count = 0;
+        int choiceIndex = 0;
         int row_index = 1;
         int sum = 0;
         String[][] totalData = getColumnContentsFromFile(CensusReader.getFullData(), CensusReader.holder);
+        for(String choice : choices)
+        {
+            multipleColumnHeaders[count] = all_keys.get(position.get(choice));
+            choiceIndex = headers.get(choice);
+            sums[count] = Integer.valueOf(totalData[row_index][choiceIndex]);
+            count++;
+        }
 
-        sum += Integer.valueOf(totalData[row_index][ItemIndex]);
-        row_index++;
-        //System.out.println(sum + "\n");
+        for (int i = 0; i < multipleColumnHeaders.length; i++)
+        {
+            System.out.println(multipleColumnHeaders[i]);
+            System.out.println(sums[i] + "\n");
+        }
+
+        for(int i = 0; i < sums.length; i++)
+        {
+            sum += sums[i];
+        }
+
+        //sum += Integer.valueOf(totalData[row_index][ItemIndex]);
+        //row_index++;
+        System.out.println(sum + "\n");
 
         return sum;
     }
