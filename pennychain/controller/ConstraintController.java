@@ -70,8 +70,6 @@ public class ConstraintController{
             cTypeList.getSelectionModel().selectLast();
 
 
-
-
     }
 
 

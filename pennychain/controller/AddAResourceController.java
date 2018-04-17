@@ -25,6 +25,7 @@ public class AddAResourceController{
     @FXML private ColorPicker colorPicker;
     @FXML private TextField labelField;
     @FXML private Button AddButton;
+    @FXML private TextField desired_amnt_field;
 
     private Color newRColor;
     private int type_flag;
@@ -74,11 +75,15 @@ public class AddAResourceController{
         Stage s = (Stage) AddButton.getScene().getWindow();
         if(!labelField.getText().equals("")) {
             projResource newResource = new projResource(labelField.getText(), newRColor);
-            //TODO: Check math more vigorously
+
             newResource.initializePlacement((int) ( project.getMainMap().getWidth() / project.getMainMap().getCell_width() ), (int) ( project.getMainMap().getLength() / project.getMainMap().getCell_length()) );
             newResource.setrType(type_flag);
 
+            if(!desired_amnt_field.getCharacters().toString().isEmpty())
+                newResource.setDesired_amnt(Integer.parseInt(desired_amnt_field.getCharacters().toString()));
+
             project.addProjResource(newResource);
+
             rList.setItems(FXCollections.observableList(project.getStringsofResources()));
             s.hide();
         }

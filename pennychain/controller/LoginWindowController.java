@@ -41,6 +41,8 @@ public class LoginWindowController {
     @FXML private Parent root;
     private Stage primaryStage;
 
+    public LoginWindowController() {}
+
     public LoginWindowController(Stage stage) {
         this.primaryStage = stage;
     }
