@@ -1,8 +1,6 @@
 package pennychain.center;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 public class APMpyth {
 	private File file_loc;
@@ -13,10 +11,14 @@ public class APMpyth {
 	}
 	
 	public String sendData() throws IOException {
-		ProcessBuilder pb = new ProcessBuilder(file_loc + "Optimization.py");
-					//This path will change later. Currently is directory of python install, python file name
-					//later python will be an executable in a set project directory
+		ProcessBuilder pb = new ProcessBuilder("pennychain\\center\\Optimization.exe", "pennychain\\center\\Optimization.py");
 		Process p = pb.start();
+		BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		System.out.println(".....start python.....");
+		String line = "";
+		while((line = br.readLine()) != null) {
+			System.out.println("Py:  " + line);
+		}
 		return(this.readData());
 	}
 	

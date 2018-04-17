@@ -26,11 +26,10 @@ public class OptimizationRequest {
      * TODO: call APMPython and parse results into string array of origin,destination pairs to return
      */
     public String[] sendRequest(String path_name, Map projectMap) throws IOException {
-        /*
+
         APMpyth apmpython = new APMpyth(path_name);
 
-        String results = apmpython.sendData();
-        */
+        System.out.println(apmpython.sendData());
 
         this.map = projectMap;
         double[] latitudes = map.getGridLats();
@@ -68,8 +67,12 @@ public class OptimizationRequest {
         System.out.println("O: " + origins);
         System.out.println("D: " + destinations);
         String[] distanceMatrix = this.getMinDistanceSupply(googleDistanceMatrix(origins, destinations), resAmt_origins, resAmt_destinations);
-        System.out.println("GDM: " + distanceMatrix);
+        //System.out.println("GDM: " + distanceMatrix);
 
+        String dm =  googleDistanceMatrix(origins, destinations);//this.getMinDistanceSupply(googleDistanceMatrix(origins, destinations), resAmt_origins, resAmt_destinations);
+        System.out.println("GDM: " + dm);
+
+        path_name = "C://users//Jason//488output//test.txt";
         this.createOptimizableFile(path_name, distanceMatrix);
         //TODO: call APMPython and parse results into string array of origin,destination pairs to return
         return null;

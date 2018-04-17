@@ -126,7 +126,7 @@ public class Project {
     
     //Function to get file directory used to pass map data between java and python
     public String getOptimizationPath() {
-        String s = "";
+        String s = "pennychain\\center\\results";
         return s;
     }
     
