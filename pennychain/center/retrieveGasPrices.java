@@ -105,7 +105,7 @@ public class retrieveGasPrices {
 
     public static void loadUrls() throws Exception
     {
-        String filename = "C:\\Users\\Chris\\IdeaProjects\\GasPrices\\src\\urls.txt";
+        String filename = "pennychain\\center\\urls.txt";
         Scanner sc = new Scanner(new File(filename));
         BackgroundThread.county_Urls = new ArrayList<>();
         while(sc.hasNextLine())
@@ -160,7 +160,7 @@ public class retrieveGasPrices {
     public static String retrieveURLString() throws Exception
     {
         String URLSource = "";
-        String filename = "C:\\Users\\Chris\\IdeaProjects\\GasPrices\\src\\urls.txt";
+        String filename = "pennychain\\center\\urls.txt";
         Scanner sc = new Scanner(new File(filename));
 
         while(sc.hasNextLine())
