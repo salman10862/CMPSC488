@@ -19,15 +19,35 @@ public class KeywordGenerator {
 
     public static void main(String args[]) throws IOException {
         ArrayList<String> keys = grabKeywords();
+        ArrayList<String> counties = getCountyNames();
         keyPostion();
-        for(int i = 0; i < keys.size(); i++)
+        /*for(int i = 0; i < keys.size(); i++)
         {
             System.out.println(keys.get(i));
+        }*/
+        for (int i = 0; i < counties.size(); i++)
+        {
+            System.out.println(counties.get(i));
         }
+
     }
 
-    public static String loadFile() throws FileNotFoundException {
+    public static String loadFile() throws FileNotFoundException
+    {
         String filename = "pennychain\\center\\SexByAge.csv";
+        Scanner input = new Scanner(new File(filename));
+        String source = "";
+
+        while(input.hasNextLine())
+        {
+            source += input.nextLine() + "\n";
+        }
+        return source;
+    }
+
+    public static String loadCounties() throws FileNotFoundException
+    {
+        String filename = "pennychain\\center\\all_050_in_42.P12.csv";
         Scanner input = new Scanner(new File(filename));
         String source = "";
 
@@ -70,6 +90,26 @@ public class KeywordGenerator {
         }
 
         return keywords;
+    }
+
+    public static ArrayList<String> getCountyNames() throws IOException
+    {
+
+        String countySource = loadCounties();
+
+        ArrayList<String> county_names = new ArrayList<>();
+
+
+        Pattern pattern = Pattern.compile("\\w+ \\w+");
+        Matcher matcher = pattern.matcher(countySource);
+
+        while(matcher.find())
+        {
+            county_names.add(matcher.group(0));
+        }
+
+        return county_names;
+
     }
 
     public static HashMap<String, Integer> keyPostion() throws IOException
