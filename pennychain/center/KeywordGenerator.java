@@ -1,6 +1,5 @@
 package pennychain.center;
 
-import pennychain.db.Hash;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,10 +20,10 @@ public class KeywordGenerator {
         ArrayList<String> keys = grabKeywords();
         ArrayList<String> counties = getCountyNames();
         keyPostion();
-        /*for(int i = 0; i < keys.size(); i++)
+        for(int i = 0; i < keys.size(); i++)
         {
             System.out.println(keys.get(i));
-        }*/
+        }
         for (int i = 0; i < counties.size(); i++)
         {
             System.out.println(counties.get(i));

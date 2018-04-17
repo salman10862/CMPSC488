@@ -17,9 +17,9 @@ public class CensusDataGraber {
     public static int populationIndex = 0;
     public static String[] columnContents = new String[68];
     public static String[] populationContents = new String[68];
-    public static String[][] multipleColumnContents = new String[68][68];
-    public static HashMap<String, Integer> sums = new HashMap<>();
-    public static HashMap<String, Integer> county_Populations = new HashMap<>();
+    //public static String[][] multipleColumnContents = new String[68][68];
+    //public static HashMap<String, Integer> sums = new HashMap<>();
+    public static HashMap<String, String> county_Populations = new HashMap<>();
     public static String[] choices = {"POP100","P012001", "P012002", "P012003", "P012004" };
 
     public static void main(String args[]) throws IOException {
@@ -128,14 +128,12 @@ public class CensusDataGraber {
 
     public static String[] retrievePopulationHeaderFromArray() throws IOException {
 
-        int content_index = 0;
-        String population = "POP100";
-
         KeywordGenerator keys = new KeywordGenerator();
         ArrayList<String> all_keys = keys.grabKeywords();
         HashMap<String, Integer> position = keys.keyPostion();
-
         HashMap<String,Integer> headers = getHeadersFromFile();
+        int content_index = 0;
+        String population = all_keys.get(0);
 
         boolean succeeded = false;
 
@@ -167,18 +165,17 @@ public class CensusDataGraber {
 
    public static HashMap<String, String> countyPopulations() throws IOException
     {
-        HashMap<String, String> pops = new HashMap<>();
         ArrayList<String> county_names = KeywordGenerator.getCountyNames();
         String[] county_pops = retrievePopulationContentsFromArray();
         int counter = 1;
 
         for(int i = 0; i < county_names.size(); i++)
         {
-            pops.put(county_names.get(i), county_pops[counter]);
+            county_Populations.put(county_names.get(i), county_pops[counter]);
             counter++;
         }
 
-        return pops;
+        return county_Populations;
     }
 
     public static int sumColumnContents(int ItemIndex) throws IOException
