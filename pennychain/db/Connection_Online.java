@@ -307,12 +307,9 @@ public static boolean updateProject(Project proj) throws NoSuchElementException{
         DBObject dbObj = (DBObject) JSON.parse(json);
 
         //get the project owner
-        String projectOwner = dbObj.get("linked_userID").toString();
-        projectOwner = projectOwner.split(",")[0];
-        projectOwner = projectOwner.replaceAll("\\s", "");
-        projectOwner = projectOwner.replace("\"","");
-
+        String projectOwner = ((DBObject)dbObj.get("linked_userID")).get("name").toString();
         BasicDBObject searchQuery = new BasicDBObject();
+
         searchQuery.put("owner", projectOwner);
 
         BasicDBObject updateFields = new BasicDBObject();
