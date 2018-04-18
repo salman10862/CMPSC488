@@ -63,24 +63,17 @@ public class SaveDbController {
 
     @FXML protected void handleSaveExisting(MouseEvent event) throws Exception {
         Gson gson = new Gson();
-        String json = "";
         String selectedProj = listView.getSelectionModel().getSelectedItem();
-
         String projName = selectedProj;
-
-        if(projName.contains("(")){
-            projName = projName.split("(")[0];
-        }
 
         if(sharedProjsMap.containsKey(selectedProj)) {
             ArrayList<String> value = sharedProjsMap.get(projName);
-            json = Connection_Online.getProjectJson(value.get(1), value.get(0));
-        } else {
-            json = Connection_Online.getProjectJson(session.getCurrentUser(), projName);
+            projName = value.get(0);
         }
 
-        if(Connection_Online.updateProject(json)) {  //initially arg was "project" instead of "json"
+        String json = gson.toJson(project);
 
+        if(Connection_Online.updateProject(json)) {  //initially arg was "project" instead of "json"
 
             //send notification email when project is saved
             if(session.isEmailEnabled()){
@@ -96,19 +89,13 @@ public class SaveDbController {
         }
 
         //send notification email to users project is shared with
-        String proj1 = selectedProj;
-
-        if(proj1.contains("(")){
-            proj1 = proj1.split("(")[0];    //remove the shared by portion to get project name by itself
-        }
-
         //get list of users project is shared with
-        ArrayList<String> list = Connection_Online.getSharedWithForProject(session.getCurrentUser(), proj1);
+        ArrayList<String> list = Connection_Online.getSharedWithForProject(session.getCurrentUser(), projName);
 
         //send notificatiion email to each user
         for(String uname: list){
             if(Connection_Online.emailEnabled(uname)){  //if user has email notifications enabled
-                SendMail.sendEmail(Connection_Online.getUserEmail(uname), proj1);
+                SendMail.sendEmail(Connection_Online.getUserEmail(uname), projName);
             }
         }
     }

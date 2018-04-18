@@ -324,6 +324,14 @@ public static boolean updateProject(Project proj) throws NoSuchElementException{
         updateFields.append("settingsList", dbObj.get("settingsList"));
         updateFields.append("sharedWith", dbObj.get("sharedWith"));
 
+        //for debugging
+        System.out.println("projLabel: " + dbObj.get("projLabel").toString());
+        System.out.println("mainMap: " + dbObj.get("mainMap").toString());
+        System.out.println("scenarioMaps: " + dbObj.get("scenarioMaps").toString());
+        System.out.println("projResourceList: " + dbObj.get("projResourceList").toString());
+        System.out.println("settingsList: " + dbObj.get("settingsList").toString());
+        System.out.println("sharedWith: " + dbObj.get("sharedWith").toString());
+
         //updateFields.append("optimization_implicit", proj.getOptimizationPath());
 
         BasicDBObject setQuery = new BasicDBObject();
