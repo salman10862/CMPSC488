@@ -33,7 +33,7 @@ public class Connection_Online {
 
         //ArrayList<String> projNames = getSharedUserProjects("ckw5071");
 
-        getSharedWithForProject("ian", "ians_project");
+        //getSharedWithForProject("ian", "ians_project");
 
       /* Project prj = new Project("ian");
        prj.setProjLabel("newTestProjLabel");
@@ -310,7 +310,7 @@ public static boolean updateProject(Project proj) throws NoSuchElementException{
         String projectOwner = ((DBObject)dbObj.get("linked_userID")).get("name").toString();
         BasicDBObject searchQuery = new BasicDBObject();
 
-        searchQuery.put("owner", projectOwner);
+        searchQuery.put("linked_userID.name", projectOwner);
 
         BasicDBObject updateFields = new BasicDBObject();
 
@@ -381,9 +381,6 @@ public static ArrayList<String> getSharedWithForProject(String uname, String pro
     return usernames;
 }
 
-public void loadProject(){
-        //TODO: Retrieve a project from the databaes and load it into application
-}
 
     //change a password in the database
     public static void updatePassword(String uname, String newSalt, String newSaltedHashedPass) {
