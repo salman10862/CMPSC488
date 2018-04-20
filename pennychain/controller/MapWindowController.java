@@ -50,6 +50,7 @@ import pennychain.db.Connection_Online;
 public class MapWindowController {
     @FXML private MenuBar menuBar;
 
+    @FXML private MenuItem newProject;
     @FXML private MenuItem saveAsItem;
     @FXML private MenuItem saveToDbItem;
     @FXML private MenuItem aboutItem;
@@ -88,6 +89,21 @@ public class MapWindowController {
         this.userSession = userSessionn;
         this.project = project;
         this.currentMap = project.getMainMap();
+    }
+
+    @FXML protected void handleNewProject(ActionEvent event) throws IOException {
+        MapWindowController newController = new MapWindowController(new Project(userSession), userSession);
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("MapWindow.fxml"));
+        loader.setController(newController);
+        Parent root = loader.load();
+        Scene scene = new Scene(root, 800, 600);
+
+        Stage stage = new Stage();
+        stage.setTitle("Application - Map Window");
+        stage.setScene(scene);
+        stage.show();
+        ((Node) menuBar).getScene().getWindow().hide();
     }
 
     @FXML protected void handleSaveAs(ActionEvent event) throws Exception {
