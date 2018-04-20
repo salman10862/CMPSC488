@@ -311,6 +311,7 @@ public static boolean updateProject(Project proj) throws NoSuchElementException{
         BasicDBObject searchQuery = new BasicDBObject();
 
         searchQuery.put("linked_userID.name", projectOwner);
+        searchQuery.put("projLabel", dbObj.get("projLabel").toString());
 
         BasicDBObject updateFields = new BasicDBObject();
 
