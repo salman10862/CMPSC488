@@ -23,13 +23,9 @@ public class OptimizationRequest {
      *  Called to initiate an optimization request on the current project's map
      *  Params: path_name, a string containing the path to exchange files with APMpython optimizer
      *          projectMap, a Map containing the longitude/latitude of each existing and considerable resource position
-     * TODO: call APMPython and parse results into string array of origin,destination pairs to return
+     *
      */
     public String[] sendRequest(String path_name, Map projectMap) throws IOException {
-
-        APMpyth apmpython = new APMpyth(path_name);
-
-        System.out.println(apmpython.sendData());
 
         this.map = projectMap;
         double[] latitudes = map.getGridLats();
@@ -43,19 +39,21 @@ public class OptimizationRequest {
             for(int j = 0; j < placement.length; j++) {
                 for(int t = 0; t < placement[j].length; t++) {
                     if(placement[t][j] == 1) {
-                        if(projectResourceList.get(i).getrType() == 0 && i==0){
+                        if(projectResourceList.get(i).getrType() == 0){
                             if(destinations.equals("")) {
                                 destinations += Double.toString(latitudes[placement[j].length*j+t]) + "," + Double.toString(longitudes[placement[j].length*j+t]);
                                 resAmt_destinations++;
                             } else {
                                 destinations += "|" + Double.toString(latitudes[placement[j].length*j+t]) + "," + Double.toString(longitudes[placement[j].length*j+t]);
-                                resAmt_origins++;
+                                resAmt_destinations++;
                             }
                         } else if(projectResourceList.get(i).getrType() == 1){
                             if(origins.equals("")) {
                                 origins += Double.toString(latitudes[placement[0].length * j + t]) + "," + Double.toString(longitudes[placement[0].length * j + t]);
+                                resAmt_origins++;
                             } else {
                                 origins += "|"+Double.toString(latitudes[placement[0].length * j + t]) + "," + Double.toString(longitudes[placement[0].length * j + t]);
+                                resAmt_origins++;
 
                             }
                         }
@@ -67,14 +65,21 @@ public class OptimizationRequest {
         System.out.println("O: " + origins);
         System.out.println("D: " + destinations);
         String[] distanceMatrix = this.getMinDistanceSupply(googleDistanceMatrix(origins, destinations), resAmt_origins, resAmt_destinations);
-        //System.out.println("GDM: " + distanceMatrix);
 
-        String dm =  googleDistanceMatrix(origins, destinations);//this.getMinDistanceSupply(googleDistanceMatrix(origins, destinations), resAmt_origins, resAmt_destinations);
-        System.out.println("GDM: " + dm);
-
-        path_name = "C://users//Jason//488output//test.txt";
+        path_name = "pennychain\\center\\test.txt";
         this.createOptimizableFile(path_name, distanceMatrix);
-        //TODO: call APMPython and parse results into string array of origin,destination pairs to return
+
+        APMpyth apmpython = new APMpyth(path_name);
+        /*
+         * Currently python is returning: "Model file file_7158.apm does not exist"
+         * (the 4-digit number following file_ varies every run)
+         *
+         * Not 100% sure what cause is. TODO: check with Hayden (perhaps optimization.py is referencing unknown file?)
+         *
+         */
+
+
+        System.out.println(apmpython.sendData());
         return null;
     }
 
@@ -145,7 +150,7 @@ public class OptimizationRequest {
      * Params: user specified maximum amount of resources
      */
     public void setMaxCenters(int desired_max) {
-        this.max_posi = desired_max;
+        this.max_posi = desired_max; //needs update for new constraint system
     }
 
 
@@ -256,7 +261,7 @@ public class OptimizationRequest {
         for(int i = 0; i < origins; i++) {
             for(int j = 0; j < destinations; j++) {
                 currentDistance = br.readLine();
-                if(minDistance[j].isEmpty()) {
+                if(minDistance[j] == null) {
                     minDistance[j] = currentDistance;
                 } else if(Double.parseDouble(minDistance[j]) < Double.parseDouble(currentDistance)) {
                     minDistance[j] = currentDistance;
