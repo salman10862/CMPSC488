@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.FutureTask;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -46,6 +49,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
+import javafx.util.Duration;
 import pennychain.center.OptimizationRequest;
 import pennychain.usr.UserSession;
 import pennychain.db.Connection_Online;
@@ -243,32 +247,42 @@ public class MapWindowController {
         });
     }
 
+
+    public void pressMouse(double local_x, double local_y, Point2D screen_coordinates, int i){
+        Event.fireEvent(webView, new MouseEvent(MouseEvent.MOUSE_RELEASED,
+                local_x, local_y, screen_coordinates.getX(), screen_coordinates.getY(), MouseButton.PRIMARY, 2,
+                false, false, false, false, true, false, false, false, false, true, null));
+        Event.fireEvent(webView, new MouseEvent(MouseEvent.MOUSE_PRESSED,
+                local_x, local_y, screen_coordinates.getX(), screen_coordinates.getY(), MouseButton.PRIMARY, 2,
+                false, false, false, false, false, false, false, false, false, false, null));
+        System.out.println("Pressing cell " + i);
+        Event.fireEvent(webView, new MouseEvent(MouseEvent.MOUSE_RELEASED,
+                local_x, local_y, screen_coordinates.getX(), screen_coordinates.getY(), MouseButton.PRIMARY, 1,
+                false, false, false, false, true, false, false, false, false, true, null));
+        Event.fireEvent(webView, new MouseEvent(MouseEvent.MOUSE_PRESSED,
+                local_x, local_y, screen_coordinates.getX(), screen_coordinates.getY(), MouseButton.PRIMARY, 1,
+                false, false, false, false, false, false, false, false, false, false, null));
+        //try{
+          //  Thread.sleep(500);
+        //} catch (Exception e){}
+    }
+
     // NOTE: MouseEvents need to be fired twice to be captured
-    public void advanceMouse(int i){
+    public void advanceMouse(int i) {
         ArrayList<Point> cell_centers = currentMap.getGridCenters();
         if(i<cell_centers.size()){
             System.out.println("Trying to advance mouse to cell + " +  i);
             double local_x = cell_centers.get(i).getX();
             double local_y = cell_centers.get(i).getY();
             Point2D screen_coordinates = webView.localToScreen(local_x, local_y);
+            final int final_int = i;
             Task<Void> task = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
                         try{
-                            Event.fireEvent(webView, new MouseEvent(MouseEvent.MOUSE_PRESSED,
-                                local_x, local_y, screen_coordinates.getX(), screen_coordinates.getY(), MouseButton.PRIMARY, 1,
-                                false, false, false, false, true, false, false, false, false, false, null));
-                            Event.fireEvent(webView, new MouseEvent(MouseEvent.MOUSE_RELEASED,
-                                local_x, local_y, screen_coordinates.getX(), screen_coordinates.getY(), MouseButton.PRIMARY, 1,
-                                    false, false, false, false, true, false, false, false, false, true, null));
-                            Event.fireEvent(webView, new MouseEvent(MouseEvent.MOUSE_PRESSED,
-                                    local_x, local_y, screen_coordinates.getX(), screen_coordinates.getY(), MouseButton.PRIMARY, 1,
-                                    false, false, false, false, true, false, false, false, false, false, null));
-                            Event.fireEvent(webView, new MouseEvent(MouseEvent.MOUSE_RELEASED,
-                                    local_x, local_y, screen_coordinates.getX(), screen_coordinates.getY(), MouseButton.PRIMARY, 1,
-                                    false, false, false, false, true, false, false, false, false, true, null));
-
-                            System.out.println("Pressing cell " + i);
+                            Timeline t = new Timeline(new KeyFrame(Duration.millis(50),
+                                    ae -> pressMouse(local_x, local_y, screen_coordinates, final_int)));
+                            t.play();
                         }
                         catch (Exception e) {
                             System.out.println(e.getMessage());
@@ -276,9 +290,9 @@ public class MapWindowController {
                     return null;
                 }
             };
+
             Thread thread = new Thread(task);
             Platform.runLater(thread);
-            Platform.setImplicitExit(false);
 
             System.out.println("OUT THE ROBOT");
         }
@@ -333,7 +347,6 @@ public class MapWindowController {
             Object m = new Object();
              class Countdown {
                  private int count = -1;
-                 public synchronized int getCount() {  return count; }
                  public synchronized int addCount() {  count++; return count;}
              }
 
@@ -342,7 +355,7 @@ public class MapWindowController {
 
             EventHandler<WebEvent <String>> latlng = new EventHandler<WebEvent<String>>() {
                 @Override
-                public void handle(WebEvent<String> stringWebEvent) {
+                public void handle(WebEvent<String> stringWebEvent)  {
                     String event_string = stringWebEvent.getData();
                     String[] temp_points = event_string.split("/", 2);
                     Double lat_val = Double.valueOf(temp_points[0]);
@@ -364,6 +377,8 @@ public class MapWindowController {
                 };
 
             webEngine.setOnAlert(latlng);
+
+            Thread.sleep(500);
 
             for(int i=0; i<project.getMainMap().getGridCenters().size() + 1; i++) {
                 advanceMouse(i);
@@ -392,6 +407,16 @@ public class MapWindowController {
             public void handle(MouseEvent mouseEvent) {
                 // Check that there is a resource to draw on the map
                 System.out.println("Grid Longitudes are:");
+                if(project.getMainMap().getGridLats()[project.getMainMap().getGridLats().length-1] == 0)
+                {
+                    int index = project.getMainMap().getGridLats().length-1;
+                    for(int i = index; project.getMainMap().getGridLats()[index]==0 ;i--){
+                        index=i;
+                    }
+                    for(int i = index; i<project.getMainMap().getGridLats().length; i++){
+                        advanceMouse(i);
+                    }
+                }
                 for(int i=0; i<currentMap.getGridLongs().length; i++)
                     System.out.println(currentMap.getGridLongs()[i] + " " + currentMap.getGridLats()[i]);
 
