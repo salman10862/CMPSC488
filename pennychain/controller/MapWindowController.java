@@ -1,20 +1,23 @@
 package pennychain.controller;
 
 import java.awt.*;
-import java.awt.event.InputEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.concurrent.FutureTask;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.*;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
@@ -29,6 +32,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -45,6 +49,7 @@ import javafx.stage.WindowEvent;
 import pennychain.center.OptimizationRequest;
 import pennychain.usr.UserSession;
 import pennychain.db.Connection_Online;
+import sun.awt.Mutex;
 
 
 public class MapWindowController {
@@ -238,19 +243,43 @@ public class MapWindowController {
         });
     }
 
-
-    Robot r;
+    // NOTE: MouseEvents need to be fired twice to be captured
     public void advanceMouse(int i){
         ArrayList<Point> cell_centers = currentMap.getGridCenters();
         if(i<cell_centers.size()){
-            System.out.println("IN THE ROBOT");
+            System.out.println("Trying to advance mouse to cell + " +  i);
             double local_x = cell_centers.get(i).getX();
             double local_y = cell_centers.get(i).getY();
             Point2D screen_coordinates = webView.localToScreen(local_x, local_y);
-            r.mouseMove((int)screen_coordinates.getX(), (int)screen_coordinates.getY());
-            r.delay(500);
-            r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-            r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+            Task<Void> task = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                        try{
+                            Event.fireEvent(webView, new MouseEvent(MouseEvent.MOUSE_PRESSED,
+                                local_x, local_y, screen_coordinates.getX(), screen_coordinates.getY(), MouseButton.PRIMARY, 1,
+                                false, false, false, false, true, false, false, false, false, false, null));
+                            Event.fireEvent(webView, new MouseEvent(MouseEvent.MOUSE_RELEASED,
+                                local_x, local_y, screen_coordinates.getX(), screen_coordinates.getY(), MouseButton.PRIMARY, 1,
+                                    false, false, false, false, true, false, false, false, false, true, null));
+                            Event.fireEvent(webView, new MouseEvent(MouseEvent.MOUSE_PRESSED,
+                                    local_x, local_y, screen_coordinates.getX(), screen_coordinates.getY(), MouseButton.PRIMARY, 1,
+                                    false, false, false, false, true, false, false, false, false, false, null));
+                            Event.fireEvent(webView, new MouseEvent(MouseEvent.MOUSE_RELEASED,
+                                    local_x, local_y, screen_coordinates.getX(), screen_coordinates.getY(), MouseButton.PRIMARY, 1,
+                                    false, false, false, false, true, false, false, false, false, true, null));
+
+                            System.out.println("Pressing cell " + i);
+                        }
+                        catch (Exception e) {
+                            System.out.println(e.getMessage());
+                        }
+                    return null;
+                }
+            };
+            Thread thread = new Thread(task);
+            Platform.runLater(thread);
+            Platform.setImplicitExit(false);
+
             System.out.println("OUT THE ROBOT");
         }
         else{
@@ -261,13 +290,12 @@ public class MapWindowController {
             transGrid.setHeight(webView.getHeight());
             layerPane.getChildren().addAll(webView, transGrid);
             windowPane.setCenter(layerPane);
-            for(int n = 0; n<cell_centers.size(); n++)
-                System.out.println(currentMap.getGridLats()[n]);
-            windowPane.setCursor(Cursor.DEFAULT);
         }
     }
 
-    @FXML protected void lockMapListener() throws AWTException{
+
+
+    @FXML protected void lockMapListener() throws AWTException, InterruptedException{
         toolbar.getItems().remove(lockMap);
 
 
@@ -285,7 +313,6 @@ public class MapWindowController {
             layerPane.getChildren().addAll(webView, transGrid);
             windowPane.setCenter(layerPane);
         } else {
-            //windowPane.getScene().setCursor(Cursor.NONE);
 
             // Set the size of the overlay Grid if this is a new Map
             webEngine.executeScript("addCenterEvents()");
@@ -303,12 +330,11 @@ public class MapWindowController {
             currentMap = project.getMainMap();
             currentZoom = zoom;
             currentMap.initializeGrid();
-
-
-             class  Countdown {
-                 private int count = 0;
-                 public synchronized int getCount() { return count; }
-                 public synchronized void addCount() {count++;}
+            Object m = new Object();
+             class Countdown {
+                 private int count = -1;
+                 public synchronized int getCount() {  return count; }
+                 public synchronized int addCount() {  count++; return count;}
              }
 
              Countdown count = new Countdown();
@@ -321,23 +347,27 @@ public class MapWindowController {
                     String[] temp_points = event_string.split("/", 2);
                     Double lat_val = Double.valueOf(temp_points[0]);
                     Double long_val = Double.valueOf(temp_points[1]);
-                    project.getMainMap().getGridLats()[count.getCount()] = lat_val;
-                    project.getMainMap().getGridLongs()[count.getCount()] = long_val;
-                    count.addCount();
-                    System.out.println("Count is: " + count.getCount());
-                    advanceMouse(count.getCount());
-                    System.out.println(lat_val);
-                    System.out.println(long_val);
-                }
-            };
+                    final int c = count.addCount();
+                    System.out.println("Cell " + c + "has been pressed");
+                    Task<Void> task = new Task<Void>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            project.getMainMap().getGridLats()[c] = lat_val;
+                            project.getMainMap().getGridLongs()[c] = long_val;
+                            return null;
+                        }
+                    };
+
+                    Thread thread = new Thread(task);
+                    Platform.runLater(thread);
+                    }
+                };
 
             webEngine.setOnAlert(latlng);
 
-
-
-            r = new Robot();
-            advanceMouse(0);
-            System.out.println("Beyond the robot");
+            for(int i=0; i<project.getMainMap().getGridCenters().size() + 1; i++) {
+                advanceMouse(i);
+            }
 
             // UI cleanup
             windowPane.setCursor(Cursor.DEFAULT);
@@ -361,6 +391,10 @@ public class MapWindowController {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 // Check that there is a resource to draw on the map
+                System.out.println("Grid Longitudes are:");
+                for(int i=0; i<currentMap.getGridLongs().length; i++)
+                    System.out.println(currentMap.getGridLongs()[i] + " " + currentMap.getGridLats()[i]);
+
                 if(!resourceChooser.getSelectionModel().isEmpty()) {
                     int selected = resourceChooser.getSelectionModel().getSelectedIndex();
                     projResource selected_Resource = project.getProjResourceList().get(selected);
