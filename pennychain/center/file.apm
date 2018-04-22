@@ -1,0 +1,12 @@
+Model
+  Variables
+    int_X[0] = 0, >=0, <=1
+  End Variables
+
+  Equations
+    X[0]=0
+    int_X[0]+0 =0
+
+    Minimize 21.0 * int_X[0] + 0 
+  End Equations
+End Model
