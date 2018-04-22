@@ -66,8 +66,7 @@ public class OptimizationRequest {
         System.out.println("D: " + destinations);
         String[] distanceMatrix = this.getMinDistanceSupply(googleDistanceMatrix(origins, destinations), resAmt_origins, resAmt_destinations);
 
-        path_name = "pennychain\\center\\test.txt";
-        this.createOptimizableFile(path_name, distanceMatrix);
+        this.createOptimizableFile(distanceMatrix);
 
         APMpyth apmpython = new APMpyth(path_name);
         /*
@@ -97,8 +96,9 @@ public class OptimizationRequest {
      *
      * TODO: add census weighting for demand to objective funtion
      */
-    private void createOptimizableFile(String path, String[] distance) throws IOException {
-        FileWriter f = new FileWriter(path);
+    private void createOptimizableFile(String[] distance) throws IOException {
+        FileWriter f = new FileWriter("pennychain\\center\\file.apm");
+        FileWriter f0 = new FileWriter("pennychain\\center\\variables.txt");
         ArrayList<String> sales_centers = new ArrayList<>();
         ArrayList<String> dist_centers = new ArrayList<>();
         ArrayList<String> constraints = new ArrayList<>();
@@ -118,9 +118,10 @@ public class OptimizationRequest {
 
         String max_num_centers = "";
         for (int i = 0; i < sales_centers.size(); i++) {
-            f.write("int_" + sales_centers.get(i) + System.getProperty("line.separator"));
+            f0.write("int_" + sales_centers.get(i) + System.getProperty("line.separator"));
             max_num_centers = max_num_centers + "int_" + sales_centers.get(i) + "+";
         }
+        f0.close();
         constraints.add(max_num_centers + "0 =" + max_posi);
 
         f.write("Model" + System.getProperty("line.separator") + "  Variables" + System.getProperty("line.separator"));
