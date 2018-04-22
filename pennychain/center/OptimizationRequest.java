@@ -138,7 +138,7 @@ public class OptimizationRequest {
         }
         f.write("  End Variables" + System.getProperty("line.separator") + System.getProperty("line.separator") + "  Equations" + System.getProperty("line.separator"));
         while (!(constraints.isEmpty())) {
-            f.write("    " + constraints.get(0) + System.getProperty("line.separator"));
+            f.write("    int_" + constraints.get(0) + System.getProperty("line.separator"));
             constraints.remove(0);
         }
 
