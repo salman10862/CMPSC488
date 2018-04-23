@@ -401,7 +401,7 @@ public class MapWindowController {
         resourceChooser.setVisible(true);
 
 
-        resourceChooserListener();
+        //resourceChooserListener();
          mouseListener = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
