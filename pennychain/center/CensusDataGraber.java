@@ -11,17 +11,17 @@ import java.util.HashMap;
  */
 public class CensusDataGraber {
 
-    public static int itemIndex = 0;
-    public static int populationIndex = 0;
-    public static String[] columnContents = new String[68];
-    public static String[] populationContents = new String[68];
-    public static String[] choices = {"POP100","P012001", "P012002", "P012003", "P012004" };
-    public static String[] multipleColumnHeaders = new String[choices.length];
+    private static int itemIndex = 0;
+    private static int populationIndex = 0;
+    private static String[] columnContents = new String[68];
+    private static String[] populationContents = new String[68];
+    private static String[] choices = {"POP100","P012001", "P012002", "P012003", "P012004" };
+    private static String[] multipleColumnHeaders = new String[choices.length];
     //public static HashMap<String, Integer> sums = new HashMap<>();
-    public static HashMap<String, String> county_Populations = new HashMap<>();
+    private static HashMap<String, String> county_Populations = new HashMap<>();
 
-    public static void main(String args[]) throws IOException {
-        retrieveColumnHeaderFromArray();
+   //public static void main(String args[]) throws IOException {
+     //   retrieveColumnHeaderFromArray();
         /*String[] example = retrievePopulationContentsFromArray();
         for(int i = 0; i < example.length; i++) {
             System.out.println(example[i]);
@@ -33,13 +33,27 @@ public class CensusDataGraber {
         {
             System.out.println(pops.get(county_names.get(i)));
         }*/
-        sumColumnContents();
+       // sumColumnContents();
        // countyPopulations();
 
+    //}
+
+    public CensusDataGraber() {
+        try {
+            retrieveColumnHeaderFromArray();
+            sumColumnContents();
+        } catch (IOException e) {
+            /*
+            add error to log
+             */
+        }
     }
 
+    public String getCounty_Populations(String county) {
+        return county_Populations.get(county);
+    }
 
-    public static HashMap<String,Integer> getHeadersFromFile() throws IOException {
+    private HashMap<String,Integer> getHeadersFromFile() throws IOException {
         HashMap<String,Integer> headers = new HashMap<>();
         String[] data = CensusReader.getCensusData();
 
@@ -59,7 +73,7 @@ public class CensusDataGraber {
         return headers;
     }
 
-    public static String[][] getColumnContentsFromFile(String[][] totalData,  int holder) throws IOException {
+    private String[][] getColumnContentsFromFile(String[][] totalData,  int holder) throws IOException {
 
         BufferedReader br = new BufferedReader(new FileReader("pennychain\\center\\all_050_in_42.P12.csv"));
         String source;
@@ -81,7 +95,7 @@ public class CensusDataGraber {
 
     }
 
-    public static String[] retrieveColumnHeaderFromArray() throws IOException {
+    private String[] retrieveColumnHeaderFromArray() throws IOException {
 
         //int column_index = 0;
         int content_index = 0;
@@ -111,7 +125,7 @@ public class CensusDataGraber {
         return columnContents;
     }
 
-    public static String[] retrieveColumnContentsFromArray() throws IOException
+    private String[] retrieveColumnContentsFromArray() throws IOException
     {
         int row_index = 1;
         int counter = 1;
@@ -126,7 +140,7 @@ public class CensusDataGraber {
         return columnContents;
     }
 
-    public static String[] retrievePopulationHeaderFromArray() throws IOException {
+    private String[] retrievePopulationHeaderFromArray() throws IOException {
 
         KeywordGenerator keys = new KeywordGenerator();
         ArrayList<String> all_keys = keys.grabKeywords();
@@ -146,7 +160,7 @@ public class CensusDataGraber {
         return populationContents;
     }
 
-    public static String[] retrievePopulationContentsFromArray() throws IOException {
+    private String[] retrievePopulationContentsFromArray() throws IOException {
         retrievePopulationHeaderFromArray();
         int row_index = 1;
         int counter = 1;
@@ -163,7 +177,7 @@ public class CensusDataGraber {
     }
 
 
-   public static HashMap<String, String> countyPopulations() throws IOException
+    private HashMap<String, String> countyPopulations() throws IOException
     {
         ArrayList<String> county_names = KeywordGenerator.getCountyNames();
         String[] county_pops = retrievePopulationContentsFromArray();
@@ -178,7 +192,7 @@ public class CensusDataGraber {
         return county_Populations;
     }
 
-    public static int sumColumnContents() throws IOException
+    private int sumColumnContents() throws IOException
     {
         KeywordGenerator keys = new KeywordGenerator();
         ArrayList<String> all_keys = keys.grabKeywords();

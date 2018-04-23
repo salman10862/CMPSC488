@@ -28,6 +28,8 @@ public class OptimizationRequest {
     public String[] sendRequest(String path_name, Map projectMap) throws IOException {
 
         this.map = projectMap;
+
+
         double[] latitudes = map.getGridLats();
         double[] longitudes = map.getGridLongs();
         String origins = "";
@@ -72,8 +74,6 @@ public class OptimizationRequest {
         /*
          * Currently python is returning: "Model file file_7158.apm does not exist"
          * (the 4-digit number following file_ varies every run)
-         *
-         * Not 100% sure what cause is. TODO: check with Hayden (perhaps optimization.py is referencing unknown file?)
          *
          */
 
@@ -128,7 +128,7 @@ public class OptimizationRequest {
 
         String obj_func = "Minimize ";
         for (int i = 0; i < sales_centers.size(); i++) {
-            obj_func = obj_func + (distance[i] /*( * gasPrice[i] )*/ + " * int_" + sales_centers.get(i) + " + ");
+            obj_func = obj_func + (distance[i] /*( * gasPrice[i] )*/ + "/" + "COUNTY_POPULATION" + " * int_" + sales_centers.get(i) + " + ");
         }   //TODO: calculate demand from census data
         obj_func = obj_func + "0 " + System.getProperty("line.separator") + "  End Equations" + System.getProperty("line.separator") + "End Model";
 
@@ -172,12 +172,18 @@ public class OptimizationRequest {
                 case 201:
                     BufferedReader br = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
                     String tempStr = "";
+                    String county_name = "";
                     StringBuilder sb = new StringBuilder();
                     while (null != (tempStr = br.readLine())) {
-                        if(tempStr.contains("formatted_address")) {
+                        /*if(tempStr.contains("formatted_address")) { //return formatted address
                             sb.append(tempStr + '\n');
                             System.out.println(tempStr);
                             break;
+                        }*/
+                        if(tempStr.contains("long name")) { //return county name
+                            county_name = tempStr.substring(30, (tempStr.length()-2));
+                        } else if (tempStr.contains("administrative_area_level_2")) {
+                            return county_name;
                         }
                     }
                     return sb.toString();
