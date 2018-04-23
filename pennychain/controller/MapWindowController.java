@@ -307,8 +307,6 @@ public class MapWindowController {
         }
     }
 
-
-
     @FXML protected void lockMapListener() throws AWTException, InterruptedException{
         toolbar.getItems().remove(lockMap);
 
@@ -613,13 +611,13 @@ public class MapWindowController {
     @FXML protected void initialize(){
         webEngine = webView.getEngine();
         webEngine.setJavaScriptEnabled(true);
-
+        lockMap.setDisable(true);
         // Add listener to activate when the webEngine has successfully loaded the .html file
         webEngine.getLoadWorker().stateProperty().addListener(
                 new ChangeListener<Worker.State>() {
                     public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
                         if (newState == Worker.State.SUCCEEDED) {
-
+                            lockMap.setDisable(false);
                             //Default case on loading an existing Map
                             if(project.getMainMap()  != null) {
                                 webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
