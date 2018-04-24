@@ -7,9 +7,11 @@ public class APMpyth {
 	
 	
 	public APMpyth(String new_path) { this.file_loc = new File(new_path); }
-	
+
 	public String sendData() throws IOException {
-		ProcessBuilder pb = new ProcessBuilder("C:\\Users\\Jason\\AppData\\Local\\Programs\\Python\\Python36\\python.exe","pennychain\\center\\Optimization.py");
+		String testOutput = "";
+		ProcessBuilder pb = new ProcessBuilder("C:\\Users\\Jason\\AppData\\Local\\Programs\\Python\\Python36\\python.exe","Optimization.py");
+		File testFile = new File("TestFile.txt");
 		Process p = pb.start();
 
 		System.out.println(".....start python.....");

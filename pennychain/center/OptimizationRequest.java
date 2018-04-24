@@ -10,7 +10,7 @@ import pennychain.controller.Map;
 import pennychain.controller.projResource;
 
 public class OptimizationRequest {
-    private int max_posi; //max # of resources to exist on returned map
+    //private int max_posi; //max # of resources to exist on returned map
     private Map map;
     private ArrayList<projResource> projectResourceList;
 
@@ -29,56 +29,114 @@ public class OptimizationRequest {
 
         this.map = projectMap;
 
+        ArrayList<String> sales_centers = new ArrayList<>();
+        //ArrayList<String> dist_centers = new ArrayList<>();
+        ArrayList<String> constraints = new ArrayList<>();
 
-        double[] latitudes = map.getGridLats();
-        double[] longitudes = map.getGridLongs();
-        String origins = "";
-        String destinations = "";
-        int resAmt_origins = 0;
-        int resAmt_destinations = 0;
-        for(int i = 0; i < projectResourceList.size(); i++) {
-            int[][] placement = projectResourceList.get(i).getPlacement();
-            for(int j = 0; j < placement.length; j++) {
-                for(int t = 0; t < placement[j].length; t++) {
-                    if(placement[t][j] == 1) {
-                        if(projectResourceList.get(i).getrType() == 0){
-                            if(destinations.equals("")) {
-                                destinations += Double.toString(latitudes[placement[j].length*j+t]) + "," + Double.toString(longitudes[placement[j].length*j+t]);
-                                resAmt_destinations++;
-                            } else {
-                                destinations += "|" + Double.toString(latitudes[placement[j].length*j+t]) + "," + Double.toString(longitudes[placement[j].length*j+t]);
-                                resAmt_destinations++;
+        if(projectResourceList.get(0) != null) {
+
+            //Create a matrix combining the placement of all existing project resources
+            int[][] init_size = projectResourceList.get(0).getPlacement();
+            int[][] globalResourceMatrix = new int[init_size[0].length][init_size.length];  //0: potential destination, 1: origin, >1: existing destination, <-1: blocked location
+            double[] latitudes = map.getGridLats();
+            double[] longitudes = map.getGridLongs();
+
+            for (int i = 0; i < projectResourceList.size(); i++) {
+                int[][] placement = projectResourceList.get(i).getPlacement();
+
+                if (projectResourceList.get(i).getrType() == 1) { //origins
+                    for (int y = 0; y < placement.length; y++) {
+                        for (int x = 0; x < placement[y].length; x++) {
+                            if (placement[x][y] == 1) {
+                                globalResourceMatrix[x][y] = 1;
                             }
-                        } else if(projectResourceList.get(i).getrType() == 1){
-                            if(origins.equals("")) {
-                                origins += Double.toString(latitudes[placement[0].length * j + t]) + "," + Double.toString(longitudes[placement[0].length * j + t]);
-                                resAmt_origins++;
-                            } else {
-                                origins += "|"+Double.toString(latitudes[placement[0].length * j + t]) + "," + Double.toString(longitudes[placement[0].length * j + t]);
-                                resAmt_origins++;
-
+                        }
+                    }
+                } else {
+                    for (int y = 0; y < placement.length; y++) {
+                        for (int x = 0; x < placement[y].length; x++) {
+                            if (placement[x][y] == 1) {
+                                globalResourceMatrix[x][y] = (i+2);
+                            } else if (placement[x][y] == -1) {
+                                globalResourceMatrix[x][y] = ((i+2)*-1);
                             }
                         }
                     }
                 }
             }
+
+            //Create variables and constraints
+            for(int i = 0; i < projectResourceList.size(); i++) {
+                if (projectResourceList.get(i).getrType() != 1) {
+                    String origins = "";
+                    int resAmt_origins = 0;
+                    String destinations = "";
+                    int resAmt_destinations = 0;
+                    sales_centers.clear();
+                    constraints.clear();
+                    int index = 0;
+
+                    for (int y = 0; y < globalResourceMatrix.length; y++) {
+                        for (int x = 0; x < globalResourceMatrix[y].length; x++) {
+
+                            if (globalResourceMatrix[x][y] == 0) { //potential (empty) location
+                                if (destinations.equals("")) {
+                                    sales_centers.add("int_x[" + index + "]");
+                                    destinations += Double.toString(latitudes[globalResourceMatrix[0].length * y + x]) + "," + Double.toString(longitudes[globalResourceMatrix[0].length * y + x]);
+                                    resAmt_destinations++;
+                                    index++;
+                                } else {
+                                    sales_centers.add("int_x[" + index + "]");
+                                    destinations += "|" + Double.toString(latitudes[globalResourceMatrix[0].length * y + x]) + "," + Double.toString(longitudes[globalResourceMatrix[0].length * y + x]);
+                                    resAmt_destinations++;
+                                    index++;
+                                }
+                            } else if (globalResourceMatrix[x][y] == 1) { //existing origin
+                                if (origins.equals("")) {
+                                    origins += Double.toString(latitudes[globalResourceMatrix[0].length * y + x]) + "," + Double.toString(longitudes[globalResourceMatrix[0].length * y + x]);
+                                    resAmt_origins++;
+                                    //dist_centers.add("int_x[" + (x+y) + "]");
+                                    //constraints.add("int_x[" + index + "]=1");
+                                    index++;
+                                } else {
+                                    origins += "|" + Double.toString(latitudes[globalResourceMatrix[0].length * y + x]) + "," + Double.toString(longitudes[globalResourceMatrix[0].length * y + x]);
+                                    resAmt_origins++;
+                                    //dist_centers.add("int_x[" + (x+y) + "]");
+                                    //constraints.add("int_x[" + index + "]=1");
+                                    index++;
+                                }
+                            } else if (globalResourceMatrix[x][y] == (i + 2)) { //existing destination
+                                if (destinations.equals("")) {
+                                    destinations += Double.toString(latitudes[globalResourceMatrix[0].length * y + x]) + "," + Double.toString(longitudes[globalResourceMatrix[0].length * y + x]);
+                                    resAmt_destinations++;
+                                    sales_centers.add("int_x[" + index + "]");
+                                    constraints.add("int_x[" + index + "]=1");
+                                    index++;
+                                } else {
+                                    destinations += "|" + Double.toString(latitudes[globalResourceMatrix[0].length * y + x]) + "," + Double.toString(longitudes[globalResourceMatrix[0].length * y + x]);
+                                    resAmt_destinations++;
+                                    sales_centers.add("int_x[" + index + "]");
+                                    constraints.add("int_x[" + index + "]=1");
+                                    index++;
+                                }
+                            } else if (globalResourceMatrix[x][y] == ((i + 2) * -1)) { //location blocked
+                                //sales_centers.add("int_x["+(x+(x*y))+"]");
+                                //constraints.add("int_x["+(x+(x*y))+"]=0");
+                            }
+                        }
+                    }
+
+                    System.out.println("O: " + origins);
+                    System.out.println("D: " + destinations);
+                    String[] distanceMatrix = this.getMinDistanceSupply(googleDistanceMatrix(origins, destinations), resAmt_origins, resAmt_destinations);
+
+                    this.createOptimizableFile(distanceMatrix, projectResourceList.get(i).getDesired_amnt(), sales_centers, constraints);
+
+                    APMpyth apmpython = new APMpyth(path_name);
+                    System.out.println(apmpython.sendData());
+                }
+            }
         }
-
-        System.out.println("O: " + origins);
-        System.out.println("D: " + destinations);
-        String[] distanceMatrix = this.getMinDistanceSupply(googleDistanceMatrix(origins, destinations), resAmt_origins, resAmt_destinations);
-
-        this.createOptimizableFile(distanceMatrix);
-
-        APMpyth apmpython = new APMpyth(path_name);
-        /*
-         * Currently python is returning: "Model file file_7158.apm does not exist"
-         * (the 4-digit number following file_ varies every run)
-         *
-         */
-
-
-        System.out.println(apmpython.sendData());
         return null;
     }
 
@@ -91,69 +149,48 @@ public class OptimizationRequest {
     }
 
 
-    /*createOptimizableFile  (may split into multiple methods later)
+    /*createOptimizableFile
      * Extracts data and writes file readable by APMPython
-     *
-     * TODO: add census weighting for demand to objective funtion
      */
-    private void createOptimizableFile(String[] distance) throws IOException {
-        FileWriter f = new FileWriter("pennychain\\center\\file.apm");
-        FileWriter f0 = new FileWriter("pennychain\\center\\variables.txt");
-        ArrayList<String> sales_centers = new ArrayList<>();
-        ArrayList<String> dist_centers = new ArrayList<>();
-        ArrayList<String> constraints = new ArrayList<>();
+    private void createOptimizableFile(String[] distance, int max_posi, ArrayList<String> sales_centers, ArrayList<String> constraints) throws IOException {
+        FileWriter apmWriter = new FileWriter("pennychain\\center\\file.apm");
+        FileWriter varWriter = new FileWriter("pennychain\\center\\variables.txt");
 
-        for (int i = 0; i < projectResourceList.size(); i++) {
-            if (projectResourceList.get(i).getrType() == 0) {
-                sales_centers.add("X["+i+"]");
-                constraints.add("X["+i+"]=0");
-            } else if (projectResourceList.get(i).getrType() == 1) {
-                dist_centers.add("X["+i+"]");
-                //add constraints pertaining to this variable
-            } else {
-                sales_centers.add("X["+i+"]");
-                constraints.add("X["+i+"]=0");
-            }
-        }
-
+        //Write variable file + constraint for max amount of resource to include in optimized result
         String max_num_centers = "";
         for (int i = 0; i < sales_centers.size(); i++) {
-            f0.write("int_" + sales_centers.get(i) + System.getProperty("line.separator"));
-            max_num_centers = max_num_centers + "int_" + sales_centers.get(i) + "+";
+            varWriter.write(sales_centers.get(i) + System.getProperty("line.separator"));
+            max_num_centers = max_num_centers + sales_centers.get(i) + "+";
         }
-        f0.close();
+        varWriter.close();
         constraints.add(max_num_centers + "0 =" + max_posi);
 
-        f.write("Model" + System.getProperty("line.separator") + "  Variables" + System.getProperty("line.separator"));
+        apmWriter.write("Model" + System.getProperty("line.separator") + "  Variables" + System.getProperty("line.separator"));
 
+        //create objective function
         String obj_func = "Minimize ";
         for (int i = 0; i < sales_centers.size(); i++) {
-            obj_func = obj_func + (distance[i] /*( * gasPrice[i] )*/ + "/" + "COUNTY_POPULATION" + " * int_" + sales_centers.get(i) + " + ");
-        }   //TODO: calculate demand from census data
+            obj_func = obj_func + (distance[i] /*( * gasPrice[i] )*/ + /* "/" + "COUNTY_POPULATION" +*/ " * " + sales_centers.get(i) + " + ");
+        }
         obj_func = obj_func + "0 " + System.getProperty("line.separator") + "  End Equations" + System.getProperty("line.separator") + "End Model";
 
+        //force variables to equal 0 or 1 in optimized result
         while (!(sales_centers.isEmpty())) {
-            f.write("    int_" + sales_centers.get(0) + " = 0, >=0, <=1" + System.getProperty("line.separator"));
+            apmWriter.write("    " + sales_centers.get(0) + " = 0, >=0, <=1" + System.getProperty("line.separator"));
             sales_centers.remove(0);
         }
-        f.write("  End Variables" + System.getProperty("line.separator") + System.getProperty("line.separator") + "  Equations" + System.getProperty("line.separator"));
+        apmWriter.write("  End Variables" + System.getProperty("line.separator") + System.getProperty("line.separator") + "  Equations" + System.getProperty("line.separator"));
+
+        //Write constraints to file
         while (!(constraints.isEmpty())) {
-            f.write("    int_" + constraints.get(0) + System.getProperty("line.separator"));
+            apmWriter.write("    " + constraints.get(0) + System.getProperty("line.separator"));
             constraints.remove(0);
         }
 
-        f.write(System.getProperty("line.separator") + "    " + obj_func);
-        f.close();
+        //Write objective function to file
+        apmWriter.write(System.getProperty("line.separator") + "    " + obj_func);
+        apmWriter.close();
     }
-
-    /*setMaxCenters:
-     * Sets maximum amount of resources, including pre-existing ones, to include in optimized result
-     * Params: user specified maximum amount of resources
-     */
-    public void setMaxCenters(int desired_max) {
-        this.max_posi = desired_max; //needs update for new constraint system
-    }
-
 
     /*
      *  Below is Google Maps API HTTP Requests
@@ -173,7 +210,7 @@ public class OptimizationRequest {
                     BufferedReader br = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
                     String tempStr = "";
                     String county_name = "";
-                    StringBuilder sb = new StringBuilder();
+                    //StringBuilder sb = new StringBuilder();
                     while (null != (tempStr = br.readLine())) {
                         /*if(tempStr.contains("formatted_address")) { //return formatted address
                             sb.append(tempStr + '\n');
@@ -186,7 +223,7 @@ public class OptimizationRequest {
                             return county_name;
                         }
                     }
-                    return sb.toString();
+                    //return sb.toString();
             }
         } catch (MalformedURLException e) {
             // new URL() failed
