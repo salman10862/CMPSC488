@@ -33,7 +33,7 @@ public class Application3 {
 	
 	public void sendRequest(String path_name) throws IOException {
 		this.read_map();
-		APMpyth apmpython = new APMpyth(path_name);
+		APMpyth apmpython = new APMpyth();
 		this.bundle_data(path_name);
 		
 		String results = apmpython.sendData();
