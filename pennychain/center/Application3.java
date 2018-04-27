@@ -1,4 +1,4 @@
-package pennychain.center;
+/*package pennychain.center;
 
 import pennychain.center.APMpyth;
 import pennychain.controller.Dist;
@@ -69,7 +69,7 @@ public class Application3 {
 				/*if(i != j) {
                                     
 					obj_func = obj_func + Math.sqrt((Math.floor((i-j)/varBound))*(Math.floor((i-j)/varBound)) + ((i-j)%varBound)*((i-j)%varBound)) + " * " + variables.get(i) + " + ";
-				}*/
+				}
 			}
 		}
 		obj_func = obj_func + "0 " + System.getProperty("line.separator") + "  End Equations" + System.getProperty("line.separator") + "End Model";
@@ -83,14 +83,14 @@ public class Application3 {
 		 * 
 		 * DISPLAY MAP DATA ON GUI
 		 * 
-		 */
+
 	}
 	
 	private void read_map() throws IOException {
 		/*
 		 * OBTAIN MAP DATA FROM GUI
 		 * 
-		 */
+
 		FileWriter f = new FileWriter("C:\\Users\\hgfel\\Documents\\NetBeansProjects\\JavaApplication3\\variables.txt");
 
 		for( int i = 0; i <varBound; i++)
@@ -104,7 +104,7 @@ public class Application3 {
 			{
 				constraints.add("int_x[" + (i+1)+ "] = 1");
 			}
-			*/
+
 
 		}
 		for(int x = 0; x < variables.size(); x++)
@@ -127,3 +127,4 @@ public class Application3 {
 	}
 
 }
+*/
