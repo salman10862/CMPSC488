@@ -80,14 +80,12 @@ public class Map {
              gridCorners) {
              right_x = p.getX();
              right_y = p.getY();
-             //System.out.println("Currently examing grid cell: " + left_x + " "+ left_y + ","+ right_x + " "+ right_y + ".");
-             if(left_x <= x && right_x >= x) {
-                 if (left_y <= y && right_y >= y) {
+             if(left_x <= x && right_x > x) {
+                 if (left_y <= y && right_y > y) {
                      coordinates[0] = left_x;
                      coordinates[1] = left_y;
                      coordinates[2] = right_x;
                      coordinates[3] = right_y;
-                     System.out.println("CELL FOUND");
                      break;
                  }
              }

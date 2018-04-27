@@ -68,8 +68,6 @@ public class ConstraintController{
             cTypeList.getSelectionModel().selectFirst();
         else
             cTypeList.getSelectionModel().selectLast();
-
-
     }
 
 
@@ -96,6 +94,7 @@ public class ConstraintController{
         if (result.isPresent()) {
             entered = result.get();
         }
+
 
 
     }
