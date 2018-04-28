@@ -14,12 +14,12 @@ from apm import *
 
 sol = apm_solve('file',3)
 
-file2 = open("CMPSC488/pennychain/center/variables.txt", 'r')
+file2 = open("pennychain/center/variables.txt", 'r')
 
 x= file2.read().splitlines()
 file2.close()
 
-file = open("CMPSC488/pennychain/center/TestFile.txt", "w")
+file = open("pennychain/center/TestFile.txt", "w")
 
 file.write('--- Results of the Optimization Problem --- \n')
 
