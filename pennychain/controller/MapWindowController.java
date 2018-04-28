@@ -7,10 +7,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.concurrent.FutureTask;
 
 import javafx.animation.KeyFrame;
-import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -18,12 +16,12 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
-import javafx.concurrent.WorkerStateEvent;
 import javafx.event.*;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -53,7 +51,6 @@ import javafx.util.Duration;
 import pennychain.center.OptimizationRequest;
 import pennychain.usr.UserSession;
 import pennychain.db.Connection_Online;
-import sun.awt.Mutex;
 
 
 public class MapWindowController {
@@ -301,9 +298,11 @@ public class MapWindowController {
             layerPane = new StackPane();
 
             transGrid.setWidth(webView.getWidth());
-            transGrid.setHeight(webView.getHeight());
+            transGrid.setHeight(webView.getHeight()-26);
             layerPane.getChildren().addAll(webView, transGrid);
+            layerPane.setAlignment(transGrid, Pos.TOP_CENTER);
             windowPane.setCenter(layerPane);
+
         }
     }
 
@@ -399,12 +398,11 @@ public class MapWindowController {
         resourceChooser.setVisible(true);
 
 
-        //resourceChooserListener();
+        resourceChooserListener();
          mouseListener = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                // Check that there is a resource to draw on the map
-                System.out.println("Grid Longitudes are:");
+                // Get remain LatLngs if the last rows are missing
                 if(project.getMainMap().getGridLats()[project.getMainMap().getGridLats().length-1] == 0)
                 {
                     int index = project.getMainMap().getGridLats().length-1;
@@ -415,9 +413,8 @@ public class MapWindowController {
                         advanceMouse(i);
                     }
                 }
-                for(int i=0; i<currentMap.getGridLongs().length; i++)
-                    System.out.println(currentMap.getGridLongs()[i] + " " + currentMap.getGridLats()[i]);
 
+                // Check that there is a resource to draw on the map
                 if(!resourceChooser.getSelectionModel().isEmpty()) {
                     int selected = resourceChooser.getSelectionModel().getSelectedIndex();
                     projResource selected_Resource = project.getProjResourceList().get(selected);
@@ -432,7 +429,11 @@ public class MapWindowController {
                         double cell_width = currentMap.getCell_width();
 
                         int cell_x = (int) (grid_coordinates[0] / cell_width);
-                        int cell_y = (int) (grid_coordinates[1] / cell_length);
+                        int cell_y = (int) ( grid_coordinates[3] / cell_length);
+
+                        if(cell_y >= selected_Resource.getPlacement().length)
+                            cell_y--;
+                        System.out.println("CELL AT " + cell_x + cell_y);
 
                         // Scenario 1: User specifies this cell can never contain this projResource
                         if (mouseEvent.isControlDown()) {
@@ -442,7 +443,9 @@ public class MapWindowController {
                         } else {
                             // Scenario 2: User specifies that projResource is currently in this cell
                             if (selected_Resource.getValueAtGrid(cell_x, cell_y) != 1) {
-                                drawSquare(mouseEvent.getX(), mouseEvent.getY(), selected_Resource.getColor());
+                                removeSquare(x_click, y_click);
+
+                                drawSquare(x_click, y_click, selected_Resource.getColor());
                                 selected_Resource.placeCoordinate(cell_x, cell_y);
                             }
                             // Scenario 3: projResource is not currently at this location, but possibly could be placed here
@@ -462,7 +465,7 @@ public class MapWindowController {
         zoomOutButton.setDisable(false);
         optimizeButton.setDisable(false);
         addAResourceItem.setDisable(false);
-        defineConstraintsItem.setDisable(false);
+        //defineConstraintsItem.setDisable(false);
     }
 
     private  void drawSquare(double x, double y, Color rColor){
@@ -471,14 +474,14 @@ public class MapWindowController {
 
         System.out.println("Trying to draw cell");
         double[] coordinates = currentMap.getGridCoordinates(x, y);
-        gc.fillRect(coordinates[0],coordinates[1],currentMap.getCell_width(),currentMap.getCell_length());
+        gc.fillRect(coordinates[0]+1,coordinates[1]+1,currentMap.getCell_width()-1,currentMap.getCell_length()-1);
     }
 
     private void removeSquare(double x, double y){
         GraphicsContext gc = transGrid.getGraphicsContext2D();
         double[] coordinates = currentMap.getGridCoordinates(x, y);
         System.out.println("Trying to clear cell");
-        gc.clearRect(coordinates[0], coordinates[1], currentMap.getCell_width(), currentMap.getCell_length());
+        gc.clearRect(coordinates[0]+1, coordinates[1]+1, currentMap.getCell_width()-1, currentMap.getCell_length()-1);
     }
 
     @FXML protected void sendOptimizationRequest() throws IOException{
@@ -579,13 +582,16 @@ public class MapWindowController {
                 // Fill in canvas for the selected projResource
                 ArrayList<Integer> placement_coordinates = selectedResource.getCoordinates();
                 ArrayList<Integer> block_coordinates = selectedResource.getBlockedCoordinates();
+                double cLength = currentMap.getCell_length()/2;
+                double cWidth = currentMap.getCell_width()/2;
+
                 for(int i =0; i<placement_coordinates.size(); i=i+2){
                     System.out.println("Attempt to draw coordinates:" + placement_coordinates.get(i) + " " + placement_coordinates.get(i+1));
-                    drawSquare(placement_coordinates.get(i)*currentMap.getCell_width(), (placement_coordinates.get(i+1))*currentMap.getCell_length(), selectedResource.getColor());
+                    drawSquare(placement_coordinates.get(i)*currentMap.getCell_width(), (placement_coordinates.get(i+1))*currentMap.getCell_length() + cLength, selectedResource.getColor());
                 }
                 for(int i=0; i<block_coordinates.size(); i=i+2){
                     System.out.println("Attempt to draw blocks");
-                    drawSquare(block_coordinates.get(i)*currentMap.getCell_width()+1, (block_coordinates.get(i+1)+1)*currentMap.getCell_length(),Color.BLACK);
+                    drawSquare(block_coordinates.get(i)*currentMap.getCell_width(), (block_coordinates.get(i+1))*currentMap.getCell_length() + cLength,Color.BLACK);
                 }
                 transGrid.setOnMouseClicked(mouseListener);
             }
@@ -609,6 +615,7 @@ public class MapWindowController {
 
 
     @FXML protected void initialize(){
+        defineConstraintsItem.setDisable(true);
         webEngine = webView.getEngine();
         webEngine.setJavaScriptEnabled(true);
         lockMap.setDisable(true);
@@ -629,13 +636,10 @@ public class MapWindowController {
                                             webEngine.executeScript("setPerspective(" + project.getMainMap().getLatitude() + ", "
                                                     + project.getMainMap().getLongitude() + ", " + currentZoom
                                                     + ")");
-                                            try{
+                                            try {
                                                 lockMapListener();
-                                                windowPane.getScene().setCursor(Cursor.CROSSHAIR);
-                                            }
-                                            catch (Exception e){
-                                                e.printStackTrace();
-                                            }
+                                            }catch(Exception E){}
+
                                     }
                                     }
                                 });
