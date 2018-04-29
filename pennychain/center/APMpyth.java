@@ -12,7 +12,7 @@ public class APMpyth {
 		String testOutput = "";
 		String homedir = System.getenv("USERPROFILE");
 		String pyPath = "\\AppData\\Local\\Programs\\Python\\Python36\\python.exe";
-		ProcessBuilder pb = new ProcessBuilder(homedir + pyPath,"Optimization.py");
+		ProcessBuilder pb = new ProcessBuilder(homedir + pyPath,"pennychain\\center\\Optimization.py");
 		File testFile = new File("TestFile.txt");
 		Process p = pb.start();
 
