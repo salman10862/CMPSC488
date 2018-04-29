@@ -76,8 +76,8 @@ public class OptimizationRequest {
                     constraints.clear();
                     int index = 0;
 
-                    for (int y = 0; y < globalResourceMatrix.length; y++) {
-                        for (int x = 0; x < globalResourceMatrix[y].length; x++) {
+                    for (int x = 0; x < globalResourceMatrix.length; x++) {
+                        for (int y = 0; y < globalResourceMatrix[x].length; y++) {
 
                             if (globalResourceMatrix[x][y] == 0) { //potential (empty) location
                                 if (destinations.equals("")) {

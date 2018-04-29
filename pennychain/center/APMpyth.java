@@ -10,7 +10,7 @@ public class APMpyth {
 
 	public String sendData() throws IOException {
 		String testOutput = "";
-		String homedir = System.getenv("CSIDL_PROFILE");
+		String homedir = System.getenv("USERPROFILE");
 		String pyPath = "\\AppData\\Local\\Programs\\Python\\Python36\\python.exe";
 		ProcessBuilder pb = new ProcessBuilder(homedir + pyPath,"Optimization.py");
 		File testFile = new File("TestFile.txt");
