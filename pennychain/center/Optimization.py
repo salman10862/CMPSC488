@@ -21,7 +21,7 @@ file2.close()
 
 file = open("pennychain/center/TestFile.txt", "w")
 
-file.write('--- Results of the Optimization Problem --- \n')
+#file.write('--- Results of the Optimization Problem --- \n')
 
 y = 0
 for y in range (0, len(x)):
