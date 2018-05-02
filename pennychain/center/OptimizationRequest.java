@@ -13,6 +13,7 @@ public class OptimizationRequest {
     //private int max_posi; //max # of resources to exist on returned map
     private Map map;
     private ArrayList<projResource> projectResourceList;
+    private ArrayList<projResource> optimizedResults = new ArrayList<>();
 
 
     public OptimizationRequest(ArrayList<projResource> projectResourceList) {
@@ -25,7 +26,7 @@ public class OptimizationRequest {
      *          projectMap, a Map containing the longitude/latitude of each existing and considerable resource position
      *
      */
-    public String[] sendRequest(String path_name, Map projectMap) throws IOException {
+    public ArrayList<projResource> sendRequest(String path_name, Map projectMap) throws IOException {
 
         this.map = projectMap;
 
@@ -76,8 +77,8 @@ public class OptimizationRequest {
                     constraints.clear();
                     int index = 0;
 
-                    for (int x = 0; x < globalResourceMatrix.length; x++) {
-                        for (int y = 0; y < globalResourceMatrix[x].length; y++) {
+                    for (int y = 0; y < globalResourceMatrix.length; y++) {
+                        for (int x = 0; x < globalResourceMatrix[y].length; x++) {
 
                             if (globalResourceMatrix[x][y] == 0) { //potential (empty) location
                                 if (destinations.equals("")) {
@@ -96,7 +97,7 @@ public class OptimizationRequest {
                                     origins += Double.toString(latitudes[globalResourceMatrix[0].length * y + x]) + "," + Double.toString(longitudes[globalResourceMatrix[0].length * y + x]);
                                     resAmt_origins++;
                                     //dist_centers.add("int_x[" + (x+y) + "]");
-                                    //constraints.add("int_x[" + index + "]=1");
+                                    //constraints.add("int_x[" + index + "]=0");
                                     index++;
                                 } else {
                                     origins += "|" + Double.toString(latitudes[globalResourceMatrix[0].length * y + x]) + "," + Double.toString(longitudes[globalResourceMatrix[0].length * y + x]);
@@ -120,8 +121,9 @@ public class OptimizationRequest {
                                     index++;
                                 }
                             } else if (globalResourceMatrix[x][y] == ((i + 2) * -1)) { //location blocked
-                                //sales_centers.add("int_x["+(x+(x*y))+"]");
-                                //constraints.add("int_x["+(x+(x*y))+"]=0");
+                                //sales_centers.add("int_x["+index+"]");
+                                //constraints.add("int_x["+index+"]=0");
+                                index++;
                             }
                         }
                     }
@@ -133,9 +135,34 @@ public class OptimizationRequest {
                     this.createOptimizableFile(distanceMatrix, projectResourceList.get(i).getDesired_amnt(), sales_centers, constraints);
 
                     APMpyth apmpython = new APMpyth(path_name);
-                    System.out.println(apmpython.sendData());
+                    if(apmpython.sendData()) {
+                        //Create new project resource for optimized results, store in array, and return to caller to be displayed on map
+                        FileReader fr = new FileReader("pennychain\\center\\TestFile.txt");
+                        BufferedReader br = new BufferedReader(fr);
+                        String result_line = "";
+
+                        projResource resultItem = new projResource(projectResourceList.get(i).getLabel(), projectResourceList.get(i).getColor());
+                        resultItem.initializePlacement(globalResourceMatrix[0].length, globalResourceMatrix.length);
+
+                        while((result_line = br.readLine()) != null) {
+                            if(Integer.parseInt(result_line.substring(result_line.length()-3, result_line.length()-2)) == 1) {
+                                int ndex = Integer.parseInt(result_line.substring(result_line.length()-7, result_line.length()-6));
+                                int y = ((ndex - (ndex % globalResourceMatrix.length)) / 4);
+                                int x = ndex % globalResourceMatrix[0].length;
+                                //System.out.println("OPTRES AT x: " + x + ", y: " + y);
+                                globalResourceMatrix[x][y] = i+2;
+                                resultItem.placeCoordinate(x, y);
+                            }
+                        }
+
+                        optimizedResults.add(resultItem);
+
+                        fr.close();
+                        br.close();
+                    }
                 }
             }
+            return optimizedResults;
         }
         return null;
     }

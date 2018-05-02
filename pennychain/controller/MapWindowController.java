@@ -486,17 +486,8 @@ public class MapWindowController {
 
     @FXML protected void sendOptimizationRequest() throws IOException{
         if(project.getMainMap() != null) {
-            String[] routes = new OptimizationRequest(project.getProjResourceList()).sendRequest(project.getOptimizationPath(), project.getMainMap());
-            //for(int i = 0; i < routes.length; i++) {
-            //    String[] route = routes[i].split(",");
-            //    String origin = route[0];
-            //    String destination = route[1];
-            //    webEngine.executeScript("displayRoutes("+origin+","+destination+")");
-            //}
+            setOptimizedResults(new OptimizationRequest(project.getProjResourceList()).sendRequest(project.getOptimizationPath(), project.getMainMap()));
         }
-        //String origin = "40.2042945,-76.7471177";
-        //String destination = "40.2007294,-76.7550847";
-        //webEngine.executeScript("displayRoutes("+origin+","+destination+")");
     }
 
     @FXML protected void handleZoomIn(){
