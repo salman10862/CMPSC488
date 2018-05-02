@@ -550,8 +550,10 @@ public class MapWindowController {
 
                 //DRAW IT
                 ArrayList<Integer> placement_coordinates = selectedResult.getCoordinates();
+                double cLength = currentMap.getCell_length()/2;
+
                 for(int i =0; i<placement_coordinates.size(); i=i+2){
-                    drawSquare(placement_coordinates.get(i)*currentMap.getCell_width() + 1, (placement_coordinates.get(i+1)+1)*currentMap.getCell_length(), selectedResult.getColor());
+                    drawSquare(placement_coordinates.get(i)*currentMap.getCell_width(), (placement_coordinates.get(i+1))*currentMap.getCell_length() + cLength, selectedResult.getColor());
                 }
                 transGrid.setOnMouseClicked(null);
             }
