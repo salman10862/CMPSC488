@@ -89,6 +89,7 @@ public class MapWindowController {
     @FXML private ComboBox<String> resourceChooser = new ComboBox<>();
     private ChoiceBox<Integer> grid_size_selection;
     private Text grid_size_text;
+    ComboBox<String> optimizedResults;
 
     public MapWindowController(Project project, UserSession userSessionn)
     {
@@ -529,7 +530,10 @@ public class MapWindowController {
 
     /// *********** FOR RECEIVING OPTIMIZER RESULTS
     private void setOptimizedResults(ArrayList<projResource> results){
-        ComboBox<String> optimizedResults = new ComboBox<>();
+        if(toolbar.getItems().contains(optimizedResults)){
+            toolbar.getItems().remove(optimizedResults);
+        }
+        optimizedResults = new ComboBox<>();
         ArrayList<String> optimized_list = new ArrayList<>();
         for (projResource r:
              results) {
