@@ -28,7 +28,7 @@ public class AddAResourceController{
     @FXML private TextField desired_amnt_field;
 
     private Color newRColor;
-    private int type_flag;
+    private int type_flag = 0;
 
     public AddAResourceController(Project project)
     {
@@ -47,16 +47,16 @@ public class AddAResourceController{
         rList.setItems(FXCollections.observableList(resourceList));
         // Handle Resource Type
         ArrayList<String> rTypeList = new ArrayList<>();
-        rTypeList.add("Generic Resource");
+        rTypeList.add("Generic Resource/Start");
         rTypeList.add("Distribution Endpoint");
         valueChoice.setItems(FXCollections.observableList(rTypeList));
-        valueChoice.getSelectionModel().selectFirst();
         valueChoice.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
                 type_flag = t1.intValue();
             }
         });
+        valueChoice.getSelectionModel().selectFirst();
 
         // Handle color picking
         newRColor = Color.WHITE.deriveColor(0,1,1,0.3);
