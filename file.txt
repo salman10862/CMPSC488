@@ -1,0 +1,19 @@
+Model
+  Variables
+    int_X[0] = 0, >=0, >=1
+    int_X[2] = 0, >=0, >=1
+    int_X[3] = 0, >=0, >=1
+    int_X[10] = 0, >=0, >=1
+    int_X[12] = 0, >=0, >=1
+  End Variables
+
+  Constraints
+    int_X[10]=1 
+    int_X[12]=1 
+    int_X[0]+int_X[2]+int_X[3]+int_X[10]+int_X[12]+0=3
+  End Constraints
+
+  Objective Function 
+    Minimize Z = 1.0 * int_X[0] + 2.0 * int_X[0] + 3.0 * int_X[0] + 1.0 * int_X[0] + 1.0 * int_X[2] + 1.0 * int_X[2] + 2.0 * int_X[2] + 3.0 * int_X[2] + 2.0 * int_X[3] + 1.0 * int_X[3] + 1.0 * int_X[3] + 2.0 * int_X[3] + 3.0 * int_X[10] + 2.0 * int_X[10] + 1.0 * int_X[10] + 1.0 * int_X[10] + 1.0 * int_X[12] + 3.0 * int_X[12] + 2.0 * int_X[12] + 1.0 * int_X[12] + 0 
+  End Equations
+End Model

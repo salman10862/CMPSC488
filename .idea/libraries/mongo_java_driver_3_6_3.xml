@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="mongo-java-driver-3.6.3">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/pennychain/lib/mongo-java-driver-3.6.3.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/mongo-java-driver-3.6.3.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

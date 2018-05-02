@@ -5,7 +5,6 @@ Model
     int_x[2] = 0, >=0, <=1
     int_x[4] = 0, >=0, <=1
     int_x[5] = 0, >=0, <=1
-    int_x[6] = 0, >=0, <=1
     int_x[7] = 0, >=0, <=1
     int_x[8] = 0, >=0, <=1
     int_x[9] = 0, >=0, <=1
@@ -13,12 +12,13 @@ Model
     int_x[11] = 0, >=0, <=1
     int_x[12] = 0, >=0, <=1
     int_x[13] = 0, >=0, <=1
+    int_x[15] = 0, >=0, <=1
   End Variables
 
   Equations
-    int_x[1]=1
-    int_x[0]+int_x[1]+int_x[2]+int_x[4]+int_x[5]+int_x[6]+int_x[7]+int_x[8]+int_x[9]+int_x[10]+int_x[11]+int_x[12]+int_x[13]+0 =3
+    int_x[4]=1
+    int_x[0]+int_x[1]+int_x[2]+int_x[4]+int_x[5]+int_x[7]+int_x[8]+int_x[9]+int_x[10]+int_x[11]+int_x[12]+int_x[13]+int_x[15]+0 =3
 
-    Minimize 11.9 * int_x[0] + 15.7 * int_x[1] + 25.4 * int_x[2] + 9.6 * int_x[4] + 18.1 * int_x[5] + 25.2 * int_x[6] + 11.6 * int_x[7] + 19.7 * int_x[8] + 28.5 * int_x[9] + 12.5 * int_x[10] + 14.9 * int_x[11] + 25.1 * int_x[12] + 29.4 * int_x[13] + 0 
+    Minimize 31.0 * int_x[0] + 27.5 * int_x[1] + 30.3 * int_x[2] + 24.4 * int_x[4] + 19.0 * int_x[5] + 31.3 * int_x[7] + 29.4 * int_x[8] + 25.5 * int_x[9] + 27.1 * int_x[10] + 32.5 * int_x[11] + 32.7 * int_x[12] + 32.6 * int_x[13] + 36.8 * int_x[15] + 0 
   End Equations
 End Model
