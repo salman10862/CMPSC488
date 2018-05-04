@@ -131,7 +131,7 @@
                                 <Label layoutX="13.0" layoutY="39.0" prefHeight="24.0" prefWidth="100.0" text="Grid Scale" />
                                 <Button fx:id="applyButton1" layoutX="414.0" layoutY="259.0" mnemonicParsing="false" onAction="#handleOptimizerApply" text="Apply" />
                                 <Button fx:id="cancelButton1" layoutX="494.0" layoutY="260.0" mnemonicParsing="false" onAction="#handleCancelButton" text="Cancel" />
-                                <Label layoutX="13.0" layoutY="89.0" prefHeight="24.0" prefWidth="100.0" text="Map Data File" />
+                                <Label layoutX="13.0" layoutY="89.0" prefHeight="24.0" prefWidth="100.0" text="Map Data To Scale By:" />
                                 <TextField fx:id="mDataField" layoutX="167.0" layoutY="89.0" prefHeight="25.0" prefWidth="281.0" />
                             </children></AnchorPane>
                     </content>

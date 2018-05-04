@@ -1,6 +1,6 @@
 package pennychain.controller;
 
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import pennychain.db.Hash;
 import pennychain.db.Connection_Online;
@@ -9,9 +9,6 @@ import pennychain.usr.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
@@ -34,6 +31,7 @@ public class SettingsController{
     @FXML private javafx.scene.control.TextField gridField;
     
     @FXML private ToggleButton emailButton;
+    @FXML private TextField mDataField;
 
     private Project project;
     private UserSession session;
@@ -69,6 +67,8 @@ public class SettingsController{
             emailButton.setSelected(true);
             emailButton.setText("Notifications On");
         }
+        gridField.setDisable(true);
+        mDataField.setDisable(true);
 
     }
 
